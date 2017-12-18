@@ -1,0 +1,86 @@
+
+Installer
+ffmpeg
+
+#generic
+tmp/
+*.log
+*.swp
+*.diff
+*.patch
+.cache
+
+# macosx
+*.DS_Store
+
+# windows
+cachesThumbs.db
+Desktop.ini
+
+# java
+*.class
+*.jar
+*.war
+*.ear
+
+# eclipse
+.buildpath
+.classpath
+.factorypath
+.project
+.pmd
+.checkstyle
+.ruleset
+.settings/
+.worksheet/
+
+# idea
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# netbeans
+/nbproject
+
+# vim
+.*.sw[a-p]
+
+# merge tooling
+*.orig
+
+# maven
+target/
+*.versionsBackup
+*.releaseBackup
+
+# sbt
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+
+# scala ide
+.cache-main
+.cache-tests
+.scala_dependencies
+
+# haskell
+dist
+cabal-dev
+*.o
+*.hi
+*.chi
+*.chs.h
+.virthualenv
+
+# android
+*.apk
+*.ap_
+*.dex
+
+# python
+*.pyc
+*.pyo
