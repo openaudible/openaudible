@@ -18,17 +18,41 @@ Clone the [git repo](https://github.com/openaudible/openaudible)
 git clone https://github.com/openaudible/openaudible.git
 ```
 
-cd to that directory.. and build the openaudible project with your IDE.
+cd to that directory..
+```
+cd openaudible
+```
+
+And you can import the maven project into your favorite IDE.
 
 In the Maven Properties, there are 3 profiles for Win, Mac, and Linux. Linux is untested. The profile points the linker to the appropriate swt library, which has the desktop widget native libraries.
 
+To build from the command line:
 ```
-mvn install
+mvn compile
+mvn package
 ```
 
 Then run the jar. You need to link to the appropriate SWT library for your OS.
 
-You should see the user interface where you can go to preferences and enter your audible account details.
+For Windows:
+```
+java -cp "target\openaudible-jar-with-dependencies.jar;swt\org.eclipse.swt.win32.win32.x86_64-4.6.jar" org.openaudible.desktop.Application
+```
+
+For Mac:
+```
+java -XstartOnFirstThread -cp "./target/openaudible-jar-with-dependencies.jar:./swt/org.eclipse.swt.cocoa.macosx.x86_64-4.6.jar" org.openaudible.desktop.Application
+```
+
+Notice on Mac, the -XstartOnFirstThread is required to run SWT apps.
+Enter that into the VM Arguments on your debugger/run dialog if using an IDE.
+
+You should see the user interface. You may see an error, or a warning about where you can go to preferences and enter your audible account details.
+
+Open the Preferences from the Edit Menu.
+Enter your audible user name (email) and password.
+
 
 If you get any errors logging in, it might help to open the Audible web browser from within the application and log in there.
 
