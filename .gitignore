@@ -19,7 +19,6 @@ Desktop.ini
 
 # java
 *.class
-*.jar
 *.war
 *.ear
 
