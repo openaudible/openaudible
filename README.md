@@ -45,6 +45,8 @@ For Mac:
 java -XstartOnFirstThread -cp "./target/openaudible-jar-with-dependencies.jar:./swt/org.eclipse.swt.cocoa.macosx.x86_64-4.6.jar" org.openaudible.desktop.Application
 ```
 
+Running with -ea to alert you of assertion failures is recommended for debugging. We use a lot of "asserts" to help identify problems.
+
 Notice on Mac, the -XstartOnFirstThread is required to run SWT apps.
 Enter that into the VM Arguments on your debugger/run dialog if using an IDE.
 
@@ -58,8 +60,18 @@ If you get any errors logging in, it might help to open the Audible web browser 
 
 The application will use cookies to expedite logging in-- and bypassing some of the "are you a human" checks.
 
+Errors are logged to an "error.log" file, usually written out to the application directory.
+
 ### Installer
 A binary installer for Windows, Mac and Linux is to be available, generated with install4j.
+
+### TODO
+This is a work in progress. It needs testing and bug reporting for all platforms.
+Exporting all your audible books to a web page is in progress.
+Exporting to a podcast format is planned.
+The UI needs cleaning up
+Support for multiple audible accounts is needed
+
 
 
 ## Built With
