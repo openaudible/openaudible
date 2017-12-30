@@ -5,7 +5,7 @@ A desktop application for downloading and managing your audible.com content.
 ## Getting Started
 
 Import as a standard java Maven project.
-You'll need a copy of ffmpeg-- I put a copy in the root directory.
+You'll need a copy of ffmpeg-- I put a copy in the root directory but can be anywhere if available in your system's PATH.
 
 ### Prerequisites
 Java 8, Maven, and git

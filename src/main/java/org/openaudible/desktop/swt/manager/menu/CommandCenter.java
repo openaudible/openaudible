@@ -116,7 +116,7 @@ public class CommandCenter {
     }
 
     public void showAbout() {
-        AboutDialog.doAbout(GUI.shell, 0);
+        AboutDialog.doAbout(GUI.shell);
     }
 
     /*

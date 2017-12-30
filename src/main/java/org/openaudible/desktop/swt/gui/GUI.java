@@ -85,9 +85,6 @@ public abstract class GUI implements ITranslatable {
         logger.error(e);
     }
 
-    public static void println(Object s) {
-        logger.info(s);
-    }
 
     /**
      * Return TRUE if the platform is Linux

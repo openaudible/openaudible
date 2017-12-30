@@ -26,34 +26,10 @@ public class Application extends GUI {
 
     public Application(Display d) {
         super(d);
+        assert(instance==null);
         instance = this;
-
-        try {
-
-            /**
-             * Use Sleak if (false) { DeviceData data = new DeviceData(); data.tracking = true; display = new Display(data); Sleak sleak = new Sleak(); sleak.open(); }
-             */
-            // shell = new Shell(display);
-            // if (shell == null) throw new Exception("no shell");
-        } catch (Throwable e) {
-            report(e);
-        }
     }
 
-    // classes we want to check the integrity of
-
-    /**
-     * Get the correct formatted public version identifier
-     *
-     * @return String The public version
-     */
-    public final static String getPublicVersion() {
-        return Version.MAJOR_VERSION; // + " " + MINOR_VERSION;
-    }
-
-    public static String buildInfo() {
-        return gui.getAppName();
-    }
 
     public void log(Object t) {
         logger.info(t);
@@ -89,12 +65,7 @@ public class Application extends GUI {
         super.initComponents();
         instance = this;
         try {
-
-            File b = new File("M:\\Books\\Audible");
-            File b2 = new File("D:\\Audible");
             audibleGUI.init();
-
-
         } catch (Throwable th) {
             logger.error("error", th);
         }
@@ -172,7 +143,7 @@ public class Application extends GUI {
             audibleGUI.audible.quit();
 
             GUI.isClosing = true;
-            println("application has been stopped.");
+
             if (!shell.isDisposed()) {
                 if (isMac())
                     shell.setVisible(false);

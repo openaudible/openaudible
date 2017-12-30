@@ -48,7 +48,7 @@ public class ConvertJob implements IQueueJob, LineListener {
     }
 
     private String getExecutable() throws IOException {
-        return FFMPEG.getExecutable().getAbsolutePath();
+        return FFMPEG.getExecutable();
     }
 
     @Override

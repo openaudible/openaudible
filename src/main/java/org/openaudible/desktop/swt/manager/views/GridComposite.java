@@ -92,8 +92,6 @@ public class GridComposite extends Composite {
         GridComposite c = null;
 
         if (label != null) {
-            // c = new GridComposite(parent, SWT.NONE);
-            // c.initLayout(2, false, GridData.FILL_HORIZONTAL);
             newTitle(parent, label);
         } else
             label = "";
@@ -137,59 +135,7 @@ public class GridComposite extends Composite {
         return group;
     }
 
-    public static void setBackgroundRecursive(Control c, Color b) {
-        GridComposite.setBG(c, b);
 
-        if (c instanceof Composite) {
-            Control children[] = ((Composite) c).getChildren();
-            for (int x = 0; x < children.length; x++) {
-                setBackgroundRecursive(children[x], b);
-            }
-        }
-
-        if (c instanceof Text) {
-            Text t = (Text) c;
-            t.forceFocus();
-        }
-    }
-
-    /*
-          public static void setBackgroundImageRecursive(Control c, String name) {
-            Point p = c.getLocation();
-            Rectangle r = c.getBounds();
-
-            if (c instanceof Group) {
-              // do nothing.
-            } else if (c instanceof Composite) {
-              r = ((Composite) c).getClientArea();
-            } else {
-              Composite par = c.getParent();
-              if (par != null) {
-                p.x += par.getLocation().x;
-                p.y += par.getLocation().y;
-              }
-            }
-
-            r.x = p.x;
-            r.y = p.y;
-
-            if (c instanceof Composite) {
-              for (Control ctl : ((Composite) c).getChildren())
-                setBackgroundImageRecursive(ctl, name);
-            }
-            try {
-              Image i = PaintShop.offsetImage(name, r);
-              c.setBackgroundImage(i);
-            } catch (Throwable th) {
-              System.err.println("error creating imageOffset: " + name + " " + r);
-            }
-            if (c instanceof Text) {
-              Text t = (Text) c;
-              t.forceFocus();
-            }
-
-          }
-    */
     public static boolean inGroup(Control composite) {
         for (; ; ) {
             Composite parent = composite.getParent();

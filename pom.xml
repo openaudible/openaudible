@@ -55,7 +55,11 @@
         <profile>
             <id>Linux</id>
             <activation>
-                <os><family>unix</family></os>
+                <os>
+                    <family>unix</family>
+                    <name>Linux</name>
+                </os>
+
             </activation>
             <properties>
                 <swt_library>org.eclipse.swt.gtk.linux.x86_64-4.6.jar</swt_library>

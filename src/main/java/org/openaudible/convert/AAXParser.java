@@ -177,7 +177,7 @@ public enum AAXParser {
             f = Audible.instance.getAAXFileDest(b);
 
         ArrayList<String> args = new ArrayList<String>();
-        args.add(FFMPEG.ffmpegExecutable);
+        args.add(FFMPEG.getExecutable());
         args.add("-i");
         args.add(f.getAbsolutePath());
         args.add("-f");
