@@ -23,6 +23,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.openaudible.desktop.swt.gui.GUI;
 import org.openaudible.desktop.swt.manager.Version;
+import org.openaudible.desktop.swt.manager.views.GridComposite;
 import org.openaudible.desktop.swt.util.shop.FontShop;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
 
@@ -33,90 +34,53 @@ import java.util.ArrayList;
  * Class displays a splash screen with info
  */
 public class AboutDialog extends Window implements Version, Listener {
-    final static String splashname = "splash.png";
-    public boolean painted = false;
-    ArrayList<String> bodyText = new ArrayList<String>(); // strings to draw
-    Font bigFont;
-    boolean moreInfo = false;
-    boolean demo;
+    final static String splashname = "48x48.png";
     Color bgColor = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
     Image splashImage = null;
 
-    private AboutDialog(Shell parentShell, String img, long ex, boolean more) {
+    private AboutDialog(Shell parentShell) {
         super(parentShell);
-        moreInfo = more;
-        painted = false;
-        String fontName = FontShop.dialogFont().getFontData()[0].getName();
-        bigFont = new Font(Display.getCurrent(), fontName, 14, 0);
-        String appName = Version.longAppName + " " + Version.MAJOR_VERSION;
-
-        String copyright = (char) 169 + " " + COPYRIGHT_YEAR + " All Rights Reserved";
-        bodyText.add("");
-        bodyText.add(appName);
-        bodyText.add(copyright);
-        bodyText.add("Build " + INT_VERSION);
     }
 
-    public static void doAbout(Shell parent, long ex) {
+    public static void doAbout(Shell parent) {
         final Display display = Display.getCurrent();
-        AboutDialog ab = new AboutDialog(parent, splashname, ex, true);
+        AboutDialog ab = new AboutDialog(parent);
         ab.open();
     }
 
-    public static AboutDialog create(Shell parent, long ex) {
-        AboutDialog ab = new AboutDialog(parent, splashname, ex, false);
-        ab.open();
-        ab.painted = true;
-        return ab;
-    }
 
-    protected int getShellStyle() {
+    protected int getShellStyle()
+    {
         return SWT.NONE;
     }
 
     protected void initializeBounds() {
-        // getShell().setSize(500, 500);
         super.initializeBounds();
         getShell().setBackground(bgColor);
         getShell().addListener(SWT.MouseDown, this);
         Rectangle r = GUI.shell.getBounds();
-        /*		r.width = 260;
-                r.height = 150;
-				r.x += 60;
-				r.y += 60;
-		*/
         getShell().setLocation(r.x + 160, r.y + 160);
         getShell().addListener(SWT.Deactivate, this);
-
 
     }
 
     protected Control createContents(Composite parent) {
-        GridLayout gl = new GridLayout();
-        int m = 40;
-        gl.marginBottom = m - 10;
-        gl.marginTop = m - 10;
-        gl.marginLeft = m;
-        gl.marginRight = m;
-        // gl.marginWidth = m;
-        parent.setLayout(gl);
-        GridData gd = new GridData(SWT.CENTER);
-        Label splash = new Label(parent, SWT.NONE);
-        // splashImage = PaintShop.getImage("splash.png");
-        // splash.setImage(splashImage);
-        splash.setBackground(bgColor);
-        splash.setLayoutData(gd);
-        // gd.widthHint = splashImage.getBounds().width+40;
-        splash.addListener(SWT.MouseDown, this);
-        for (String b : bodyText) {
-            Label l = new Label(parent, SWT.NONE);
-            l.setText(b);
-            l.setBackground(bgColor);
-            l.addListener(SWT.MouseDown, this);
-            gd = new GridData(SWT.CENTER);
-            l.setLayoutData(gd);
-        }
-        getShell().pack();
+        GridComposite c = new GridComposite(parent, SWT.NONE);
+        c.initLayout();
+
+        splashImage = PaintShop.getImage(splashname);
+        c.newImage(splashImage);
+
+        c.addListener(SWT.MouseDown, this);
+
+        String copyright = (char) 169 + " " + COPYRIGHT_YEAR + " All Rights Reserved";
+        String build = "Build " + Version.MAJOR_VERSION+" " + INT_VERSION;
+
+
+        c.newLabel(Version.longAppName).setFont(FontShop.dialogFontBold());
+        c.newLabel(build).setFont(FontShop.dialogFont());
+        c.newLabel(copyright).setFont(FontShop.dialogFont());
+
         return null;
     }
 
@@ -133,7 +97,6 @@ public class AboutDialog extends Window implements Version, Listener {
                 Display.getCurrent().wake();
                 break;
             case SWT.Dispose:
-                bigFont.dispose();
                 PaintShop.disposeImage(splashname);
                 break;
             default:

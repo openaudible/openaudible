@@ -22,7 +22,7 @@ import org.openaudible.desktop.swt.gui.progress.ProgressDialog;
 import org.openaudible.desktop.swt.gui.progress.ProgressTask;
 import org.openaudible.desktop.swt.manager.views.AudibleBrowser;
 import org.openaudible.desktop.swt.manager.views.StatusPanel;
-import org.openaudible.desktop.util.GUIUtil;
+import org.openaudible.util.Platform;
 import org.openaudible.feeds.pagebuilder.WebPage;
 import org.openaudible.util.queues.IQueueJob;
 import org.openaudible.util.queues.IQueueListener;
@@ -76,15 +76,12 @@ public class AudibleGUI implements BookListener {
 
         try {
             String vers = FFMPEG.getVersion();
+            LOG.info("using "+vers);
             hasFFMPEG = true;
-
         } catch (Exception th) {
+            LOG.error("error finding ffmpeg", th);
             MessageBoxFactory.showError(null, "Warning, ffmpeg not found:" + th);
             hasFFMPEG = false;
-            File f = new File("test");
-            System.err.println(f);
-
-
         }
 
         return hasFFMPEG;
@@ -457,10 +454,11 @@ public class AudibleGUI implements BookListener {
                 String win = "Explorer /select, ";
 
                 String cmd = null;
-                if (GUIUtil.instance.isMac())
+                if (Platform.isMac())
                     cmd = mac;
-                if (GUIUtil.instance.isWindows())
+                if (Platform.isWindows())
                     cmd = win;
+                // TODO: Support linux.
                 assert (cmd != null);
                 if (cmd != null) {
                     cmd += m.getAbsolutePath() + "\"";
