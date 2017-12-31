@@ -10,7 +10,7 @@ You'll need a copy of ffmpeg-- I put a copy in the root directory but can be any
 ### Prerequisites
 Java 8, Maven, and git
 
-### Installing from source
+### Getting the source
 
 Clone the [git repo](https://github.com/openaudible/openaudible)
 
@@ -18,22 +18,40 @@ Clone the [git repo](https://github.com/openaudible/openaudible)
 git clone https://github.com/openaudible/openaudible.git
 ```
 
-cd to that directory..
+### Build using Intellij
+Import Project:
+Select the openaudible/pom.xml file
+Click through all of the defaults
+
+### Build using Eclipse
+Import Maven Project
+Select the openaudible/pom.xml file
+
+### Build from command line (requires maven, java 8 SDK)
+
+cd to the openadible directory..
 ```
 cd openaudible
 ```
 
-And you can import the maven project into your favorite IDE.
-
-In the Maven Properties, there are 3 profiles for Win, Mac, and Linux. Linux is untested. The profile points the linker to the appropriate swt library, which has the desktop widget native libraries.
-
-To build from the command line:
 ```
 mvn compile
 mvn package
 ```
+### Running the application from IDE
 
-Then run the jar. You need to link to the appropriate SWT library for your OS.
+You need to link to the appropriate SWT library for your OS. Your IDE may do this for you using the Maven platform profile.
+For IntelliJ, select RunL Debug... menu
+Select Edit Configurations...
++ Add Application
+Name: OpenAudible
+Main Class: org.openaudible.desktop.Application
+VM options: -ea
+Mac VM options: -ea -XstartOnFirstThread
+Click Debug button
+
+
+### Running from Command Line
 
 For Windows:
 ```
@@ -54,9 +72,8 @@ You should see the user interface. You may see an error, or a warning about wher
 
 Open the Preferences from the Edit Menu.
 Enter your audible user name (email) and password.
-
-
-If you get any errors logging in, it might help to open the Audible web browser from within the application and log in there.
+Before logging in with the application, go to the Controls: Browser menu and log into your audible account.
+This is only required if logging in fails or if the browser cookies expire.
 
 The application will use cookies to expedite logging in-- and bypassing some of the "are you a human" checks.
 
@@ -68,8 +85,9 @@ A binary installer for Windows, Mac and Linux is to be available, generated with
 ### TODO
 This is a work in progress. It needs testing and bug reporting for all platforms.
 Exporting all your audible books to a web page is in progress.
-Exporting to a podcast format is planned.
-The UI needs cleaning up
+Exporting to a podcast format is planned
+Exporting to a format that supports the best mobile audio book players is the goal.
+The UI needs cleaning up, especially for Linux.
 Support for multiple audible accounts is needed
 
 
