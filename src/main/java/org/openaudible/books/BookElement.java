@@ -1,5 +1,7 @@
 package org.openaudible.books;
 
+// Audio Book Attributes.
+//
 public enum BookElement {
     product_id, codec, asin, infoLink, fullTitle, author, narratedBy, summary, description, duration, format, rating_average, rating_count, release_date, purchase_date, publisher, genre, shortTitle, copyright, user_id, cust_id;
 

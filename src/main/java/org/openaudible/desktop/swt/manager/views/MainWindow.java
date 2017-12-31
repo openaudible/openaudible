@@ -20,8 +20,10 @@ public class MainWindow extends GridComposite {
         main.setLayout(new GridLayout(1, true));
         main.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         createTop(main);
-
         createBottom(main);
+        // top a little bigger than the bottom..
+        int weights[] = {60,40};
+        main.setWeights(weights);
 
     }
 

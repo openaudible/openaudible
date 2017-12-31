@@ -7,9 +7,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.openaudible.desktop.swt.gui.GUI;
 import org.openaudible.desktop.swt.manager.AudibleGUI;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
-
+// Small search text input field for filtering results based on string.
 public class SearchField extends GridComposite {
     Text text;
 
@@ -17,8 +18,8 @@ public class SearchField extends GridComposite {
         super(c, SWT.NONE);
         initLayout(2, false, gdStyle);
         Label l = new Label(this, SWT.NONE);
-        l.setImage(PaintShop.getImage("icons/search.png"));
-        text = new Text(this, SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
+        l.setImage(PaintShop.getImage("icons/search.png")); // use our search icon rather than the SWT.ICON_SEARCH
+        text = new Text(this, SWT.SEARCH | SWT.ICON_CANCEL);
         text.setEditable(true);
         text.setCursor(null);
         GridData gd = new GridData();

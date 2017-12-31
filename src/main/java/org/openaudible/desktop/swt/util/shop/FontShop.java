@@ -11,8 +11,8 @@ import org.openaudible.desktop.swt.gui.GUI;
 import org.openaudible.desktop.swt.i8n.Translate;
 import org.openaudible.desktop.swt.manager.Application;
 
-public class FontShop implements Cloneable, Comparable {
-    public final static boolean staticFonts = true;
+// ugly singleton swt font manager
+public class FontShop {
     public final static Log logger = LogFactory.getLog(FontShop.class);
     public static final int DIALOG_FONT = 1;
     public static final int HEADER_FONT = 4;
@@ -22,10 +22,10 @@ public class FontShop implements Cloneable, Comparable {
     final public static int kNumFonts = 5; // last + 1, for zero index
     final public static String kFontNames[] = {"treefont", "tablefont", "dialogfont", "headerfont", "textfont"};
     private static FontShop curFonts = null;
-    Font regFonts[];
-    Font boldFonts[];
-    Font italicFonts[];
-    // private static FontRegistry registry;
+    final Font regFonts[];
+    final Font boldFonts[];
+    final Font italicFonts[];
+
 
     public FontShop(Display display) {
         if (display == null) {
@@ -44,16 +44,20 @@ public class FontShop implements Cloneable, Comparable {
             curFonts = this;
 
     }
+/*
 
-    /**
+    */
+/**
      * This utility class constructor is hidden
-     */
+     *//*
+
     private FontShop() {
         // Protect default constructor
         regFonts = new Font[kNumFonts];
         boldFonts = new Font[kNumFonts];
 
     }
+*/
 
     /**
      * Check the given Font for being NULL or disposed. Return false in that case.
@@ -63,14 +67,6 @@ public class FontShop implements Cloneable, Comparable {
      */
     public static boolean isset(Font font) {
         return (font != null && !font.isDisposed());
-    }
-
-    /**
-     * Update fonts for all controls in RSSOwl
-     */
-    public static void setFontForAll(Application sync) {
-        System.err.println("setFontForAll not implemented.");
-
     }
 
     /**
@@ -136,50 +132,7 @@ public class FontShop implements Cloneable, Comparable {
         return curFonts.boldFonts[TREE_FONT];
     }
 
-    public static void setCurrentFonts(FontShop s) {
-        if (staticFonts)
-            return;
 
-        s.checkFont();
-        curFonts.checkFont();
-
-        // curFonts.disposeFonts();
-        curFonts = s;
-
-        curFonts.checkFont();
-    }
-
-    public void finalize() {
-        if (!staticFonts && isset(regFonts[0])) {
-            logger.error("finalize found undisposed font.");
-        }
-    }
-
-    public Object clone() {
-        if (staticFonts)
-            return curFonts;
-
-        FontShop fs = new FontShop();
-
-        for (int x = 0; x < kNumFonts; x++) {
-            FontData[] fontData = this.regFonts[x].getFontData();
-            fs.regFonts[x] = new Font(Display.getDefault(), fontData[0].getName(), fontData[0].getHeight(), 0);
-            newStyledFont(x);
-        }
-
-        return fs;
-    }
-
-    public int compareTo(Object fs) {
-        FontShop that = (FontShop) fs;
-        for (int x = 0; x < kNumFonts; x++) {
-            if (!this.regFonts[x].equals(that.regFonts[x]))
-                return -1;
-            if (!this.boldFonts[x].equals(that.boldFonts[x]))
-                return -1;
-        }
-        return 0;
-    }
 
     private Font newDefaultFont(int id) {
         Display display = Display.getCurrent();
@@ -207,9 +160,6 @@ public class FontShop implements Cloneable, Comparable {
             case TREE_FONT:
                 fontCopy = JFaceResources.getTextFont();
                 break;
-
-            //	fontCopy = JFaceResources.getHeaderFont();
-            //	break;
 
             default:
                 break;
@@ -261,17 +211,6 @@ public class FontShop implements Cloneable, Comparable {
         return "Fonts";
     }
 
-    public void disposeFonts() {
-        if (staticFonts)
-            return;
-
-        for (int x = 0; x < kNumFonts; x++) {
-            if (isset(regFonts[x]))
-                regFonts[x].dispose();
-            if (isset(boldFonts[x]))
-                boldFonts[x].dispose();
-        }
-    }
 
     public void checkFont() {
         for (int i = 0; i < regFonts.length; i++) {
@@ -289,35 +228,5 @@ public class FontShop implements Cloneable, Comparable {
         }
     }
 
-    public Font getFont(int i) {
-        return regFonts[i];
-    }
-
-    public Font getBoldFont(int i) {
-        return boldFonts[i];
-    }
-
-    public void setFont(int i, Font f) {
-        if (staticFonts)
-            return;
-
-        if (isset(regFonts[i])) {
-            if (staticFonts)
-                return;
-            regFonts[i].dispose();
-        }
-
-        if (regFonts[i] != null && !regFonts[i].isDisposed()) {
-            if (regFonts[i] == f) {
-                System.err.println("fonts equal...");
-                return;
-            }
-            regFonts[i].dispose();
-        }
-
-        regFonts[i] = f;
-        newStyledFont(i);
-
-    }
 
 }

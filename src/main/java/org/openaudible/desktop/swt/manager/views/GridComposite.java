@@ -16,6 +16,7 @@ import org.openaudible.desktop.swt.gui.GUI;
 import org.openaudible.desktop.swt.i8n.Translate;
 import org.openaudible.desktop.swt.util.shop.*;
 
+// Wraps Composite with GridLayout to support building simple grids and layouts.
 public class GridComposite extends Composite {
     public GridLayout gridLayout;
     protected Color bgColor;

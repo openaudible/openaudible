@@ -11,11 +11,12 @@ import java.util.List;
 
 /**
  * Created  6/27/2017.
+ * Used as singleton to notify all book listeners about a book event
  */
 public class BookNotifier extends EventNotifier<BookListener> implements BookListener {
     private static final Log LOG = LogFactory.getLog(BookNotifier.class);
-    private static BookNotifier instance = new BookNotifier();
-    int c1;
+    private static BookNotifier instance = new BookNotifier();      // singleton.
+    int c1; // some debugging.
     long time;
     private ArrayList<Book> selected = new ArrayList<Book>();
 
