@@ -8,9 +8,9 @@ Import as a standard java Maven project.
 You'll need a copy of ffmpeg-- I put a copy in the root directory but can be anywhere if available in your system's PATH.
 
 ### Prerequisites
-Java 8, Maven, and git
+Java 8, Maven, and git. Windows, Mac or Linux Desktop.
 
-### Getting the source
+## Building 
 
 Clone the [git repo](https://github.com/openaudible/openaudible)
 
@@ -18,16 +18,16 @@ Clone the [git repo](https://github.com/openaudible/openaudible)
 git clone https://github.com/openaudible/openaudible.git
 ```
 
-### Build using Intellij
+#### Build using Intellij
 Import Project:
 Select the openaudible/pom.xml file
 Click through all of the defaults
 
-### Build using Eclipse
+#### Build using Eclipse
 Import Maven Project
 Select the openaudible/pom.xml file
 
-### Build from command line (requires maven, java 8 SDK)
+#### Build from command line (requires maven, java 8 SDK)
 
 cd to the openadible directory..
 ```
@@ -38,34 +38,40 @@ cd openaudible
 mvn compile
 mvn package
 ```
-### Running the application from IDE
+## Running/Debugging
 
-You need to link to the appropriate SWT library for your OS. Your IDE may do this for you using the Maven platform profile.
-For IntelliJ, select RunL Debug... menu
-Select Edit Configurations...
-+ Add Application
-Name: OpenAudible
-Main Class: org.openaudible.desktop.Application
-VM options: -ea
-Mac VM options: -ea -XstartOnFirstThread
-Click Debug button
+Your IDE should link the platform specific SWT library via the maven profile.
 
+#### IntelliJ
+Select menu Run: Debug...  <br />
+Select Edit Configurations... <br />
+Add Application <br />
+Name: OpenAudible <br />
+Main Class: org.openaudible.desktop.Application <br />
+VM options: -ea <br />
+Mac VM options: -ea -XstartOnFirstThread <br />
+Click Debug button <br />
 
-### Running from Command Line
-
-For Windows:
+#### Windows Command Line
 ```
 java -cp "target\openaudible-jar-with-dependencies.jar;swt\org.eclipse.swt.win32.win32.x86_64-4.6.jar" org.openaudible.desktop.Application
 ```
 
-For Mac:
+#### Mac Command Line
 ```
 java -XstartOnFirstThread -cp "./target/openaudible-jar-with-dependencies.jar:./swt/org.eclipse.swt.cocoa.macosx.x86_64-4.6.jar" org.openaudible.desktop.Application
 ```
+Notice on Mac, the -XstartOnFirstThread is required to run SWT apps.
+
+#### Linux Command Line
+```
+java -cp "target\openaudible-jar-with-dependencies.jar;swt\org.eclipse.swt.gtk.linux.x86_64-4.6.jar" org.openaudible.desktop.Application
+```
+
+#### Notes
 
 Running with -ea to alert you of assertion failures is recommended for debugging. We use a lot of "asserts" to help identify problems.
 
-Notice on Mac, the -XstartOnFirstThread is required to run SWT apps.
 Enter that into the VM Arguments on your debugger/run dialog if using an IDE.
 
 You should see the user interface. You may see an error, or a warning about where you can go to preferences and enter your audible account details.
@@ -82,15 +88,16 @@ Errors are logged to an "error.log" file, usually written out to the application
 ### Installer
 A binary installer for Windows, Mac and Linux is to be available, generated with install4j.
 
-### TODO
-This is a work in progress. It needs testing and bug reporting for all platforms.
-Exporting all your audible books to a web page is in progress.
-Exporting to a podcast format is planned
-Exporting to a format that supports the best mobile audio book players is the goal.
-The UI needs cleaning up, especially for Linux.
-Support for multiple audible accounts is needed
 
+## Screenshot
+![Windows Screenshot](https://openaudible.github.io/images/open_audible_win.png)
+Windows User Interface
 
+## Features
+* Import audible books from your account
+* Convert to mp3 with all tags
+* Display all your books in searchable
+* Export web page/javascript file with all your books
 
 ## Built With
 
@@ -100,6 +107,15 @@ Support for multiple audible accounts is needed
 ## Contributing
 
 Please feel free to submit pull requests.
+
+### TODO
+This is a work in progress. It needs testing and bug reporting for all platforms.
+Exporting to a podcast format is planned
+Exporting to a format that supports the best mobile audio book players is the goal.
+The UI needs cleaning up, especially for Linux.
+Improved "first time setup" and connection needs major improvement
+Support for multiple audible accounts would be nice
+Create Web page at [openaudible.github.io](https://openaudible.github.io/) - for releases and information
 
 ## Versioning
 
