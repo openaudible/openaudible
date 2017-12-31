@@ -160,17 +160,13 @@ public class Preferences extends Dialog {
 
         Group group = c.newGroup("Audible Account", 2);
         group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
-
         email = GridComposite.newTextPair(group, "Audible Email");
-
         GridData gd = new GridData();
         gd.widthHint = 250;
         email.setLayoutData(gd);
-
-
         password = GridComposite.newPasswordPair(group, "Password");
         key = GridComposite.newTextPair(group, "Key");
-        key.setEditable(false);
+        // key.setEditable(false);
     }
 
 

@@ -1,401 +1,494 @@
 package org.openaudible.desktop.swt.manager.menu;
 
+import java.util.ArrayList;
+import java.util.Vector;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.openaudible.desktop.swt.i8n.ITranslatable;
 import org.openaudible.desktop.swt.i8n.Translate;
 import org.openaudible.desktop.swt.manager.Application;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
 
-import java.util.ArrayList;
-import java.util.Vector;
-
 /**
  * This is the Menu that is displayed on top of the application
  */
-public class AppMenu implements ITranslatable, SelectionListener {
-    public static final int kNoEquiv = 0;
-    public static AppMenu instance;
-    CommandCenter commandCenter;
-    boolean languageChange;
-    Application app;
-    Shell shell;
-    boolean isMac;
-    Menu mbar;
-    Menu fileMenu;
-    Menu editMenu;
-    Menu controlMenu;
-    Command actionCommands[] = {Command.ViewInAudible, Command.Show_MP3, Command.Play,
-            Command.Download, Command.Convert, Command.Refresh_Book_Info};
-    Command appCommands[] = {
-            Command.Connect, Command.Quick_Refresh, Command.Rescan_Library,
-            Command.Download_All, Command.Convert_All, Command.Export_Web_Page,
-            Command.Fetch_Decryption_Key, Command.Browser, Command.About};
-    Menu debugMenu = null;
-    ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
-    boolean showUnimplemented = true;
-    private Menu actionMenu;
+public class AppMenu implements ITranslatable, SelectionListener
+{
+	public static final int kNoEquiv = 0;
+	public static AppMenu instance;
+	final CommandCenter commandCenter;
+	boolean languageChange;
+	final Application app;
+	final Shell shell;
+	final boolean isMac;
+	Menu mbar;
+	Menu fileMenu;
+	Menu editMenu;
+	Menu controlMenu;
+	Command actionCommands[] = { Command.ViewInAudible, Command.Show_MP3, Command.Play, Command.Download, Command.Convert, Command.Refresh_Book_Info };
+	Command appCommands[] = { Command.Connect, Command.Quick_Refresh, Command.Rescan_Library, Command.Download_All, Command.Convert_All, Command.Export_Web_Page, Command.Fetch_Decryption_Key,
+			Command.Browser, Command.About };
+	Menu debugMenu = null;
+	ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
+	boolean showUnimplemented = true;
+	private Menu actionMenu;
 
-    /**
-     * Instantiate a new Sync Menu.
-     */
-    public AppMenu(Application sync, Shell shell, CommandCenter commandCenter) {
-        this.app = sync;
-        this.shell = shell;
-        this.commandCenter = commandCenter;
-        isMac = Application.isMac();
-        initMenuBar();
-        instance = this;
-    }
+	/**
+	 * Instantiate a new Sync Menu.
+	 */
+	public AppMenu(Application app, Shell shell, CommandCenter commandCenter)
+	{
+		this.app = app;
+		this.shell = shell;
+		this.commandCenter = commandCenter;
+		isMac = Application.isMac();
+		initMenuBar();
+		instance = this;
+	}
 
-    public AppMenu(Shell shell) {
-        this(Application.instance, shell, Application.instance.commandCenter);
-    }
+	public AppMenu(Shell shell)
+	{
+		this(Application.instance, shell, Application.instance.commandCenter);
+	}
 
-    public Menu getActionMenu() {
-        return actionMenu;
-    }
+	public Menu getActionMenu()
+	{
+		return actionMenu;
+	}
 
-    MenuItem getItem(Menu m, Command cmd) {
-        if (m != null) {
-            MenuItem items[] = m.getItems();
-            for (int x = 0; x < items.length; x++) {
-                Object obj = items[x].getData();
-                if (obj != null) {
-                    if (obj instanceof Command) {
-                        if (obj == cmd)
-                            return items[x];
-                    }
-                }
-            }
-        }
-        Application.report("getItem error " + cmd + " for " + m);
-        return null;
-        // return menuTable.get(new Integer(id));
-    }
+	MenuItem getItem(Menu m, Command cmd)
+	{
+		if (m != null)
+		{
+			MenuItem items[] = m.getItems();
+			for (int x = 0; x < items.length; x++)
+			{
+				Object obj = items[x].getData();
+				if (obj != null)
+				{
+					if (obj instanceof Command)
+					{
+						if (obj == cmd)
+							return items[x];
+					}
+				}
+			}
+		}
+		Application.report("getItem error " + cmd + " for " + m);
+		return null;
+		// return menuTable.get(new Integer(id));
+	}
 
-    public MenuItem newSeparator(Menu parent) {
-        return new MenuItem(parent, SWT.SEPARATOR);
-    }
+	public MenuItem newSeparator(Menu parent)
+	{
+		return new MenuItem(parent, SWT.SEPARATOR);
+	}
 
-    public MenuItem newMItem(Menu parent, Command id) {
-        return newMItem(parent, id, SWT.NONE);
-    }
+	public MenuItem newMItem(Menu parent, Command id)
+	{
+		return newMItem(parent, id, SWT.NONE);
+	}
 
-    public MenuItem addSeparator(Menu parent) {
-        return new MenuItem(parent, SWT.SEPARATOR);
-    }
+	public MenuItem addSeparator(Menu parent)
+	{
+		return new MenuItem(parent, SWT.SEPARATOR);
+	}
 
-    public MenuItem newMItem(Menu parent, Command cmd, int style) {
-        MenuItem item = new MenuItem(parent, style);
-        item.setData(cmd);
-        char equivalent = cmd.getKeyEquiv();
-        String name = cmd.getMenuName();
+	public MenuItem installSystemMenu(final Command cmd)
+	{
+		if (isMac)
+		{
+			int id = 0;
+			switch (cmd)
+			{
+				case Preferences:
+					id = SWT.ID_PREFERENCES;
+					break;
+				case About:
+					id = SWT.ID_ABOUT;
+					break;
+				case Quit:
+					id = SWT.ID_QUIT;
+					break;
+				default: // Only the menus above are system menus.
+					return null;
 
-        if (equivalent != 0 && style != SWT.POP_UP) {
-            if (!Application.isMac()) {
-                item.setAccelerator(SWT.CTRL + equivalent);
-                name += " \tCtrl+" + equivalent;
-            } else {
-                item.setAccelerator(SWT.COMMAND + equivalent);
-            }
-            // updateAccelerator(item, name, equivalent, false);
-            item.setText(name);
-        } else {
-            item.setText(name);
-        }
+			}
 
-        item.addSelectionListener(this);
-        if (cmd.getImage() != null) {
-            Image img = PaintShop.getImage(cmd.getImage());
-            if (img != null)
-                item.setImage(img);
-        }
-        registerMenuItem(item);
+			Menu systemMenu = Display.getDefault().getSystemMenu();
+			if (systemMenu != null)
+			{
+				for (MenuItem systemItem : systemMenu.getItems())
+				{
+					if (systemItem.getID() == id)
+					{
+						final Listener listener = new Listener()
+						{
+							public void handleEvent(Event event)
+							{
+								commandCenter.handleMenuAction(cmd, null);
+							}
+						};
 
-        return item;
-    }
+						systemItem.addListener(SWT.Selection, listener);
+						return systemItem;
+					}
+				}
+			}
+		}
+		return null;
+	}
 
-    public Menu createWinSizeMenu() {
-        Menu m = newMenu("Window Size");
-        String menuSize[] = {"800x600", "1024x768", "1024x1024", "1152x768", "1280x768", "1366x768", "1280x1080", "1920x1080"};
+	public MenuItem newMItem(Menu parent, Command cmd, int style)
+	{
+		MenuItem item = installSystemMenu(cmd);
+		if (item != null)
+			return item; // is a special Mac OS menu
 
-        for (String t : menuSize) {
-            MenuItem item = new MenuItem(m, SWT.PUSH);
-            item.setData(t);
-            item.setText(t);
-            item.addSelectionListener(this);
-        }
-        return m;
-    }
+		item = new MenuItem(parent, style);
+		item.setData(cmd);
+		char equivalent = cmd.getKeyEquiv();
+		String name = cmd.getMenuName();
 
-    protected Menu newMenu(String name) {
-        name = Translate.getInstance().menuName(name);
-        final MenuItem am = new MenuItem(mbar, SWT.CASCADE);
-        am.setText(name);
-        Menu m = newMenu(SWT.DROP_DOWN);
-        am.setMenu(m);
-        return m;
-    }
+		if (equivalent != 0 && style != SWT.POP_UP)
+		{
+			if (!Application.isMac())
+			{
+				item.setAccelerator(SWT.CTRL + equivalent);
+				name += " \tCtrl+" + equivalent;
+			} else
+			{
+				item.setAccelerator(SWT.COMMAND + equivalent);
+			}
+			// updateAccelerator(item, name, equivalent, false);
+			item.setText(name);
+		} else
+		{
+			item.setText(name);
+		}
 
-    private Menu newMenu(int style) {
-        final Menu m = new Menu(shell, style);
+		item.addSelectionListener(this);
+		if (!isMac && cmd.getImage() != null)
+		{
+			Image img = PaintShop.getImage(cmd.getImage());
+			if (img != null)
+				item.setImage(img);
+		}
 
-        m.addListener(SWT.Show, new Listener() {
-            public void handleEvent(Event event) {
-                updateMenus();
-            }
-        });
+		registerMenuItem(item);
 
-        return m;
-    }
+		return item;
+	}
 
-    protected void initMenuBar() {
-        mbar = new Menu(shell, SWT.BAR);
-        fileMenu = newMenu("File");
+	public Menu createWinSizeMenu()
+	{
+		Menu m = newMenu("Window Size");
+		String menuSize[] = { "800x600", "1024x768", "1024x1024", "1152x768", "1280x768", "1366x768", "1280x1080", "1920x1080" };
 
-        if (!isMac) {
-            addSeparator(fileMenu);
-            MenuItem exit = newMItem(fileMenu, Command.Quit);
-        }
-        editMenu = newMenu("Edit");
-        newMItem(editMenu, Command.Cut);
-        newMItem(editMenu, Command.Copy);
+		for (String t : menuSize)
+		{
+			MenuItem item = new MenuItem(m, SWT.PUSH);
+			item.setData(t);
+			item.setText(t);
+			item.addSelectionListener(this);
+		}
+		return m;
+	}
 
-        newMItem(editMenu, Command.Paste);
-        newSeparator(editMenu);
-        newMItem(editMenu, Command.Preferences);
+	protected Menu newMenu(String name)
+	{
+		name = Translate.getInstance().menuName(name);
+		final MenuItem am = new MenuItem(mbar, SWT.CASCADE);
+		am.setText(name);
+		Menu m = newMenu(SWT.DROP_DOWN);
+		am.setMenu(m);
+		return m;
+	}
 
+	private Menu newMenu(int style)
+	{
+		final Menu m = new Menu(shell, style);
 
-        controlMenu = newMenu("Controls");
-        for (Command c : appCommands) {
-            newMItem(controlMenu, c);
-        }
+		m.addListener(SWT.Show, new Listener()
+		{
+			public void handleEvent(Event event)
+			{
+				updateMenus();
+			}
+		});
 
-        actionMenu = newMenu("Actions");
-        for (Command c : actionCommands) {
-            newMItem(actionMenu, c);
-        }
+		return m;
+	}
 
-        shell.setMenuBar(mbar);
-    }
+	protected void initMenuBar()
+	{
+		mbar = new Menu(shell, SWT.BAR);
 
-    private void setEnabled(Menu m, Command cmd, boolean value) {
-        MenuItem mi = getItem(m, cmd);
-        if (mi != null)
-            mi.setEnabled(value);
-    }
+		if (!isMac)
+		{
+			fileMenu = newMenu("File");
+			MenuItem exit = newMItem(fileMenu, Command.Quit);
+		}
 
-    private void setChecked(Menu m, Command cmd, boolean value) {
-        MenuItem mi = getItem(m, cmd); // (value);
-        mi.setSelection(value);
-    }
+		editMenu = newMenu("Edit");
+		newMItem(editMenu, Command.Cut);
+		newMItem(editMenu, Command.Copy);
 
-    // Must be called from display thread.
-    public void updateMenus() {
-        if (app.quitting)
-            return;
+		newMItem(editMenu, Command.Paste);
+		newSeparator(editMenu);
+		newMItem(editMenu, Command.Preferences);
 
-        for (MenuItem m : menuItems) {
-            if (m.isDisposed()) {
-                System.err.println(m + " menuitem disposed");
+		controlMenu = newMenu("Controls");
+		for (Command c : appCommands)
+		{
+			if (isMac && c == Command.About)
+				continue;
 
-                // menuItems.remove(m);
-                continue;
-                // assert(!m.isDisposed());
-            }
+			newMItem(controlMenu, c);
+		}
 
-            Object t = m.getData();
-            if (t instanceof IMenuCommand) {
-                ((IMenuCommand) t).update(m);
-            } else if (t instanceof Command) {
-                Command c = (Command) t;
-                m.setEnabled(CommandCenter.instance.getEnabled(c));
-            }
-        }
+		actionMenu = newMenu("Actions");
+		for (Command c : actionCommands)
+		{
+			newMItem(actionMenu, c);
+		}
 
-        setEnabled(editMenu, Command.Copy, false);
-        setEnabled(editMenu, Command.Paste, false);
-        setEnabled(editMenu, Command.Cut, false);
+		shell.setMenuBar(mbar);
 
-    }
+	}
 
-    public void initMnemonics() {
-        if (mbar != null)
-            initMnemonics(mbar.getItems());
-    }
+	private void setEnabled(Menu m, Command cmd, boolean value)
+	{
+		MenuItem mi = getItem(m, cmd);
+		if (mi != null)
+			mi.setEnabled(value);
+	}
 
-    /**
-     * Init the mnemonics
-     */
-    // public void initMnemonics() {
-    void initMnemonics(MenuItem items[]) {
+	private void setChecked(Menu m, Command cmd, boolean value)
+	{
+		MenuItem mi = getItem(m, cmd); // (value);
+		mi.setSelection(value);
+	}
 
-        /** Store chars that have been used as mnemonic */
-        Vector chars = new Vector();
-        /** For each MenuItem */
-        for (int a = 0; a < items.length; a++) {
-            String name = items[a].getText();
-            /** Replace any & that are existing */
-            name = name.replaceAll("&", "");
-            /** For each char in the name */
-            for (int b = 0; b < name.length(); b++) {
-                /** Check if char is available and no whitespace */
-                if (name.substring(b, b + 1) != null && !name.substring(b, b + 1).equals(" ")) {
-                    /** Check if char has been used as mnemonic before */
-                    if (!chars.contains(name.substring(b, b + 1).toLowerCase())) {
-                        /** Set mnemonic */
-                        items[a].setText(name.substring(0, b) + "&" + name.substring(b, name.length()));
-                        /** Add char as used mnemonic */
-                        chars.add(name.substring(b, b + 1).toLowerCase());
-                        break;
-                    }
-                }
-            }
-            /** Also check MenuItems ob possible Sub-Menus */
-            if (items[a].getMenu() != null)
-                initMnemonics(items[a].getMenu().getItems());
-        }
-    }
+	// Must be called from display thread.
+	public void updateMenus()
+	{
+		if (app.quitting)
+			return;
 
-    /**
-     * Update the accelerators on the menuitems
-     */
-    public void updateAccelerators() {
-    }
+		for (MenuItem m : menuItems)
+		{
+			if (m.isDisposed())
+			{
+				System.err.println(m + " menuitem disposed");
 
-    /**
-     * Update all controlls text with i18n
-     */
-    public void updateI18N() {
-        languageChange = true;
-        /** Update accelerators */
-        updateAccelerators();
-        /** Update the mnemonics */
-        initMnemonics();
-    }
+				// menuItems.remove(m);
+				continue;
+				// assert(!m.isDisposed());
+			}
 
-    /**
-     * Update the accelerators on the selected menuitem
-     *
-     * @param menuItem Selected menuitem
-     * @param text     Translation key of the MenuItem's text
-     * @param type     Translation key of the selected menuitem
-     * @param points   TRUE if "..." should be added to the item
-     */
-    private void updateAccelerator(MenuItem menuItem, String text, String type, boolean points) {
+			Object t = m.getData();
+			if (t instanceof IMenuCommand)
+			{
+				((IMenuCommand) t).update(m);
+			} else if (t instanceof Command)
+			{
+				Command c = (Command) t;
+				m.setEnabled(CommandCenter.instance.getEnabled(c));
+			}
+		}
 
-    }
+		setEnabled(editMenu, Command.Copy, false);
+		setEnabled(editMenu, Command.Paste, false);
+		setEnabled(editMenu, Command.Cut, false);
 
-    /**
-     * Remove all accelerators except the ones from the Edit Menu
-     */
-    void removeAccelerators() {
-    }
+	}
 
-    /**
-     * Update the accelerators on the selected menuitem
-     *
-     * @param menuItem Selected menuitem
-     * @param type     Translation key of the selected menuitem
-     * @param points   TRUE if "..." should be added to the item
-     */
-    void updateAccelerator(MenuItem menuItem, String type, boolean points) {
-        updateAccelerator(menuItem, type, type, points);
-    }
+	public void initMnemonics()
+	{
+		if (mbar != null)
+			initMnemonics(mbar.getItems());
+	}
 
-    /**
-     * This is a workaround for bug #915624. Update hotkeys that use a single character (in this case 'n' and 'f').
-     */
-    void updateOneCharAccelerators() {
-    }
+	/**
+	 * Init the mnemonics
+	 */
+	// public void initMnemonics() {
+	void initMnemonics(MenuItem items[])
+	{
 
-    // boolean useSleak = false;
-    public void widgetSelected(SelectionEvent selectionevent) {
-        Object obj = selectionevent.getSource();
-        if (obj instanceof MenuItem) {
-            MenuItem mi = (MenuItem) obj;
-            obj = mi.getData();
-            if (obj instanceof Command)
-                commandCenter.handleMenuAction((Command) obj, mi);
-            else if (obj instanceof MenuCommand) {
-                MenuCommand mc = (MenuCommand) obj;
-                mc.execute();
-            }
+		/** Store chars that have been used as mnemonic */
+		Vector chars = new Vector();
+		/** For each MenuItem */
+		for (int a = 0; a < items.length; a++)
+		{
+			String name = items[a].getText();
+			/** Replace any & that are existing */
+			name = name.replaceAll("&", "");
+			/** For each char in the name */
+			for (int b = 0; b < name.length(); b++)
+			{
+				/** Check if char is available and no whitespace */
+				if (name.substring(b, b + 1) != null && !name.substring(b, b + 1).equals(" "))
+				{
+					/** Check if char has been used as mnemonic before */
+					if (!chars.contains(name.substring(b, b + 1).toLowerCase()))
+					{
+						/** Set mnemonic */
+						items[a].setText(name.substring(0, b) + "&" + name.substring(b, name.length()));
+						/** Add char as used mnemonic */
+						chars.add(name.substring(b, b + 1).toLowerCase());
+						break;
+					}
+				}
+			}
+			/** Also check MenuItems ob possible Sub-Menus */
+			if (items[a].getMenu() != null)
+				initMnemonics(items[a].getMenu().getItems());
+		}
+	}
 
-        }
+	/**
+	 * Update the accelerators on the menuitems
+	 */
+	public void updateAccelerators()
+	{
+	}
 
-    }
+	/**
+	 * Update all controlls text with i18n
+	 */
+	public void updateI18N()
+	{
+		languageChange = true;
+		/** Update accelerators */
+		updateAccelerators();
+		/** Update the mnemonics */
+		initMnemonics();
+	}
 
-    public void widgetDefaultSelected(SelectionEvent selectionevent) {
-        widgetSelected(selectionevent);
-    }
+	/**
+	 * Update the accelerators on the selected menuitem
+	 *
+	 * @param menuItem
+	 *            Selected menuitem
+	 * @param text
+	 *            Translation key of the MenuItem's text
+	 * @param type
+	 *            Translation key of the selected menuitem
+	 * @param points
+	 *            TRUE if "..." should be added to the item
+	 */
+	private void updateAccelerator(MenuItem menuItem, String text, String type, boolean points)
+	{
 
-    private MenuItem newMItem(Menu parent, IMenuCommand cmd) {
-        MenuItem item = new MenuItem(parent, cmd.getStyle());
-        item.setData(cmd);
-        char equivalent = cmd.getMenuEquivalent();
-        String name = cmd.getMenuName();
+	}
 
-        if (equivalent != 0 && cmd.getStyle() != SWT.POP_UP) {
-            if (!Application.isMac()) {
-                item.setAccelerator(SWT.CTRL + equivalent);
-                name += " \tCtrl+" + equivalent;
-            } else {
-                item.setAccelerator(SWT.COMMAND + equivalent);
-            }
-            // updateAccelerator(item, name, equivalent, false);
-            item.setText(name);
-        } else {
-            item.setText(name);
-        }
+	/**
+	 * Remove all accelerators except the ones from the Edit Menu
+	 */
+	void removeAccelerators()
+	{
+	}
 
-        item.addSelectionListener(this);
-        if (cmd.getImage() != null) {
-            Image img = PaintShop.getImage(cmd.getImage());
-            if (img != null)
-                item.setImage(img);
-        }
+	/**
+	 * Update the accelerators on the selected menuitem
+	 *
+	 * @param menuItem
+	 *            Selected menuitem
+	 * @param type
+	 *            Translation key of the selected menuitem
+	 * @param points
+	 *            TRUE if "..." should be added to the item
+	 */
+	void updateAccelerator(MenuItem menuItem, String type, boolean points)
+	{
+		updateAccelerator(menuItem, type, type, points);
+	}
 
-        registerMenuItem(item);
-        return item;
-    }
+	/**
+	 * This is a workaround for bug #915624. Update hotkeys that use a single character (in this case 'n' and 'f').
+	 */
+	void updateOneCharAccelerators()
+	{
+	}
 
-    public void registerMenuItem(final MenuItem mi) {
-        menuItems.add(mi);
+	// boolean useSleak = false;
+	public void widgetSelected(SelectionEvent selectionevent)
+	{
+		Object obj = selectionevent.getSource();
+		if (obj instanceof MenuItem)
+		{
+			MenuItem mi = (MenuItem) obj;
+			obj = mi.getData();
+			if (obj instanceof Command)
+				commandCenter.handleMenuAction((Command) obj, mi);
+			else if (obj instanceof MenuCommand)
+			{
+				MenuCommand mc = (MenuCommand) obj;
+				mc.execute();
+			}
 
-        mi.addListener(SWT.Dispose, new Listener() {
-            public void handleEvent(Event event) {
-                menuItems.remove(mi);
-            }
-        });
-    }
+		}
 
-    public void setMBarVisible(boolean b) {
-        if (b) {
-            initMenuBar();
-        } else {
-            for (MenuItem mi : mbar.getItems()) {
-                Menu m = mi.getMenu();
-                for (MenuItem mi2 : m.getItems())
-                    menuItems.remove(mi2);
-                m.dispose();
-            }
+	}
 
-            mbar.dispose();
-        }
+	public void widgetDefaultSelected(SelectionEvent selectionevent)
+	{
+		widgetSelected(selectionevent);
+	}
 
-    }
+	public void registerMenuItem(final MenuItem mi)
+	{
+		menuItems.add(mi);
 
-    public Menu getBookTableMenu() {
-        Menu menu = newMenu(SWT.POP_UP);
-        for (Command c : actionCommands) {
-            newMItem(menu, c);
-        }
+		mi.addListener(SWT.Dispose, new Listener()
+		{
+			public void handleEvent(Event event)
+			{
+				menuItems.remove(mi);
+			}
+		});
 
-        return menu;
-    }
+	}
+
+	public void setMBarVisible(boolean b)
+	{
+		if (b)
+		{
+			initMenuBar();
+		} else
+		{
+			for (MenuItem mi : mbar.getItems())
+			{
+				Menu m = mi.getMenu();
+				for (MenuItem mi2 : m.getItems())
+					menuItems.remove(mi2);
+				m.dispose();
+			}
+
+			mbar.dispose();
+		}
+
+	}
+
+	public Menu getBookTableMenu()
+	{
+		Menu menu = newMenu(SWT.POP_UP);
+		for (Command c : actionCommands)
+		{
+			newMItem(menu, c);
+		}
+
+		return menu;
+	}
 }

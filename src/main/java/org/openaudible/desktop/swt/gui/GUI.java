@@ -101,7 +101,9 @@ public abstract class GUI implements ITranslatable {
      * @return boolean TRUE if platform is Mac
      */
     public static boolean isMac() {
-        return (SWT.getPlatform().equalsIgnoreCase("carbon"));
+    	String platform = SWT.getPlatform();
+    	
+        return (platform.equalsIgnoreCase("carbon")||platform.equalsIgnoreCase("cocoa"));
     }
 
     /**

@@ -19,22 +19,18 @@ git clone https://github.com/openaudible/openaudible.git
 ```
 
 #### Build using Intellij
-Import Project:
-Select the openaudible/pom.xml file
+Import Project: <br />
+Select the openaudible/pom.xml file <br />
 Click through all of the defaults
 
 #### Build using Eclipse
-Import Maven Project
-Select the openaudible/pom.xml file
+Import... Maven Project<br />
+Select the openaudible directory<br />
 
 #### Build from command line (requires maven, java 8 SDK)
 
-cd to the openadible directory..
 ```
 cd openaudible
-```
-
-```
 mvn compile
 mvn package
 ```
@@ -85,7 +81,7 @@ The application will use cookies to expedite logging in-- and bypassing some of 
 
 Errors are logged to an "error.log" file, usually written out to the application directory.
 
-### Installer
+## Installer
 A binary installer for Windows, Mac and Linux is to be available, generated with install4j.
 
 
@@ -106,16 +102,16 @@ Windows User Interface
 
 ## Contributing
 
-Please feel free to submit pull requests.
-
-### TODO
 This is a work in progress. It needs testing and bug reporting for all platforms.
-Exporting to a podcast format is planned
-Exporting to a format that supports the best mobile audio book players is the goal.
-The UI needs cleaning up, especially for Linux.
-Improved "first time setup" and connection needs major improvement
-Support for multiple audible accounts would be nice
-Create Web page at [openaudible.github.io](https://openaudible.github.io/) - for releases and information
+
+* Exporting to a podcast format is planned
+* Exporting to a format that supports the best mobile audio book players is the goal.
+* The UI needs cleaning up, especially for Linux.
+* Improved "first time setup" and connection needs major improvement
+* Support for multiple audible accounts would be nice
+* Create Web page at [openaudible.github.io](https://openaudible.github.io/) - for releases and information
+
+Please feel free to submit pull requests.
 
 ## Versioning
 
@@ -123,7 +119,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-See also the list of [contributors](https://github.com/openaudible/openaudible/contributors) who participated in this project.
+See the list of [contributors](https://github.com/openaudible/openaudible/contributors) who participated in this project.
 
 ## License
 
