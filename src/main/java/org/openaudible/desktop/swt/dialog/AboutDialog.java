@@ -47,7 +47,6 @@ public class AboutDialog extends Window implements Version, Listener {
         Rectangle r = GUI.shell.getBounds();
         getShell().setLocation(r.x + 160, r.y + 160);
         getShell().addListener(SWT.Deactivate, this);
-
     }
 
     protected Control createContents(Composite parent) {
@@ -56,29 +55,21 @@ public class AboutDialog extends Window implements Version, Listener {
         splashImage = PaintShop.getImage(splashname);
         c.newImage(splashImage);
         c.addListener(SWT.MouseDown, this);
-        String build = "Build " + Version.appVersion +" ";
-        String compileDate = ManifestReader.instance.getBuildVersion();
+        String compileDate = ManifestReader.instance.getBuildVersion(); // from jar's manifest, if available
+        String build = "Build " + Version.appVersion +" "+compileDate;
         c.newLabel(Version.appName).setFont(FontShop.dialogFontBold());
-        if (compileDate!=null)
-        {
-            c.newLabel("Compiled "+compileDate);
-        }
-
-        c.newLabel(build).setFont(FontShop.dialogFont());
-        // c.newLabel(copyright).setFont(FontShop.dialogFont());
+        c.newLabel(build.trim()).setFont(FontShop.dialogFont());
 
         Link link = new Link(c, SWT.NONE);
-        link.setText("https://github.com/openaudible");
+        link.setText(Version.appLink);
         link.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
                 String u = event.text;
                 System.out.println(u);
-
             }
         });
         c.newLabel("");
-
         c.newLabel("Not affiliated with audible.com").setFont(FontShop.dialogFont());
         return null;
     }
