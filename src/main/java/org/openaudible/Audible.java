@@ -121,7 +121,7 @@ public class Audible implements IQueueListener<Book> {
 
     boolean takeBook(Book b) {
         if (!ok(b)) {
-            LOG.warn("invalid book: " + b.inspect(","));
+            LOG.warn("invalid book: " + checkBook(b));
             return false;
         }
 
@@ -154,13 +154,18 @@ public class Audible implements IQueueListener<Book> {
     }
 
     public boolean ok(Book b) {
+        String o = checkBook(b);
+        return o.isEmpty();
+    }
+
+    public String checkBook(Book b) {
         // BookElement required[] = { BookElement.product_id, BookElement.user_id, BookElement.cust_id };
         BookElement required[] = {BookElement.product_id, BookElement.fullTitle};
         for (BookElement e : required) {
             if (!b.has(e))
-                return false;
+                return "required:" +e+" missing from "+b;
         }
-        return true;
+        return "";
 
     }
 
