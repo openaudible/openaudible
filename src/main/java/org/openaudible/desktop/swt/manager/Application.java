@@ -16,8 +16,6 @@ import org.openaudible.desktop.swt.manager.menu.CommandCenter;
 import org.openaudible.desktop.swt.manager.views.MainWindow;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
 
-import java.io.File;
-
 
 public class Application extends GUI {
     public static Application instance;
@@ -36,11 +34,11 @@ public class Application extends GUI {
     }
 
     public String getAppName() {
-        return Version.shortAppName;
+        return Version.appName;
     }
 
     public String getAppNameAndVersion() {
-        return getAppName() + " " + Version.MAJOR_VERSION;
+        return getAppName() + " " + Version.appVersion;
     }
 
     public Composite createMainBody(Composite parent) {

@@ -60,7 +60,6 @@ public class SimpleProcess {
             eg.waitFor();
             if (sg.getException() != null)
                 throw sg.getException();
-
         }
 
     }
@@ -78,26 +77,17 @@ public class SimpleProcess {
             err = new InputStreamReporter("err: ", proc.getErrorStream(), null);
             err.start();
 
-            for (; ; ) {
-                if (quit) {
-                    proc.destroy();
-                    return false;
-                }
-
-                int xxx = proc.waitFor();
-                if (true)
-                    break;
-                //
-                //				done = proc.waitFor();
-                //				if (done)
-                //					break;
-
+            if (quit) {
+                proc.destroy();
+                return false;
             }
 
-            is.finish();
-            err.finish();
+            int xxx = proc.waitFor();
+
 
         } finally {
+            is.finish();
+            err.finish();
 
         }
 
@@ -123,11 +113,9 @@ public class SimpleProcess {
     public class Results {
         public byte output[];
         public byte error[];
-
         public String getErrorString() {
             return new String(error);
         }
-
         public String getOutputString() {
             return new String(output);
         }

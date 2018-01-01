@@ -69,13 +69,14 @@ public class AudibleGUI implements BookListener {
         assert (instance == null);
         instance = this;
         bookNotifier.addListener(this);
-        LOG.info("audible desktop " + Version.INT_VERSION + " core " + Audible.version);
+        LOG.info("audible desktop " + Version.appVersion + " core " + Audible.version);
     }
 
     public boolean checkFFMPEG() {
 
         try {
             String vers = FFMPEG.getVersion();
+
             LOG.info("using "+vers);
             hasFFMPEG = true;
         } catch (Exception th) {

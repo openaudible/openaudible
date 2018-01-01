@@ -101,7 +101,7 @@ public class AppLoader implements Version {
                 hp = new File(homePath);
         }
 
-        File prefs = new File(hp, shortAppName);
+        File prefs = new File(hp, appName);
         if (!prefs.isDirectory()) {
             boolean ok = prefs.mkdirs();
             if (!ok) {
@@ -149,7 +149,7 @@ public class AppLoader implements Version {
 
 
             String java = System.getProperty("java.version");
-            logger.info("Starting " + getAppName() + " build " + INT_VERSION + " for " + SWT.getPlatform() + " swt " + SWT.getVersion() + " jvm " + java);
+            logger.info("Starting " + getAppName() + " build " +Version.appVersion + " for " + SWT.getPlatform() + " swt " + SWT.getVersion() + " jvm " + java);
             // checkNIC();
             GUI.userArgs = null;
             /** Inform MainController about argument if it is valid */
@@ -173,7 +173,7 @@ public class AppLoader implements Version {
     }
 
     public static final String getAppName() {
-        return "org.openaudible.desktop.Application";
+        return Version.appName;
     }
 
     public GUI createApp(Display d) {

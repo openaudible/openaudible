@@ -13,7 +13,7 @@ import org.openaudible.desktop.swt.manager.Version;
 import org.openaudible.desktop.swt.manager.views.GridComposite;
 import org.openaudible.desktop.swt.util.shop.FontShop;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
-
+import org.openaudible.util.ManifestReader;
 
 
 /**
@@ -56,10 +56,14 @@ public class AboutDialog extends Window implements Version, Listener {
         splashImage = PaintShop.getImage(splashname);
         c.newImage(splashImage);
         c.addListener(SWT.MouseDown, this);
-        String copyright = (char) 169 + " " + COPYRIGHT_YEAR + " All Rights Reserved";
-        String build = "Build " + Version.MAJOR_VERSION+" " + INT_VERSION;
+        String build = "Build " + Version.appVersion +" ";
+        String compileDate = ManifestReader.instance.getBuildVersion();
+        c.newLabel(Version.appName).setFont(FontShop.dialogFontBold());
+        if (compileDate!=null)
+        {
+            c.newLabel("Compiled "+compileDate);
+        }
 
-        c.newLabel(Version.longAppName).setFont(FontShop.dialogFontBold());
         c.newLabel(build).setFont(FontShop.dialogFont());
         // c.newLabel(copyright).setFont(FontShop.dialogFont());
 
