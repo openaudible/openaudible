@@ -4,7 +4,7 @@ package org.openaudible.audible;
 import org.openaudible.util.EventNotifier;
 
 
-public class ConnectionNotifier extends EventNotifier<ConnectionEvent> implements ConnectionEvent {
+public class ConnectionNotifier extends EventNotifier<ConnectionListener> implements ConnectionListener {
     private static ConnectionNotifier ourInstance = new ConnectionNotifier();
     State state = State.Not_Connected;
 
@@ -19,9 +19,14 @@ public class ConnectionNotifier extends EventNotifier<ConnectionEvent> implement
     public void connectionChanged(boolean connected) {
         state = connected ? State.Connected : State.Disconnected;
 
-        for (ConnectionEvent l : getListeners()) {
+        for (ConnectionListener l : getListeners()) {
             l.connectionChanged(connected);
         }
+    }
+
+    public boolean isConnected()
+    {
+        return getState()==State.Connected;
     }
 
     public State getState() {

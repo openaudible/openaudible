@@ -29,7 +29,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -511,8 +510,9 @@ public class AudibleScraper {
             getProgress().setTask("Loading Library");
 
         setURL("https://www.audible.com/lib");
-        getWebClient().waitForBackgroundJavaScript(50000);
+
         if (!checkLoggedIn()) {
+            getWebClient().waitForBackgroundJavaScript(10000);  // needed? prob. not.
             HTMLUtil.debugNode(page, "got logged out 1");
             login();
             if (!checkLoggedIn()) {

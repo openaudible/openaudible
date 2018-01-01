@@ -238,8 +238,6 @@ public abstract class GUI implements ITranslatable {
     public void createEventManager() {
     }
 
-    public void checkUpdate(boolean verbose) {
-    }
 
     protected AppMenu createAppMenu() {
         return null;
@@ -281,6 +279,12 @@ public abstract class GUI implements ITranslatable {
                 onDeactivate();
             }
         });
+
+        if (GUI.isLinux())
+        {
+            System.setProperty("SWT_GTK3", "0");
+        }
+
         createEventManager();
         /** Fake ToolTip */
         fakeToolTip = new FakeToolTip();

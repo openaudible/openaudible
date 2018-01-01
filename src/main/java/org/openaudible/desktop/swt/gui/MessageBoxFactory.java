@@ -40,28 +40,12 @@ public class MessageBoxFactory {
 
     public static void showError(final Shell shell, final String title, final String e) {
 
-
         SWTAsync.slow(new SWTAsync("showError") {
             public void task() {
-                /*
-                Shell sh = shell;
-				
-				/** Create new Shell in case Shell was disposed before */
-//				if (shell== null || sh.isDisposed())
-//					sh = new Shell(Display.getCurrent());
-//
-//				MessageBox box = new MessageBox(sh, SWT.ICON_ERROR);
-//				box.setText(GUI.i18n.getTranslation("MESSAGE_BOX_TITLE_ERROR"));
-//				box.setMessage(e);
-//				box.open();
-//				MessageDialog.openError(shell, GUI.i18n.getTranslation(""), e);
-//				*/
-
                 MessageDialog.openError(shell, GUI.i18n.getTranslation(title), e);
 
             }
         });
-
     }
 
     /**

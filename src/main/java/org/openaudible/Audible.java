@@ -188,15 +188,22 @@ public class Audible implements IQueueListener<Book> {
 
         File booksFile = Directories.META.getDir(bookFileName);
 
-        if (booksFile.exists()) {
-            String content = HTMLUtil.readFile(booksFile);
-            List<Book> bookList = new Gson().fromJson(content, new TypeToken<List<Book>>() {
-            }.getType());
-            for (Book b : bookList) {
-                takeBook(b);
-            }
-        }
+        BookNotifier.getInstance().setEnabled(false);
+        try {
 
+            if (booksFile.exists()) {
+                String content = HTMLUtil.readFile(booksFile);
+                List<Book> bookList = new Gson().fromJson(content, new TypeToken<List<Book>>() {
+                }.getType());
+                for (Book b : bookList) {
+                    takeBook(b);
+                }
+            }
+        } finally
+        {
+            BookNotifier.getInstance().setEnabled(true);
+            BookNotifier.getInstance().booksUpdated();
+        }
         updateFileCache();
     }
 
@@ -718,7 +725,8 @@ public class Audible implements IQueueListener<Book> {
     }
 
     public boolean hasLogin() {
-        if (account == null) return false;
+        if (account == null)
+            return false;
 
         return !account.audiblePassword.isEmpty() && !account.audibleUser.isEmpty();
     }

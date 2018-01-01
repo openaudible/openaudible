@@ -1,22 +1,17 @@
 package org.openaudible.desktop.swt.manager.menu;
 
-import java.util.ArrayList;
-import java.util.Vector;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.openaudible.desktop.swt.i8n.ITranslatable;
 import org.openaudible.desktop.swt.i8n.Translate;
 import org.openaudible.desktop.swt.manager.Application;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
+
+import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * This is the Menu that is displayed on top of the application
@@ -36,7 +31,7 @@ public class AppMenu implements ITranslatable, SelectionListener
 	Menu controlMenu;
 	Command actionCommands[] = { Command.ViewInAudible, Command.Show_MP3, Command.Play, Command.Download, Command.Convert, Command.Refresh_Book_Info };
 	Command appCommands[] = { Command.Connect, Command.Quick_Refresh, Command.Rescan_Library, Command.Download_All, Command.Convert_All, Command.Export_Web_Page, Command.Fetch_Decryption_Key,
-			Command.Browser, Command.About };
+			Command.Browser, Command.Check_For_Update, Command.About };
 	Menu debugMenu = null;
 	ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
 	boolean showUnimplemented = true;

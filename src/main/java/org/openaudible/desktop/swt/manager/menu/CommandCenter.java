@@ -9,6 +9,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.*;
 import org.openaudible.Audible;
+import org.openaudible.audible.ConnectionNotifier;
 import org.openaudible.desktop.swt.dialog.AboutDialog;
 import org.openaudible.desktop.swt.gui.GUI;
 import org.openaudible.desktop.swt.gui.MessageBoxFactory;
@@ -67,12 +68,6 @@ public class CommandCenter {
         }
     }
 
-    /**
-     * Check for an updated version
-     */
-    void actionCheckUpdate() {
-        app.checkUpdate(true);
-    }
 
     /**
      * Copy text into clipboard
@@ -237,7 +232,9 @@ public class CommandCenter {
             case Export_CSV:
                 AudibleGUI.instance.exportCSV();
                 break;
-
+            case Check_For_Update:
+                AudibleGUI.instance.checkForUpdate(true);
+                break;
             case Export_Web_Page:
                 AudibleGUI.instance.exportWebPage();
                 break;
@@ -345,13 +342,15 @@ public class CommandCenter {
                 return AudibleGUI.instance.hasLogin();
 
             case Connect:
-                return true;
+                return !ConnectionNotifier.getInstance().isConnected();
 
             case ParseAAX:
                 return AudibleGUI.instance.selectedAAXCount() > 0;
 
             case Fetch_Decryption_Key:
                 return AudibleGUI.instance.canGetDecryptionKey();
+            case Check_For_Update:
+                return true;
 
             default:
                 assert (false);

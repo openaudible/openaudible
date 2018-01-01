@@ -4,6 +4,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.openaudible.audible.ConnectionListener;
+import org.openaudible.audible.ConnectionNotifier;
 import org.openaudible.books.Book;
 import org.openaudible.books.BookListener;
 import org.openaudible.books.BookNotifier;
@@ -14,16 +16,20 @@ import org.openaudible.desktop.swt.util.shop.FontShop;
 
 import java.util.List;
 
-public class StatusPanel extends GridComposite implements BookListener {
+public class StatusPanel extends GridComposite implements BookListener, ConnectionListener {
     Label stats[];
+    // Label connected;
 
     StatusPanel(Composite c) {
         super(c, SWT.NONE);
         initLayout(2, false, GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
 
         BookNotifier.getInstance().addListener(this);
+        ConnectionNotifier.getInstance().addListener(this);
+
         Status elems[] = Status.values();
         stats = new Label[elems.length];
+
 
         for (int x = 0; x < elems.length; x++) {
             if (!elems[x].display())
@@ -87,11 +93,15 @@ public class StatusPanel extends GridComposite implements BookListener {
     @Override
     public void booksUpdated() {
         _update();
+    }
 
+    @Override
+    public void connectionChanged(boolean connected) {
+        _update();
     }
 
     public enum Status {
-        Books, AAX_Files, MP3_Files, To_Download, To_Convert, Downloading, Converting;  //Connection,
+        Connected, Books, AAX_Files, MP3_Files, To_Download, To_Convert, Downloading, Converting;  //Connection,
 
         public String displayName() {
             return name().replace('_', ' ');
@@ -99,14 +109,13 @@ public class StatusPanel extends GridComposite implements BookListener {
 
         public boolean display() {
             switch (this) {
-
                 case Books:
                 case To_Convert:
                 case Downloading:
                 case Converting:
                 case MP3_Files:
+                case Connected:
                     return true;
-
 
                 case AAX_Files:
                 case To_Download:

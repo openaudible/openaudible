@@ -7,7 +7,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.openaudible.desktop.swt.gui.GUI;
 import org.openaudible.desktop.swt.manager.AudibleGUI;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
 // Small search text input field for filtering results based on string.

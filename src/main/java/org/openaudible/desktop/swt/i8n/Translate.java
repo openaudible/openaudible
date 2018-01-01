@@ -82,7 +82,10 @@ public class Translate {
     private String itemName(String key, String item, String def) {
         String what = item + "_" + key.toUpperCase().replace(" ", "_");
         assert (!key.toUpperCase().contains(what));
-        if (def == null) def = key;
+        if (def == null)
+        {
+            def = key.replace('_',' ');
+        }
         return getTranslation(what, def);
     }
 

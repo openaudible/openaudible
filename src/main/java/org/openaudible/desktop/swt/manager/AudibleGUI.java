@@ -1,6 +1,7 @@
 package org.openaudible.desktop.swt.manager;
 
 import com.gargoylesoftware.htmlunit.util.Cookie;
+import com.google.gson.JsonObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
@@ -10,20 +11,23 @@ import org.openaudible.AudibleAutomated;
 import org.openaudible.Directories;
 import org.openaudible.audible.AudibleLoginError;
 import org.openaudible.audible.AudibleScraper;
+import org.openaudible.audible.ConnectionNotifier;
 import org.openaudible.books.Book;
 import org.openaudible.books.BookElement;
 import org.openaudible.books.BookListener;
 import org.openaudible.books.BookNotifier;
 import org.openaudible.convert.AAXParser;
 import org.openaudible.convert.FFMPEG;
+import org.openaudible.desktop.swt.gui.GUI;
 import org.openaudible.desktop.swt.gui.MessageBoxFactory;
 import org.openaudible.desktop.swt.gui.SWTAsync;
 import org.openaudible.desktop.swt.gui.progress.ProgressDialog;
 import org.openaudible.desktop.swt.gui.progress.ProgressTask;
 import org.openaudible.desktop.swt.manager.views.AudibleBrowser;
 import org.openaudible.desktop.swt.manager.views.StatusPanel;
-import org.openaudible.util.Platform;
 import org.openaudible.feeds.pagebuilder.WebPage;
+import org.openaudible.util.HTTPGet;
+import org.openaudible.util.Platform;
 import org.openaudible.util.queues.IQueueJob;
 import org.openaudible.util.queues.IQueueListener;
 import org.openaudible.util.queues.ThreadedQueue;
@@ -277,7 +281,7 @@ public class AudibleGUI implements BookListener {
         if (s != null && !s.isLoggedIn()) {
             LOG.info("Setting cookies 1");
 
-            SWTAsync.block(new SWTAsync() {
+            SWTAsync.block(new SWTAsync("connect") {
                 @Override
                 public void task() {
                     LOG.info("Done Setting cookies 2");
@@ -346,6 +350,9 @@ public class AudibleGUI implements BookListener {
     }
 
     public boolean canPlay() {
+        if (GUI.isLinux())
+            return false;   // TODO: FIX for Linux
+
         Book b = onlyOneSelected();
         return b != null && audible.hasMP3(b);
     }
@@ -358,9 +365,9 @@ public class AudibleGUI implements BookListener {
         return false;
     }
 
+    // has login credentials.
     public boolean hasLogin() {
-        return true;
-        // return audible.hasLogin();
+        return audible.hasLogin();
     }
 
     public boolean canViewInAudible() {
@@ -377,11 +384,17 @@ public class AudibleGUI implements BookListener {
     }
 
     public boolean canViewInSystem() {
+
+        if (GUI.isLinux()) return false;        // TODO: Fix for Linux
+
+
         Book b = onlyOneSelected();
         if (b != null) {
             if (audible.hasMP3(b))
                 return true;
         }
+
+
         return false;
     }
 
@@ -426,6 +439,8 @@ public class AudibleGUI implements BookListener {
                 if (cq > 0)
                     out += " of " + (cq + cl);
                 return out;
+            case Connected:
+                return ConnectionNotifier.getInstance().isConnected()? "Yes":"No";
 
             default:
                 break;
@@ -512,7 +527,8 @@ public class AudibleGUI implements BookListener {
 
     public void exportWebPage() {
         try {
-            File destDir = new File("M:\\Books\\Audible\\Web");
+            File destDir = Directories.getDir(Directories.WEB);
+
             ArrayList<Book> list = new ArrayList<Book>();
             list.addAll(audible.getBooks());
             Collections.sort(list);
@@ -707,7 +723,7 @@ public class AudibleGUI implements BookListener {
     }
 
     public void browse() {
-        SWTAsync.run(new SWTAsync() {
+        SWTAsync.run(new SWTAsync("browse") {
             @Override
             public void task() {
                 browse("https://www.audible.com/lib");
@@ -781,6 +797,52 @@ public class AudibleGUI implements BookListener {
         }
 
     }
+
+    public String checkForUpdate(boolean verbose)
+    {
+        String msg = versionCheck();
+        if (!msg.isEmpty())
+        {
+            MessageBoxFactory.showGeneral(null, SWT.ICON_INFORMATION, "Update Check", msg);
+        } else
+        {
+            if (verbose)
+            {
+                String noUpdate = "No updates available";
+                MessageBoxFactory.showGeneral(null, SWT.ICON_INFORMATION, "Using latest version", noUpdate);
+            }
+
+        }
+        return msg;
+    }
+    // return "" if
+    public String versionCheck ()
+    {
+        String url = Version.versionLink;
+        url += "?";
+        url += "platform="+Platform.getPlatform().toString();
+        url += "&version="+Version.appVersion;
+        url += "&count="+audible.getBookCount();
+
+        try {
+            JsonObject obj = HTTPGet.instance.getJSON(url);
+            LOG.info(url+"->"+obj.toString());
+            if (!obj.has("version"))
+                throw new IOException("missing version field\n"+obj);
+            String curVers = obj.get("version").getAsString();
+            if (curVers.equals(Version.appVersion))
+            {
+                return "";
+            }
+            return "An update is available!\nYour version: "+Version.appVersion+"\nLatest Version:"+curVers;
+        }
+        catch(IOException e)
+        {
+            LOG.error("Error checking for latest version: "+e);
+            return "Error checking for latest version.\nError message: "+e.getMessage();
+        }
+    }
+
 
     class PageBuilderTask extends ProgressTask {
         final WebPage pageBuilder;

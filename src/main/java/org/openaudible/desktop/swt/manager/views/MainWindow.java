@@ -61,7 +61,7 @@ public class MainWindow extends GridComposite {
     void libraryStatus(GridComposite row) {
         Composite statusGroup = row.newGroup("Library Status");
         GridData gd = new GridData(gdFlags);
-        gd.widthHint = 150;
+        gd.widthHint = 170;
         statusGroup.setLayoutData(gd);
         status = new StatusPanel(statusGroup);
 

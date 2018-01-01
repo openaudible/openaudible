@@ -26,6 +26,7 @@ public enum Command {
     Redeem,
     Browser,
     Fetch_Decryption_Key,
+    Check_For_Update,
     Cookies;
 
 

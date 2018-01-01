@@ -19,6 +19,7 @@ public class BookNotifier extends EventNotifier<BookListener> implements BookLis
     int c1; // some debugging.
     long time;
     private ArrayList<Book> selected = new ArrayList<Book>();
+    volatile boolean enabled = true;
 
     private BookNotifier() {
     }
@@ -39,7 +40,7 @@ public class BookNotifier extends EventNotifier<BookListener> implements BookLis
 
     @Override
     public void booksSelected(List<Book> list) {
-
+        if (!enabled) return;
         synchronized (getLock()) {
             selected.clear();
             selected.addAll(list);
@@ -51,6 +52,8 @@ public class BookNotifier extends EventNotifier<BookListener> implements BookLis
 
     @Override
     public void bookAdded(Book book) {
+        if (!enabled) return;
+
         for (BookListener l : getListeners())
             l.bookAdded(book);
 
@@ -65,17 +68,31 @@ public class BookNotifier extends EventNotifier<BookListener> implements BookLis
 
     @Override
     public void bookUpdated(Book book) {
+        if (!enabled) return;
         for (BookListener l : getListeners())
             l.bookUpdated(book);
         log();
     }
 
+    public static Log getLOG() {
+        return LOG;
+    }
+
     @Override
     public void booksUpdated() {
+        if (!enabled) return;
 
         for (BookListener l : getListeners())
             l.booksUpdated();
         log();
     }
 
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }

@@ -11,25 +11,49 @@ public abstract class SWTAsync implements Runnable {
     final static long kMinReportTime = 3000;
     final static long kMinCaptureTime = 2000;
     static final int timeInts[] = {50, 500, 5000, 10000, 20000};
-    // long started = System.currentTimeMillis();
+
     public static boolean quit = false;
     public static boolean useStack = Version.appDebug;
     public static boolean useTimer = Version.appDebug;
     static Hashtable timeResults = new Hashtable(); // <String, TimeStats>
     static long block_count = 0;
     Exception stack = null;
-    String taskName;
+    final String taskName;
     boolean logTimeStats = useTimer;
     private volatile boolean block = false;
 
 
-    protected SWTAsync() {
-    }
+    static int interval_count=0;
+    static long interval_start=System.currentTimeMillis();
+    final static long interval_max = 5000;
+    final static long interval_warning = 50;        // 50 calls in 5 seconds is too often.
+
+
 
     public SWTAsync(String task) {
         this.taskName = task;
         if (useStack)
+        {
             stack = new Exception();
+            checkInterval();
+        }
+    }
+
+    private void checkInterval()
+    {
+        interval_count++;
+        long now = System.currentTimeMillis();
+        long delta = now-interval_start;
+
+        if (interval_count>interval_warning)
+        {
+            System.err.println("Warning: SWTAsync called "+interval_count+" in "+delta+" task="+taskName);
+        }
+        if (delta>interval_max)
+        {
+            interval_count=0;
+            interval_start=now;
+        }
     }
 
     public static boolean inDisplayThread() {
