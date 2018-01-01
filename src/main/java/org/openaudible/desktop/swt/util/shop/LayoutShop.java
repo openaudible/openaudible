@@ -174,8 +174,8 @@ public class LayoutShop {
     public static void packAll(Control control) {
         if (control instanceof Composite) {
             Control[] childs = ((Composite) control).getChildren();
-            for (int a = 0; a < childs.length; a++) {
-                packAll(childs[a]);
+            for (Control child : childs) {
+                packAll(child);
             }
             ((Composite) control).layout();
         }
@@ -251,8 +251,8 @@ public class LayoutShop {
     public static void setLayoutForAll(Control control) {
         if (control instanceof Composite) {
             Control[] childs = ((Composite) control).getChildren();
-            for (int a = 0; a < childs.length; a++) {
-                setLayoutForAll(childs[a]);
+            for (Control child : childs) {
+                setLayoutForAll(child);
             }
             ((Composite) control).layout();
         }

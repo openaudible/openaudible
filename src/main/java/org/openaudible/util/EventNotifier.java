@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 public abstract class EventNotifier<T> {
-    private ArrayList<T> listeners = new ArrayList<>();
+    private final ArrayList<T> listeners = new ArrayList<>();
 
     public void addListener(T l) {
         synchronized (listeners) {

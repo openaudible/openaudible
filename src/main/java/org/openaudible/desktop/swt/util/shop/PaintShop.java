@@ -18,7 +18,7 @@ public class PaintShop {
     static Display display;
     private static Hashtable imageCache = new Hashtable();
 
-    private static Hashtable<String, Resource> resourceCache = new Hashtable<String, Resource>();
+    private static Hashtable<String, Resource> resourceCache = new Hashtable<>();
 
 
 

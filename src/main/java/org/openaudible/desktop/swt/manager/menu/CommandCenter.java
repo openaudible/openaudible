@@ -75,13 +75,13 @@ public class CommandCenter {
      * @param text Any control capable of holding text
      */
     void actionCopyText(Control text) {
-        /** Control is a StyledText widget */
+        /* Control is a StyledText widget */
         if (text instanceof StyledText) {
             if (((StyledText) text).getText() != null) {
-                /** User has selected text */
+                /* User has selected text */
                 if (((StyledText) text).getSelectionCount() > 0)
                     cb.setContents(new Object[]{((StyledText) text).getSelectionText()}, new Transfer[]{TextTransfer.getInstance()});
-                /** User has not selected text */
+                /* User has not selected text */
                 else
                     cb.setContents(new Object[]{((StyledText) text).getText()}, new Transfer[]{TextTransfer.getInstance()});
             }
@@ -98,7 +98,7 @@ public class CommandCenter {
      */
     void actionExit() {
         logger.info("actionExit");
-        /** Force an Exit */
+        /* Force an Exit */
         if (reallyQuit())
             app.onClose(new Event(), true);
     }
@@ -128,15 +128,15 @@ public class CommandCenter {
      * @param action One of the supported actions of the edit menu
      */
     boolean handleEditAction(Command action) {
-        /** Retrieve the Focus Control */
+        /* Retrieve the Focus Control */
         Control control = GUI.display.getFocusControl();
-        /** No focus control available, return */
+        /* No focus control available, return */
         if (!WidgetShop.isset(control))
             return false;
 
-        /** Perform Edit Action */
+        /* Perform Edit Action */
         switch (action) {
-            /** Edit action: Cut */
+            /* Edit action: Cut */
             case Cut:
                 if (control instanceof Text)
                     ((Text) control).cut();
@@ -147,7 +147,7 @@ public class CommandCenter {
                 else
                     return false;
                 break;
-            /** Edit action: Copy */
+            /* Edit action: Copy */
             case Copy:
                 if (control instanceof Text)
                     ((Text) control).copy();
@@ -158,7 +158,7 @@ public class CommandCenter {
                 else
                     return false;
                 break;
-            /** Edit action: Paste */
+            /* Edit action: Paste */
             case Paste:
                 if (control instanceof Text)
                     ((Text) control).paste();

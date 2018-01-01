@@ -15,7 +15,7 @@ public class InputStreamReporter extends Thread {
     String lastMsg = "";
     volatile boolean quit = false;
     volatile boolean done = false;
-    Object waiter = new Object();
+    final Object waiter = new Object();
     volatile int lines = 0;
 
     /**
@@ -39,7 +39,7 @@ public class InputStreamReporter extends Thread {
         try {
             String line;
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            /** Read output */
+            /* Read output */
             while ((line = br.readLine()) != null) {
                 if (taker != null)
                     taker.takeLine(line);
@@ -50,7 +50,7 @@ public class InputStreamReporter extends Thread {
             }
 
         }
-        /** Log any error */ catch (Exception e) {
+        /* Log any error */ catch (Exception e) {
             LOG.error(this.getName(), e);
         } finally {
             done = true;

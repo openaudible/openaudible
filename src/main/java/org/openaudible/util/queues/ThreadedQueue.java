@@ -14,13 +14,11 @@ public class ThreadedQueue<E> implements IQueueListener<E> {
     volatile boolean quit = false;
     int totalThreads = 0;
 
-    LinkedList<E> queue = new LinkedList<E>();
-    LinkedList<JobThread> threads = new LinkedList<JobThread>();
-    LinkedList<IQueueJob> jobs = new LinkedList<IQueueJob>();
-
-    Object waitObject = new Object();
-
-    ArrayList<IQueueListener<E>> listeners = new ArrayList<IQueueListener<E>>();
+    final LinkedList<E> queue = new LinkedList<>();
+    final LinkedList<JobThread> threads = new LinkedList<>();
+    final LinkedList<IQueueJob> jobs = new LinkedList<>();
+    final Object waitObject = new Object();
+    final ArrayList<IQueueListener<E>> listeners = new ArrayList<>();
 
     public ThreadedQueue() {
         this(5);
@@ -91,7 +89,7 @@ public class ThreadedQueue<E> implements IQueueListener<E> {
     }
 
     public Collection<E> addAll(Collection<E> items) {
-        ArrayList<E> results = new ArrayList<E>();
+        ArrayList<E> results = new ArrayList<>();
 
         for (E e : items) {
             boolean added = add(e);
@@ -143,7 +141,7 @@ public class ThreadedQueue<E> implements IQueueListener<E> {
     }
 
     private ArrayList<IQueueListener<E>> getListeners() {
-        ArrayList<IQueueListener<E>> copy = new ArrayList<IQueueListener<E>>();
+        ArrayList<IQueueListener<E>> copy = new ArrayList<>();
         copy.addAll(listeners);
         return copy;
     }

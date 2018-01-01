@@ -47,7 +47,7 @@ public enum AAXParser {
             Mp4Tag tag = (Mp4Tag) audiofile.getTag();
             System.err.println(audiofile + " tag=" + tag);
 
-            ArrayList<String> idList = new ArrayList<String>();
+            ArrayList<String> idList = new ArrayList<>();
 
             Iterator<TagField> fields = tag.getFields();
             System.err.println(fields instanceof Iterator);
@@ -57,8 +57,8 @@ public enum AAXParser {
 
             }
 
-            HashSet<FieldKey> generic = new HashSet<FieldKey>();
-            HashSet<Mp4FieldKey> mp4 = new HashSet<Mp4FieldKey>();
+            HashSet<FieldKey> generic = new HashSet<>();
+            HashSet<Mp4FieldKey> mp4 = new HashSet<>();
 
             for (FieldKey fk : FieldKey.values()) {
                 Mp4TagField o = tag.getFirstField(fk);
@@ -175,7 +175,7 @@ public enum AAXParser {
         if (f == null)
             f = Audible.instance.getAAXFileDest(b);
 
-        ArrayList<String> args = new ArrayList<String>();
+        ArrayList<String> args = new ArrayList<>();
         args.add(FFMPEG.getExecutable());
         args.add("-i");
         args.add(f.getAbsolutePath());
@@ -239,7 +239,7 @@ public enum AAXParser {
         String title = "title=";
 
         Chapter cur = null;
-        ArrayList<Chapter> list = new ArrayList<Chapter>();
+        ArrayList<Chapter> list = new ArrayList<>();
 
         for (String l : lines) {
             if (l.equals("[CHAPTER]")) {

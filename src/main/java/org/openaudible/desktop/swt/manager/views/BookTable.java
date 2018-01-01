@@ -40,23 +40,21 @@ public class BookTable extends EnumTable<Book, BookTableColumn> implements BookL
         table.getColumn(0).setImage(hasAAX);
         table.getColumn(0).setText("");
 
-        final Listener paintListener = new Listener() {
-            public void handleEvent(Event event) {
-                final Image image = hasMP3;
+        final Listener paintListener = event -> {
+            final Image image = hasMP3;
 
-                switch (event.type) {
-                    case SWT.MeasureItem: {
-                        event.width += rect.width;
-                        event.height = Math.max(event.height, rect.height + 2);
-                        break;
-                    }
-                    case SWT.PaintItem: {
-                        int x = event.x + event.width;
-                        Rectangle rect = image.getBounds();
-                        int offset = Math.max(0, (event.height - rect.height) / 2);
-                        event.gc.drawImage(image, x, event.y + offset);
-                        break;
-                    }
+            switch (event.type) {
+                case SWT.MeasureItem: {
+                    event.width += rect.width;
+                    event.height = Math.max(event.height, rect.height + 2);
+                    break;
+                }
+                case SWT.PaintItem: {
+                    int x = event.x + event.width;
+                    Rectangle rect1 = image.getBounds();
+                    int offset = Math.max(0, (event.height - rect1.height) / 2);
+                    event.gc.drawImage(image, x, event.y + offset);
+                    break;
                 }
             }
         };

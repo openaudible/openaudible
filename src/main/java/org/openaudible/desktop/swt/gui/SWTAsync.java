@@ -66,8 +66,7 @@ public abstract class SWTAsync implements Runnable {
             return "";
         String lf = "\n";
         String out = "Time Results:" + lf + "Buckets: ";
-        for (int x = 0; x < timeInts.length; x++)
-            out += "" + timeInts[x] + " ";
+        for (int timeInt : timeInts) out += "" + timeInt + " ";
         out += lf;
 
         for (Enumeration cenum = timeResults.keys(); cenum.hasMoreElements(); ) {

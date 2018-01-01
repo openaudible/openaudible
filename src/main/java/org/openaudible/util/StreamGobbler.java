@@ -13,7 +13,7 @@ public class StreamGobbler extends Thread {
     OutputStream out;
     volatile boolean quit = false;
     volatile boolean done = false;
-    Object waiter = new Object();
+    final Object waiter = new Object();
     IOException exception;
     boolean closeInput = true, closeOutput = true;
 
@@ -45,7 +45,7 @@ public class StreamGobbler extends Thread {
             }
         }
 
-        /** Log any error */ catch (IOException e) {
+        /* Log any error */ catch (IOException e) {
 
             LOG.error(this.getName(), e);
         } finally {

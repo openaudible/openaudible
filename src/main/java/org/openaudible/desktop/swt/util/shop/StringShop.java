@@ -61,12 +61,12 @@ public class StringShop {
      */
     public static String createFileName(String str) {
 
-        /** Replace some special chars */
+        /* Replace some special chars */
         str = str.replaceAll(" > ", "_");
         str = str.replaceAll(": ", "_");
         str = str.replaceAll(" ", "_");
 
-        /** If filename only contains of special chars */
+        /* If filename only contains of special chars */
         if (str.matches("[_]+"))
             str = "rssowl";
 
@@ -81,10 +81,10 @@ public class StringShop {
      */
     public static String decodeISOChar(byte[] isoBytes) {
 
-        /** Return the Entity value if decode fails */
+        /* Return the Entity value if decode fails */
         String decodedChar = String.valueOf("&" + (int) isoBytes[0] + ";");
 
-        /** Only decode if Charset ISO-8859-1 is available */
+        /* Only decode if Charset ISO-8859-1 is available */
         if (Charset.isSupported("ISO-8859-1")) {
             Charset isoCharset = Charset.forName("ISO-8859-1");
             CharsetDecoder decoder = isoCharset.newDecoder();
@@ -148,11 +148,11 @@ public class StringShop {
      */
     public static String pointTrim(String str, int length, boolean escapeMnemonics) {
 
-        /** Remove mnemonics if needed and replace "&" with "&&" */
+        /* Remove mnemonics if needed and replace "&" with "&&" */
         if (escapeMnemonics)
             str = replaceAll(str, "&", "&&");
 
-        /** Return a Substring and append "..." */
+        /* Return a Substring and append "..." */
         return (str.length() >= length) ? str.substring(0, length) + "..." : str;
     }
 
@@ -167,7 +167,7 @@ public class StringShop {
      */
     public static String printf(String str, String[] wildcard, String[] substitution) {
 
-        /** Replace each wildcard with its substitution */
+        /* Replace each wildcard with its substitution */
         for (int i = 0; i < wildcard.length; i++) {
             str = StringShop.replaceAll(str, wildcard[i], substitution[i]);
         }
@@ -207,11 +207,11 @@ public class StringShop {
     public static String unicodeToEntities(String str) {
         StringBuffer strBuf = new StringBuffer();
 
-        /** For each character */
+        /* For each character */
         for (int i = 0; i < str.length(); i++) {
             char ch = str.charAt(i);
 
-            /** This is a non ASCII, non Whitespace character */
+            /* This is a non ASCII, non Whitespace character */
             if (!((ch >= 0x0020) && (ch <= 0x007e)) && !Character.isWhitespace(ch)) {
                 strBuf.append("&#x");
                 String hex = Integer.toHexString(str.charAt(i) & 0xFFFF);
@@ -223,7 +223,7 @@ public class StringShop {
                 strBuf.append(";");
             }
 
-            /** This is an ASCII character */
+            /* This is an ASCII character */
             else {
                 strBuf.append(ch);
             }

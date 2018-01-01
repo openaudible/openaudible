@@ -18,27 +18,19 @@ public enum HTTPGet {
 
     public JsonObject getJSON(String url) throws IOException
     {
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        try {
+        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             HttpGet httpget = new HttpGet(Version.versionLink);
-            CloseableHttpResponse httpResponse = httpclient.execute(httpget);
-            try {
+            try (CloseableHttpResponse httpResponse = httpclient.execute(httpget)) {
 
                 HttpEntity httpEntity = httpResponse.getEntity();
-                if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK)
-                {
+                if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                     String entity = EntityUtils.toString(httpEntity);
                     JsonParser parser = new JsonParser();
                     JsonObject obj = parser.parse(entity).getAsJsonObject();
                     return obj;
                 }
                 throw new IOException(httpResponse.getStatusLine().getReasonPhrase());
-            } finally {
-                httpResponse.close();
             }
-        } finally
-        {
-            httpclient.close();
         }
     }
 

@@ -59,7 +59,7 @@ public class MessageBoxFactory {
      */
     public static int showMessage(Shell shell, int style, String title, String message) {
         SWTAsync.assertGUI();
-        /** Create new Shell in case Shell was disposed before */
+        /* Create new Shell in case Shell was disposed before */
         if (shell == null || shell.isDisposed())
             shell = new Shell(Display.getCurrent());
 
@@ -82,7 +82,7 @@ public class MessageBoxFactory {
             public void task() {
                 Shell s = shell;
 
-                /** Create new Shell in case Shell was disposed before */
+                /* Create new Shell in case Shell was disposed before */
                 if (s == null || s.isDisposed())
                     s = new Shell(Display.getCurrent());
                 // ICON_QUESTION
@@ -102,7 +102,7 @@ public class MessageBoxFactory {
         if (message == null) message = "";
         if (title == null) title = "";
 
-        /** Create new Shell in case Shell was disposed before */
+        /* Create new Shell in case Shell was disposed before */
         if (shell == null || shell.isDisposed())
             shell = new Shell(Display.getCurrent());
         Image shellImage = PaintShop.getShellImage();

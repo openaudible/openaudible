@@ -26,15 +26,15 @@ public class EnumTable<E extends Object, F extends Enum> implements SelectionLis
     protected final Composite parent;
     public F sortCol = null; // null (defaultSort) or column to sort by.
     protected Table table;
-    protected ArrayList<E> list = new ArrayList<E>(); // List of all SuperTableData
+    protected final ArrayList<E> list = new ArrayList<>(); // List of all SuperTableData
     protected Color tableColors[];
     protected boolean allowReverseSort = true;
     protected boolean oddEvenColors = true;
     protected boolean needSort = false;
     protected boolean reverseSort = false;
     protected int defaultAttributes = SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER | SWT.V_SCROLL;
-    protected ArrayList<TableColumn> tableColumns = new ArrayList<TableColumn>();
-    ArrayList<RowListener> rowListeners = new ArrayList<RowListener>(1);
+    protected final ArrayList<TableColumn> tableColumns = new ArrayList<>();
+    final ArrayList<RowListener> rowListeners = new ArrayList<>(1);
     F columns[]; // enum constants to display
     PackMode packMode = PackMode.packLast;
 
@@ -105,20 +105,12 @@ public class EnumTable<E extends Object, F extends Enum> implements SelectionLis
         col1.pack();
         col2.pack();
 
-        Listener listener = new Listener() {
-
-            @Override
-            public void handleEvent(Event e) {
-                final TreeItem treeItem = (TreeItem) e.item;
-                display.asyncExec(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        for (TreeColumn tc : treeItem.getParent().getColumns())
-                            tc.pack();
-                    }
-                });
-            }
+        Listener listener = e -> {
+            final TreeItem treeItem = (TreeItem) e.item;
+            display.asyncExec(() -> {
+                for (TreeColumn tc : treeItem.getParent().getColumns())
+                    tc.pack();
+            });
         };
 
         tree.addListener(SWT.Collapse, listener);
@@ -184,8 +176,8 @@ public class EnumTable<E extends Object, F extends Enum> implements SelectionLis
         SWTAsync.assertGUI();
         boolean needRefresh = false;
         if (tableColors != null && tableColors.length != c.length) {
-            for (int x = 0; x < tableColors.length; x++) {
-                tableColors[x].dispose();
+            for (Color tableColor : tableColors) {
+                tableColor.dispose();
             }
             tableColors = null;
         }
@@ -469,7 +461,7 @@ public class EnumTable<E extends Object, F extends Enum> implements SelectionLis
     }
 
     public void addKeyBoardListener() {
-        /** KeyPressed Event */
+        /* KeyPressed Event */
         table.addKeyListener(new KeyAdapter() {
             String text = "";
             long lastKey = 0;
@@ -617,7 +609,7 @@ public class EnumTable<E extends Object, F extends Enum> implements SelectionLis
 
     public List<E> getSelectedItems() {
         TableItem ti[] = table.getSelection();
-        ArrayList<E> out = new ArrayList<E>(ti.length);
+        ArrayList<E> out = new ArrayList<>(ti.length);
         for (TableItem i : ti) {
             if (!i.isDisposed())
                 out.add((E) i.getData());
@@ -647,7 +639,7 @@ public class EnumTable<E extends Object, F extends Enum> implements SelectionLis
 
     // return list of E
     public ArrayList<E> getList() {
-        return new ArrayList<E>(list);
+        return new ArrayList<>(list);
     }
 
     // Reset the default sort
@@ -704,7 +696,8 @@ public class EnumTable<E extends Object, F extends Enum> implements SelectionLis
         table.addKeyListener(new KeyListener() {
             @Override
             public void keyPressed(KeyEvent e) {
-                boolean ctlDown = ((e.stateMask | SWT.CTRL) != 0);
+                int m = e.stateMask | SWT.CTRL;
+                boolean ctlDown = (m != 0);
                 if (e.keyCode == 97 && ctlDown) {
                     selectAll();
                 }

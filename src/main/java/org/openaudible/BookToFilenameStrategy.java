@@ -71,7 +71,7 @@ public enum BookToFilenameStrategy {
             name = _removeAll(name, f);
         }
 
-        name = name.replaceAll("  ", " ");    // no double spaces.
+        name = name.replace("  ", " ");    // no double spaces.
         return name;
     }
 

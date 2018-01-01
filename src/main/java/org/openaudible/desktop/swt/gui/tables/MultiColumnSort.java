@@ -34,8 +34,8 @@ public class MultiColumnSort implements java.util.Comparator {
     public int compare(Object o1, Object o2) {
         MultiColumnData t1 = (MultiColumnData) o1;
         MultiColumnData t2 = (MultiColumnData) o2;
-        for (int x = 0; x < sortOrder.length; x++) {
-            int v = t1.compareTo(st, t2, sortOrder[x]);
+        for (int aSortOrder : sortOrder) {
+            int v = t1.compareTo(st, t2, aSortOrder);
             if (v != 0)
                 return reverseOrder ? -v : v;
         }

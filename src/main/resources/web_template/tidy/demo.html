@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+
+
+	<!-- JavaScript insert start -->
+
+	<script src="tidy-table.min.js"></script>
+	<script>
+	$(document).ready(function() {
+		$('#container')
+			.TidyTable({
+				enableCheckbox: true,
+				enableMenu:     true,
+				reverseSortDir: true
+			},
+			{
+				columnTitles: ['Rank', 'Programming Language', 'Ratings Jan 2012', 'Delta Jan 2012', 'Status'],
+				columnValues: [
+					['1', 'Java', '17.479%', '-0.29%', 'A'],
+					['2', 'C', '16.976%', '+1.15%', 'A'],
+					['3', 'C#', '8.781%', '+2.55%', 'A'],
+					['4', 'C++', '8.063%', '-0.72%', 'A'],
+					['5', 'Objective-C', '6.919%', '+3.91%','A']
+				],
+				menuOptions: [
+					['- Action -', null],
+					['Callback 1', { callback: doSomething1 }],
+					['Callback 2', { callback: doSomething2 }]
+				],
+				postProcess: {
+					table:  doSomething3,
+					column: doSomething4,
+					menu:   doSomething5
+				}
+			});
+	});
+
+	// do something with selected results
+	function doSomething1(rows) {
+		alert('callback1(rows=' + rows.length + ')');
+	}
+
+	function doSomething2(rows) {
+		alert('callback2(rows=' + rows.length + ')');
+	}
+
+	// post-process DOM elements
+	function doSomething3(table) {
+		table.on('hover', function() {
+			//alert('post-process(table)');
+		});
+	}
+
+	function doSomething4(col) {
+		col.on('click', function() {
+			alert('post-process(value=' + $(this).text() + ')');
+		});
+	}
+
+	function doSomething5(menu) {
+		menu.on('change', function() {
+			//alert('post-process(menu)');
+		});
+	}
+	</script>
+
+	<!-- JavaScript insert end -->
+
+
+	<!-- CSS include start -->
+
+	<link rel="stylesheet" type="text/css" href="tidy-table.min.css">
+
+	<!-- CSS include end -->
+
+
+	<!-- CSS overrides start -->
+
+	<link rel="stylesheet" type="text/css" href="https://mbrooks.info/demo.min.css">
+	<link rel="stylesheet" type="text/css" href="demo.css">
+
+	<!-- CSS overrides end -->
+
+
+	<title>Tidy Table - Generate a sortable HTML table from JSON</title>
+</head>
+<body>
+
+<p id="about">
+	This <strong>jQuery</strong> plugin is <a href="tidy-table.min.js" title="Only 3.8 kB">lightweight</a>, easy to <a href="README.html#install" title="Installation">install</a> / <a href="demo.css" title="Stylesheet">customize</a>, and works on all modern web browsers.
+</p>
+
+
+<!-- HTML example start -->
+
+<div id="container"></div>
+
+<!-- HTML example end -->
+
+
+<!-- footer start -->
+
+<div id="footer">
+	<span class="copy">&#169; 2012-2015 <a href="https://mbrooks.info">Marc S. Brooks</a></span>
+</div>
+
+<!-- footer end -->
+
+
+</body>
+</html>

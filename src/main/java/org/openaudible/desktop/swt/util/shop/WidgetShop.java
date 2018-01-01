@@ -62,32 +62,32 @@ public class WidgetShop {
      */
     public static Vector calculateStyleRanges(StyledText textField, Vector words, Color foreground, Color background, int fontstyle, boolean caseSensitive) {
 
-        /** Use Vector for the StyleRanges */
+        /* Use Vector for the StyleRanges */
         Vector styleRanges = new Vector();
 
-        /** Text with words to style */
+        /* Text with words to style */
         String text = textField.getText();
 
-        /** Regard case sensitivity */
+        /* Regard case sensitivity */
         if (!caseSensitive)
             text = textField.getText().toLowerCase();
 
-        /** Foreach word to style */
-        for (int a = 0; a < words.size(); a++) {
+        /* Foreach word to style */
+        for (Object word : words) {
             int start = 0;
-            String curWord = (String) words.get(a);
+            String curWord = (String) word;
 
-            /** ToLowerCase if case is regarded */
+            /* ToLowerCase if case is regarded */
             if (!caseSensitive)
                 curWord = curWord.toLowerCase();
 
-            /** Save current position */
+            /* Save current position */
             int pos;
 
-            /** For each occurance of the word in the text */
+            /* For each occurance of the word in the text */
             while ((pos = text.indexOf(curWord, start)) > -1) {
 
-                /** New stylerange for the word */
+                /* New stylerange for the word */
                 StyleRange styleRange = new StyleRange();
                 styleRange.start = pos;
                 styleRange.length = (curWord.length());
@@ -96,7 +96,7 @@ public class WidgetShop {
                 styleRange.background = background;
                 styleRanges.add(styleRange);
 
-                /** Goto next words */
+                /* Goto next words */
                 start = styleRange.start + styleRange.length;
             }
         }
@@ -123,13 +123,13 @@ public class WidgetShop {
      */
     private static void createWildCardMenu(final Text text, String[] wildcards, String[] labels) {
 
-        /** Both arrays need to have the same size */
+        /* Both arrays need to have the same size */
         if (wildcards.length != labels.length)
             return;
 
         Menu wildCardMenu = new Menu(text);
 
-        /** Foreach wildcards */
+        /* Foreach wildcards */
         for (int a = 0; a < wildcards.length; a++) {
             final String wildcard = wildcards[a];
             MenuItem menuItem = new MenuItem(wildCardMenu, SWT.POP_UP);
@@ -180,29 +180,29 @@ public class WidgetShop {
      */
     public static void initMnemonics(Button buttons[]) {
 
-        /** Store chars that have been used as mnemonic */
+        /* Store chars that have been used as mnemonic */
         Vector chars = new Vector();
 
-        /** For each Button */
-        for (int a = 0; a < buttons.length; a++) {
-            String name = buttons[a].getText();
+        /* For each Button */
+        for (Button button : buttons) {
+            String name = button.getText();
 
-            /** Replace any & that are existing */
+            /* Replace any & that are existing */
             name = name.replaceAll("&", "");
 
-            /** For each char in the name */
+            /* For each char in the name */
             for (int b = 0; b < name.length(); b++) {
 
-                /** Check if char is available and no whitespace */
+                /* Check if char is available and no whitespace */
                 if (name.substring(b, b + 1) != null && !name.substring(b, b + 1).equals(" ")) {
 
-                    /** Check if char has been used as mnemonic before */
+                    /* Check if char has been used as mnemonic before */
                     if (!chars.contains(name.substring(b, b + 1).toLowerCase())) {
 
-                        /** Set mnemonic */
-                        buttons[a].setText(name.substring(0, b) + "&" + name.substring(b, name.length()));
+                        /* Set mnemonic */
+                        button.setText(name.substring(0, b) + "&" + name.substring(b, name.length()));
 
-                        /** Add char as used mnemonic */
+                        /* Add char as used mnemonic */
                         chars.add(name.substring(b, b + 1).toLowerCase());
                         break;
                     }
@@ -228,18 +228,18 @@ public class WidgetShop {
      */
     public static void tweakTextWidget(final Text text) {
 
-        /** Check Widget */
+        /* Check Widget */
         if (!isset(text))
             return;
 
-        /** MouseDoubleClick Event */
+        /* MouseDoubleClick Event */
         text.addMouseListener(new MouseAdapter() {
             public void mouseDoubleClick(MouseEvent e) {
                 text.selectAll();
             }
         });
 
-        /** KeyPressed Event */
+        /* KeyPressed Event */
         text.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if ((e.stateMask == SWT.CTRL || e.stateMask == SWT.COMMAND) && (e.keyCode == 'a' || e.keyCode == 'A'))
@@ -249,17 +249,17 @@ public class WidgetShop {
     }
 
     public static void tweakTextWidget(final StyledText text) {
-        /** Check Widget */
+        /* Check Widget */
         if (!isset(text))
             return;
-        /** MouseDoubleClick Event */
+        /* MouseDoubleClick Event */
         text.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseDoubleClick(MouseEvent e) {
                 text.selectAll();
             }
         });
-        /** KeyPressed Event */
+        /* KeyPressed Event */
         text.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {

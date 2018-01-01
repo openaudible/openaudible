@@ -47,8 +47,8 @@ public class SuperTable<E extends SuperTableData<? extends Comparable>> implemen
             }
         }
     };
-    protected ArrayList<E> list = new ArrayList<E>(); // List of all SuperTableData
-    protected HashMap<Object, TableItem> map = new HashMap<Object, TableItem>();
+    protected final ArrayList<E> list = new ArrayList<>(); // List of all SuperTableData
+    protected final HashMap<Object, TableItem> map = new HashMap<>();
     protected Color tableColors[];
     protected boolean allowReverseSort = true;
     protected int numColumns = 1;
@@ -110,7 +110,7 @@ public class SuperTable<E extends SuperTableData<? extends Comparable>> implemen
         }
     };
     // items, sorted, with filter capability.
-    private ArrayList<E> virtualList = new ArrayList<E>(); // List of all items
+    private ArrayList<E> virtualList = new ArrayList<>(); // List of all items
     private boolean keepSorted = true;
     private ResizeEvent resizeEvent = null;
 
@@ -207,9 +207,9 @@ public class SuperTable<E extends SuperTableData<? extends Comparable>> implemen
             // Checkbox changed...
             TableItem ti[] = getSelection();
             if (ti.length > 1) {
-                for (int x = 0; x < ti.length; x++) {
-                    if (!ti[x].equals(e.data)) {
-                        ti[x].setChecked(state);
+                for (TableItem aTi : ti) {
+                    if (!aTi.equals(e.data)) {
+                        aTi.setChecked(state);
                     }
                 }
             }
@@ -228,8 +228,8 @@ public class SuperTable<E extends SuperTableData<? extends Comparable>> implemen
         SWTAsync.assertGUI();
         boolean needRefresh = false;
         if (tableColors != null && tableColors.length != c.length) {
-            for (int x = 0; x < tableColors.length; x++) {
-                tableColors[x].dispose();
+            for (Color tableColor : tableColors) {
+                tableColor.dispose();
             }
             tableColors = null;
         }
@@ -355,10 +355,8 @@ public class SuperTable<E extends SuperTableData<? extends Comparable>> implemen
         synchronized (list) {
             int rows = list.size();
             int rowCount = 0;
-            for (int y = 0; y < rows; y++) {
+            for (E std : list) {
                 // E d = list.get(y);
-                E std = list.get(y);
-
                 if (std.isFiltered())
                     continue;
                 // TableItem ti = virtualTable.getItem(rowCount);
@@ -444,35 +442,32 @@ public class SuperTable<E extends SuperTableData<? extends Comparable>> implemen
     }
 
     protected Listener getVirtualDataListener() {
-        return new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                try {
-                    if (virtualList.size() > 0) {
-                        TableItem item = (TableItem) event.item;
-                        int index = table.indexOf(item);
-                        if (index != -1) {
-                            E d = virtualList.get(index);
-                            _setTableItems(d, item);
-                            if (oddEvenColors) {
-                                item.setBackground(tableColors[index % 2]);
-                            }
+        return event -> {
+            try {
+                if (virtualList.size() > 0) {
+                    TableItem item = (TableItem) event.item;
+                    int index = table.indexOf(item);
+                    if (index != -1) {
+                        E d = virtualList.get(index);
+                        _setTableItems(d, item);
+                        if (oddEvenColors) {
+                            item.setBackground(tableColors[index % 2]);
                         }
-
                     }
-                    // println("virtual Data " + index + " d=" + d.toString());
-                } catch (Throwable e) {
-                    tableError = true;
-                    println("virtual draw error " + e.getMessage());
-
-                    log.error(e);
 
                 }
-                /*
-                 * item.setText("Item " + index);
-				 * System.out.println(item.getText());
-				 */
+                // println("virtual Data " + index + " d=" + d.toString());
+            } catch (Throwable e) {
+                tableError = true;
+                println("virtual draw error " + e.getMessage());
+
+                log.error(e);
+
             }
+            /*
+             * item.setText("Item " + index);
+             * System.out.println(item.getText());
+             */
         };
     }
 
@@ -549,8 +544,7 @@ public class SuperTable<E extends SuperTableData<? extends Comparable>> implemen
         synchronized (list) {
             int rowCount = 0;
             int rows = list.size();
-            for (int y = 0; y < rows; y++) {
-                E d = list.get(y);
+            for (E d : list) {
                 if (d.isFiltered())
                     continue;
                 // TableItem ti = virtualTable.getItem(rowCount);
@@ -637,7 +631,7 @@ public class SuperTable<E extends SuperTableData<? extends Comparable>> implemen
         sortMenu = new Menu(table.getShell(), SWT.POP_UP);
         for (int x = 0; x < menuNames.length; x++) {
             MenuItem item = new MenuItem(sortMenu, SWT.PUSH);
-            Integer ID = new Integer(x);
+            Integer ID = x;
             item.setData(ID);
             item.setText(menuNames[x]);
             item.addSelectionListener(this);
@@ -716,7 +710,7 @@ public class SuperTable<E extends SuperTableData<? extends Comparable>> implemen
     }
 
     public void addKeyBoardListener() {
-        /** KeyPressed Event */
+        /* KeyPressed Event */
         table.addKeyListener(new KeyAdapter() {
             String text = "";
             long lastKey = 0;
@@ -820,7 +814,7 @@ public class SuperTable<E extends SuperTableData<? extends Comparable>> implemen
 
         // int ids[] = table.getSelectionIndices();
         // int len = ids.length;
-        ArrayList<E> out = new ArrayList<E>(ti.length);
+        ArrayList<E> out = new ArrayList<>(ti.length);
         for (TableItem i : ti) {
             E std = getTableData(i);
             assert (std != null);
@@ -976,8 +970,8 @@ public class SuperTable<E extends SuperTableData<? extends Comparable>> implemen
         table.setVisible(false);
         table.removeAll();
         TableColumn tc[] = table.getColumns();
-        for (int x = 0; x < tc.length; x++) {
-            tc[x].dispose();
+        for (TableColumn aTc : tc) {
+            aTc.dispose();
         }
         numColumns = i;
 

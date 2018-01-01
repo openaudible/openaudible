@@ -107,7 +107,7 @@ public class CreateRSS {
                         .setUrl(new URI("http://www.theTestPodcast.com/episodes/1")));
         final ItunesImage itemImage = new ItunesImage().setHref("http://www.theTestPodcast.com/images/episode1.png");
         item.setImage(itemImage);
-        channel.setItems(new ArrayList<Item>(Collections.singletonList(item)));
+        channel.setItems(new ArrayList<>(Collections.singletonList(item)));
 
         final Rss rss = new Rss();
         rss.setChannel(channel);

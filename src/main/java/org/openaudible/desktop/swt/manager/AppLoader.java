@@ -49,12 +49,12 @@ public class AppLoader implements Version {
         }
 
         // System.out.println("LM: syncloader.. "+Globals.WORKING_DIR);
-        /** Apply application name to Display */
+        /* Apply application name to Display */
         Display.setAppName(getAppName());
 
         display = new Display();
 
-        /** Shell should not be visible in the taskbar */
+        /* Shell should not be visible in the taskbar */
         invisibleShell = new Shell(display, SWT.NONE);
         new FontShop(display);
 
@@ -95,7 +95,7 @@ public class AppLoader implements Version {
             System.err.println("Bad path for home dir: " + hp.getAbsolutePath());
         }
         if (GUI.isMac()) {
-            /** On Mac, append "Library/Preferences" to the user.home directory */
+            /* On Mac, append "Library/Preferences" to the user.home directory */
             hp = new File(hp, "Library");
             if (!hp.isDirectory())
                 hp = new File(homePath);
@@ -130,10 +130,10 @@ public class AppLoader implements Version {
      * Write OS specific DWOrds into System properties
      */
     private static void setUpProperties() {
-        /** Mac: Disable the blue focus ring on most Widgets */
+        /* Mac: Disable the blue focus ring on most Widgets */
         if (GUI.isMac())
             System.setProperty("org.eclipse.swt.internal.carbon.noFocusRing", "true");
-        /** Mac: Use small fonts */
+        /* Mac: Use small fonts */
         if (GUI.isMac())
             System.setProperty("org.eclipse.swt.internal.carbon.smallFonts", "true");
     }
@@ -152,17 +152,17 @@ public class AppLoader implements Version {
             logger.info("Starting " + getAppName() + " build " +Version.appVersion + " for " + SWT.getPlatform() + " swt " + SWT.getVersion() + " jvm " + java);
             // checkNIC();
             GUI.userArgs = null;
-            /** Inform MainController about argument if it is valid */
+            /* Inform MainController about argument if it is valid */
             if (args.length > 0) {
                 if (isValidArgument(args[0]))
                     GUI.userArgs = args[0];
             }
 
-            /** Create the Working Directory if it does not yet exist */
+            /* Create the Working Directory if it does not yet exist */
             createWorkingDir(GUI.userArgs);
             // System.out.println("LM: WD="+Globals.WORKING_DIR);
 
-            /** Setup OS specific properties (DWords) */
+            /* Setup OS specific properties (DWords) */
             setUpProperties();
         } catch (Throwable e) {
             e.printStackTrace();

@@ -10,7 +10,7 @@ public enum BookMerge {
     instance;
 
     public HashSet<BookElement> merge(Book book, Book book2) {
-        HashSet<BookElement> list = new HashSet<BookElement>();
+        HashSet<BookElement> list = new HashSet<>();
 
         if (book.getProduct_id().equals(book2.getProduct_id())) {
             for (BookElement e : BookElement.values()) {

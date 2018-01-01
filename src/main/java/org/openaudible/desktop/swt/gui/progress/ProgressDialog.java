@@ -22,7 +22,7 @@ public class ProgressDialog extends ProgressMonitorDialog {
     // Display display;
     Throwable runException = null;
     boolean closed = false;
-    Object waitObj = new Object();
+    final Object waitObj = new Object();
     //
     //
     //	private static void doProgressTask(final Shell s, final Thread task)

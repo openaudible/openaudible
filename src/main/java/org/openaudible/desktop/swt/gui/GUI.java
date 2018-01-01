@@ -53,14 +53,13 @@ public abstract class GUI implements ITranslatable {
      * Instantiate a new GUI
      *
      * @param display     The display
-     * @param splashShell The shell holding the splash
      */
     public GUI(Display display) {
-        /** Init fields */
+        /* Init fields */
         GUI.display = display;
         GUI.gui = this;
         // displayThread = Thread.currentThread();
-        /** Startup process */
+        /* Startup process */
     }
 
     /**
@@ -168,11 +167,11 @@ public abstract class GUI implements ITranslatable {
      * Startup process of org.openaudible.desktop.Application (called once at start)
      */
     public void startUp() {
-        /** Language of App */
+        /* Language of App */
 
-        /** Init Icons */
+        /* Init Icons */
         PaintShop.initIcons(display);
-        /** Init all components */
+        /* Init all components */
         initComponents();
 
 
@@ -229,9 +228,9 @@ public abstract class GUI implements ITranslatable {
      * Update all controlls text with i18n
      */
     public void updateI18N() {
-        /** Update I18N in the menuStructure */
+        /* Update I18N in the menuStructure */
         appMenu.updateI18N();
-        /** Pack all */
+        /* Pack all */
         LayoutShop.packAll(shell);
     }
 
@@ -248,37 +247,21 @@ public abstract class GUI implements ITranslatable {
      */
     protected void initComponents() {
 
-        /** Build a new shell that holds the application */
+        /* Build a new shell that holds the application */
         shell = new Shell(display);
         shell.setLayout(LayoutShop.createGridLayout(1, 3, 2, 3));
         shell.setText(i18n.getTranslation("APP_NAME"));
-        /** On Mac do not set Shell Image since it will change the Dock Image */
+        /* On Mac do not set Shell Image since it will change the Dock Image */
         if (isWindows())
             shell.setImages(PaintShop.appIcon);
-        /** Save favorites before quit */
-        shell.addDisposeListener(new DisposeListener() {
-            public void widgetDisposed(DisposeEvent e) {
-                onDispose();
-            }
-        });
-        /** Listen for close event to set isClosing flag */
-        shell.addListener(SWT.Close, new Listener() {
-            public void handleEvent(Event event) {
-                onClose(event);
-            }
-        });
-        /** Listen for iconify event */
-        shell.addListener(SWT.Iconify, new Listener() {
-            public void handleEvent(Event event) {
-                onIconify();
-            }
-        });
-        /** Listen for deactivate event */
-        shell.addListener(SWT.Deactivate, new Listener() {
-            public void handleEvent(Event event) {
-                onDeactivate();
-            }
-        });
+        /* Save favorites before quit */
+        shell.addDisposeListener(e -> onDispose());
+        /* Listen for close event to set isClosing flag */
+        shell.addListener(SWT.Close, event -> onClose(event));
+        /* Listen for iconify event */
+        shell.addListener(SWT.Iconify, event -> onIconify());
+        /* Listen for deactivate event */
+        shell.addListener(SWT.Deactivate, event -> onDeactivate());
 
         if (GUI.isLinux())
         {
@@ -286,18 +269,18 @@ public abstract class GUI implements ITranslatable {
         }
 
         createEventManager();
-        /** Fake ToolTip */
+        /* Fake ToolTip */
         fakeToolTip = new FakeToolTip();
         appMenu = createAppMenu();
-        /** Sync controls with event manager */
+        /* Sync controls with event manager */
     }
 
     /**
      * Runs the event loop for App
      */
     private void runEventLoop() {
-        /**
-         * This is not very good style, but I will catch any exception, to log and display the message!
+        /*
+          This is not very good style, but I will catch any exception, to log and display the message!
          */
         for (; ; ) {
             try {
@@ -314,12 +297,12 @@ public abstract class GUI implements ITranslatable {
             if (isClosing)
                 break;
         }
-        /** Dispose display */
+        /* Dispose display */
         display.dispose();
     }
 
     public void logCritical(final String msg, final Throwable e) {
-        /** Log and display Message */
+        /* Log and display Message */
         logger.warn(msg, e);
         logger.warn(e);
 
@@ -354,16 +337,16 @@ public abstract class GUI implements ITranslatable {
      * @param forceExit If TRUE, force App to exit
      */
     public void onClose(Event event, boolean forceExit) {
-        /** Else: Exit application */
+        /* Else: Exit application */
         isClosing = true;
-        /** Save Shell bounds if not minimized to tray */
+        /* Save Shell bounds if not minimized to tray */
     }
 
     /**
      * Called when the Shell is Deactivated
      */
     void onDeactivate() {
-        /** Hide the FakeToolTip that could be open in this moment */
+        /* Hide the FakeToolTip that could be open in this moment */
         fakeToolTip.hide();
     }
 
@@ -371,7 +354,7 @@ public abstract class GUI implements ITranslatable {
      * Called when the Shell is disposed
      */
     protected void onDispose() {
-        /** Shutdown procedure */
+        /* Shutdown procedure */
         shutDown();
     }
 
@@ -397,7 +380,7 @@ public abstract class GUI implements ITranslatable {
         shell.open();
         shell.setVisible(true);
         applicationStarted();
-        /** Start the event loop to read and dispatch events */
+        /* Start the event loop to read and dispatch events */
         runEventLoop();
     }
 

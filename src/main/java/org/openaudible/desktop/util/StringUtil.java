@@ -310,14 +310,14 @@ public class StringUtil {
         StringBuffer result = new StringBuffer();
         char characters[] = input.toCharArray();
         int j = 0;
-        for (int i = 0; i < characters.length; i++) {
-            if (characters[i] == '\t') {
+        for (char character : characters) {
+            if (character == '\t') {
                 do {
                     result.append(" ");
                     j++;
                 } while (j % 8 != 0);
             } else {
-                result.append(characters[i]);
+                result.append(character);
                 j++;
             }
         }

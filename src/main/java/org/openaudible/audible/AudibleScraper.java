@@ -219,7 +219,7 @@ public class AudibleScraper {
     }
 
     ArrayList<Book> parseLibraryFragment(DomDocumentFragment fragment) throws IOException {
-        ArrayList<Book> list = new ArrayList<Book>();
+        ArrayList<Book> list = new ArrayList<>();
         ArrayList<String> colNames = new ArrayList<>();
 
         HtmlTable table = fragment.getFirstByXPath("//table");
@@ -637,7 +637,7 @@ public class AudibleScraper {
         if (page == null)
             home();
         LOG.info("Accessing audible library...");
-        HashSet<Book> results = new HashSet<Book>();
+        HashSet<Book> results = new HashSet<>();
         lib();
         return results;
     }
@@ -650,7 +650,7 @@ public class AudibleScraper {
         if (page == null)
             home();
         LOG.info("Accessing audible library...");
-        HashSet<Book> results = new HashSet<Book>();
+        HashSet<Book> results = new HashSet<>();
 
         getWebClient().setJavascriptEnabled(false);
 
@@ -848,7 +848,8 @@ public class AudibleScraper {
         if (asin != null && asin.length() > 0) {
             b.setAsin(asin);
         } else {
-            assert (b.getAsin().equals(asin));
+          // trouble ahead... ?
+
 
         }
 

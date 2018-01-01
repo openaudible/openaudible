@@ -68,9 +68,9 @@ public class WebPage {
             thumbImages.mkdirs();
 
         Gson gson = new Gson();
-        ArrayList<BookInfo> list = new ArrayList<BookInfo>();
+        ArrayList<BookInfo> list = new ArrayList<>();
 
-        ArrayList<Book> toCopy = new ArrayList<Book>();
+        ArrayList<Book> toCopy = new ArrayList<>();
         for (Book b : books) {
             File mp3 = Audible.instance.getMP3FileDest(b);
             if (!mp3.exists())
@@ -91,11 +91,11 @@ public class WebPage {
                 if (progress.wasCanceled())
                     throw new Exception("Canceled");
 
-                progress.setTask("Copying " + count + " of " + toCopy.size() + " book to web's MP3 directory");
                 File mp3 = Audible.instance.getMP3FileDest(b);
                 String fileName = getFileName(b); // human readable, without extension.
                 String mp3Name = fileName + ".mp3";
                 File mp3File = new File(mp3Dir, mp3Name);
+                progress.setTask("Copying book " + count + " of " + toCopy.size() + " to "+mp3File.getAbsolutePath());
 
                 CopyWithProgress.copyWithProgress(progress, mp3, mp3File);
 

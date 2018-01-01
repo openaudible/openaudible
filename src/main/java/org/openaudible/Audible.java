@@ -50,7 +50,7 @@ public class Audible implements IQueueListener<Book> {
     private AudibleScraper audibleScraper;
     private IProgressTask progress;
     private boolean autoConvertToMP3 = false;
-    private HashMap<String, Book> books = new HashMap<String, Book>(); // Book.id(), Book
+    private final HashMap<String, Book> books = new HashMap<>(); // Book.id(), Book
 
 
     public Audible() {
@@ -101,15 +101,11 @@ public class Audible implements IQueueListener<Book> {
     }
 
     public List<Book> getBooks() {
-        ArrayList<Book> list = new ArrayList<Book>();
+        ArrayList<Book> list = new ArrayList<>();
         synchronized (books) {
             list.addAll(books.values());
         }
-        Collections.sort(list, new Comparator<Book>() {
-            public int compare(Book b1, Book b2) {
-                return b1.getFullTitle().compareTo(b2.getFullTitle());
-            }
-        });
+        Collections.sort(list, (b1, b2) -> b1.getFullTitle().compareTo(b2.getFullTitle()));
         return list;
     }
 
@@ -242,9 +238,8 @@ public class Audible implements IQueueListener<Book> {
     }
 
     public HashSet<File> getFileSet(Directories dir) {
-        HashSet<File> set = new HashSet<File>();
-        for (File f : dir.getDir().listFiles())
-            set.add(f);
+        HashSet<File> set = new HashSet<>();
+        Collections.addAll(set, dir.getDir().listFiles());
         return set;
     }
 
@@ -359,7 +354,7 @@ public class Audible implements IQueueListener<Book> {
 
             return BookMerge.instance.merge(book, updatedBook);
         }
-        return new HashSet<BookElement>();
+        return new HashSet<>();
     }
 
     public Book findFirst(String args) {
@@ -383,7 +378,7 @@ public class Audible implements IQueueListener<Book> {
 
     // return list of books containing string in title, author, narrator,asis
     public ArrayList<Book> find(String string) {
-        ArrayList<Book> list = new ArrayList<Book>();
+        ArrayList<Book> list = new ArrayList<>();
 
         string = string.toLowerCase();
         for (Book b : getBooks()) {
@@ -494,7 +489,7 @@ public class Audible implements IQueueListener<Book> {
     }
 
     public ArrayList<Book> toDownload() {
-        ArrayList<Book> list = new ArrayList<Book>();
+        ArrayList<Book> list = new ArrayList<>();
         for (Book b : getBooks()) {
             if (!hasAAX(b) && !hasMP3(b))
                 list.add(b);
@@ -503,7 +498,7 @@ public class Audible implements IQueueListener<Book> {
     }
 
     public ArrayList<Book> toConvert() {
-        ArrayList<Book> list = new ArrayList<Book>();
+        ArrayList<Book> list = new ArrayList<>();
         for (Book b : getBooks()) {
             if (hasAAX(b) && !hasMP3(b))
                 list.add(b);
@@ -524,7 +519,7 @@ public class Audible implements IQueueListener<Book> {
 
     public void updateInfo() throws Exception {
         AudibleScraper s = getScraper();
-        ArrayList<Book> list = new ArrayList<Book>();
+        ArrayList<Book> list = new ArrayList<>();
 
         for (Book b : Audible.instance.getBooks()) {
             if (!s.hasInfo(b) && !b.getInfoLink().isEmpty()) {
@@ -710,12 +705,8 @@ public class Audible implements IQueueListener<Book> {
         needFileCacheUpdate = 0;
         try {
             save();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (Throwable e) {
+            LOG.error("error saving...",e);
         }
     }
 

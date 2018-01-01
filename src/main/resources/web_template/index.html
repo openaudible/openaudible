@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="books.js" type="text/javascript"></script>
+
+
+	<!-- JavaScript insert start -->
+
+	<script src="tidy/tidy-table.min.js"></script>
+	<script>
+	$(document).ready(function() {
+		
+		$('#container')
+			.TidyTable({
+				enableCheckbox: false,
+				enableMenu:     false,
+				reverseSortDir: false
+			},
+			{
+				columnTitles: ['Link', 'Info', 'Summary'],
+				columnValues: populateBooks(),   				
+				menuOptions: [
+				],
+				postProcess: {
+					table:  resizeSummary,
+					column: doColClick
+				}
+			});
+	});
+
+function trunc(str, len)
+{
+	if (str===undefined) return "";
+	return str.substring(0, len);	
+}
+
+
+function resizeSummary(table) {
+	table.find('th:nth-child(2), td:nth-child(2)').css('width','200');
+	
+
+	
+}
+
+function populateBooks() 
+{
+	
+    var arr = window.myBooks;
+    var i;
+    var out = [];
+
+    for(i = 0; i < arr.length; i++) 
+	{
+		var book = arr[i];
+		
+		var rating = book.rating_average = (book.rating_average !== undefined) ? book.rating_average:"";
+		var author = book.author = (book.author !== undefined) ? trunc(book.author, 20):"";
+		var narratedBy = book.narratedBy = (book.narratedBy !== undefined) ? trunc(book.narratedBy, 20):"";
+		var run_time = book.run_time = (book.run_time !== undefined) ? book.run_time:"";
+		var summary = trunc(book.description, 2048);
+
+
+		summary = summary.replace(/(?:\r\n|\r|\n)/g, '<p />');
+
+
+		
+		var thumb = "<img src='assets/download.jpg'>";
+		
+		if (book.image !== undefined)
+			thumb = "<img src='thumb/"+encodeURI(book.image)+"' width='200' height='200'>";		// Thumbnail size
+		
+		
+		var linkName = trunc(book.title, 90);
+		var mp3 = encodeURI(book.mp3);
+		var thumbLink = "<a href='mp3/"+mp3+"'>"+thumb+"</a> ";
+		// if (book.audible!==undefined) 	title += "<a href='http://audible.com"+book.audible+"' target='_new'><img src='assets/audible.png'></a> ";
+
+		var info = "<strong>"+trunc(book.title, 50)+"</strong><br>";
+	
+		if (author.length>0)
+			info += "by <i>"+author+"</i><br>";
+		if (narratedBy.length>0)
+			info += "Narrated by "+narratedBy+"<br>";
+		info += run_time;
+		info += " ";
+		info += trunc(book.rating_average, 99);
+	
+		var row = [thumbLink, info, summary];
+		out.push(row);
+    }
+ 	return out;
+ 
+}
+
+
+
+
+	// post-process DOM elements
+	function doTableClick(table) {
+		table.on('hover', function() {
+			// alert('doTableClick(table)');
+		});
+	}
+
+	function doColClick(col) 
+	{
+		col.on('click', function() {
+		//	alert('doColClick(value=' + $(this).text() + ')');
+		});
+	}
+
+
+	</script>
+
+	<link rel="stylesheet" type="text/css" href="tidy/tidy-table.min.css">
+	<link rel="stylesheet" type="text/css" href="books.css">
+	<title>A collection of audiobooks...</title>
+</head>
+<body>
+
+
+<div id="container"></div>
+
+</body>
+</html>

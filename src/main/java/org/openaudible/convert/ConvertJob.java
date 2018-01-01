@@ -22,7 +22,7 @@ public class ConvertJob implements IQueueJob, LineListener {
     final Book book;
     final File aax, mp3, image, temp;
     volatile boolean quit = false;
-    ArrayList<String> metaData = new ArrayList<String>();
+    ArrayList<String> metaData = new ArrayList<>();
     boolean nextMeta = false;
     long next = 0;
     long interval = 1000;
@@ -86,7 +86,7 @@ public class ConvertJob implements IQueueJob, LineListener {
     }
 
     public void createMP3() throws IOException, InterruptedException {
-        ArrayList<String> args = new ArrayList<String>();
+        ArrayList<String> args = new ArrayList<>();
         args.add(getExecutable());
 
         if (Audible.instance.getActivationBytes().isEmpty())

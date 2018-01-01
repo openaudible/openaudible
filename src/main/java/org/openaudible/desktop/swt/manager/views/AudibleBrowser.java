@@ -220,7 +220,7 @@ public class AudibleBrowser {
         new BrowserFunction(browser, "cookieCallback") {
             @Override
             public Object function(Object[] objects) {
-                ArrayList<Cookie> list = new ArrayList<Cookie>();
+                ArrayList<Cookie> list = new ArrayList<>();
                 String u = browser.getUrl();
                 if (u.contains("www.audible.com")) {
                     Object[] keyValuePairs = (Object[]) objects[0];

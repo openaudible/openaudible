@@ -18,7 +18,7 @@ public class BookNotifier extends EventNotifier<BookListener> implements BookLis
     private static BookNotifier instance = new BookNotifier();      // singleton.
     int c1; // some debugging.
     long time;
-    private ArrayList<Book> selected = new ArrayList<Book>();
+    private ArrayList<Book> selected = new ArrayList<>();
     volatile boolean enabled = true;
 
     private BookNotifier() {

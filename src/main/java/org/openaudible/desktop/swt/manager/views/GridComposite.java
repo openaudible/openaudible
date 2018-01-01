@@ -81,7 +81,7 @@ public class GridComposite extends Composite {
         button.setText(Translate.getInstance().buttonName(title));
         button.setFont(FontShop.dialogFont());
 
-        /** Apply layoutdata to button */
+        /* Apply layoutdata to button */
         setButtonLayoutData(button);
         button.addSelectionListener(action);
 
@@ -242,7 +242,7 @@ public class GridComposite extends Composite {
     }
 
     protected static void addSpace(Composite c) {
-        /** Fill with some spacer */
+        /* Fill with some spacer */
         LayoutShop.setDialogSpacer(c, 2, 1);
     }
 
@@ -257,14 +257,14 @@ public class GridComposite extends Composite {
      * @param data   The GridData to use
      */
     protected static void setButtonLayoutData(Button button, GridData data) {
-        /** GC to retrieve fontmetrics object */
+        /* GC to retrieve fontmetrics object */
         GC gc = new GC(button);
         FontMetrics fontMetrics = gc.getFontMetrics();
-        /** Apply appropiate gridata */
+        /* Apply appropiate gridata */
         int widthHint = Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_WIDTH);
         data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
         button.setLayoutData(data);
-        /** Dispose GC */
+        /* Dispose GC */
         gc.dispose();
     }
 
@@ -339,15 +339,12 @@ public class GridComposite extends Composite {
     // Use for Text objects..
     public static void disallowTabs(Control c) {
 
-        c.addTraverseListener(new TraverseListener() {
-            @Override
-            public void keyTraversed(TraverseEvent e) {
-                switch (e.detail) {
-                    case SWT.TRAVERSE_TAB_NEXT:
-                    case SWT.TRAVERSE_TAB_PREVIOUS:
-                        e.doit = true;
-                        break;
-                }
+        c.addTraverseListener(e -> {
+            switch (e.detail) {
+                case SWT.TRAVERSE_TAB_NEXT:
+                case SWT.TRAVERSE_TAB_PREVIOUS:
+                    e.doit = true;
+                    break;
             }
         });
     }
@@ -364,8 +361,7 @@ public class GridComposite extends Composite {
     }
 
     public static Object getRadioData(Button radioButtons[]) {
-        for (int x = 0; x < radioButtons.length; x++) {
-            Button b = radioButtons[x];
+        for (Button b : radioButtons) {
             if (b.getSelection())
                 return b.getData();
         }
@@ -388,8 +384,8 @@ public class GridComposite extends Composite {
                 return;
 
             Control children[] = ((Composite) c).getChildren();
-            for (int x = 0; x < children.length; x++) {
-                setEnabledRecursive(children[x], on, exclude);
+            for (Control aChildren : children) {
+                setEnabledRecursive(aChildren, on, exclude);
             }
         }
     }
@@ -397,8 +393,8 @@ public class GridComposite extends Composite {
     public static void setVisibleRecursive(Control c, boolean on) {
         if (c instanceof Composite) {
             Control children[] = ((Composite) c).getChildren();
-            for (int x = 0; x < children.length; x++) {
-                setEnabledRecursive(children[x], on);
+            for (Control aChildren : children) {
+                setEnabledRecursive(aChildren, on);
             }
         }
     }
@@ -510,7 +506,7 @@ public class GridComposite extends Composite {
         button.setText(Translate.getInstance().buttonName(title));
         button.setFont(FontShop.dialogFont());
 
-        /** Apply layoutdata to button */
+        /* Apply layoutdata to button */
         setButtonLayoutData(button);
         if (selectionListener != null)
             button.addSelectionListener(selectionListener);
@@ -567,7 +563,7 @@ public class GridComposite extends Composite {
     }
 
     public void addSpace() {
-        /** Fill with some spacer */
+        /* Fill with some spacer */
         LayoutShop.setDialogSpacer(this, 2, 1);
     }
 
@@ -698,7 +694,7 @@ public class GridComposite extends Composite {
         if (keyListener != null)
             t.addKeyListener(keyListener);
 
-        GridData gdt = LayoutDataShop.createGridData(0 | GridData.HORIZONTAL_ALIGN_FILL, 1);
+        GridData gdt = LayoutDataShop.createGridData( GridData.HORIZONTAL_ALIGN_FILL, 1);
         gdt.widthHint = 200;
         t.setLayoutData(gdt);
         WidgetShop.tweakTextWidget(t);

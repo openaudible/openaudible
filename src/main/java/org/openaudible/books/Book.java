@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 public class Book implements Comparable<Book>, Serializable {
-    private final HashMap<String, String> map = new HashMap<String, String>();
+    private final HashMap<String, String> map = new HashMap<>();
 
     public Book(HashMap m) {
         map.putAll(m);

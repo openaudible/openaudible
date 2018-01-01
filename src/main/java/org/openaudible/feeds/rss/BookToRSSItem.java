@@ -18,7 +18,7 @@ import java.util.Date;
 
 public class BookToRSSItem {
 
-    public static Item BookToRSSItem(Audible a, File mp3File, Book b) throws MalformedURLException, URISyntaxException {
+    public static Item create(Audible a, File mp3File, Book b) throws MalformedURLException, URISyntaxException {
         Date d = null;
 
         String dateString = b.getRelease_date();

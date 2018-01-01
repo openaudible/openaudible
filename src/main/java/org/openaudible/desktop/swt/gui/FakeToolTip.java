@@ -108,26 +108,26 @@ public class FakeToolTip {
             fakeToolTip.setVisible(false);
         } else {
 
-            /** If tooltip was not yet created */
+            /* If tooltip was not yet created */
             if (!WidgetShop.isset(fakeToolTip))
                 createFakeToolTip();
 
-            /** Apply Text */
+            /* Apply Text */
             fakeToolTipLabel.setText(tooltip);
 
-            /** Calculate and set preferred Size */
+            /* Calculate and set preferred Size */
             Point preferredSize = fakeToolTip.computeSize(SWT.DEFAULT,
                     SWT.DEFAULT);
             fakeToolTip.setSize(preferredSize.x, preferredSize.y);
             Point pt;
 
 
-            /** Assume that cursor height is 21 */
+            /* Assume that cursor height is 21 */
             int cursorHeight = 21;
 
-            /**
-             * Position the tooltip and ensure that it is not located off the
-             * screen
+            /*
+              Position the tooltip and ensure that it is not located off the
+              screen
              */
 
 
@@ -152,7 +152,7 @@ public class FakeToolTip {
             }
 
 
-            /** Apply new location and set fake tooltip visible */
+            /* Apply new location and set fake tooltip visible */
             fakeToolTip.setLocation(pt);
             fakeToolTip.setVisible(true);
         }

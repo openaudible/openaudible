@@ -164,9 +164,7 @@ public class BookInfoPanel extends GridComposite implements BookListener {
         File imgFile = Audible.instance.getImageFileDest(b);
         if (imgFile.exists()) {
             try {
-                FileInputStream fis = null;
-                try {
-                    fis = new FileInputStream(imgFile);
+                try (FileInputStream fis = new FileInputStream(imgFile)) {
                     Image i = new Image(Display.getCurrent(), fis);
 
                     int width = i.getBounds().width;
@@ -207,8 +205,6 @@ public class BookInfoPanel extends GridComposite implements BookListener {
                     i.dispose();
 
                     imageLabel.setImage(thumb);
-                } finally {
-                    fis.close();
                 }
             } catch (Throwable th) {
                 assert (false);

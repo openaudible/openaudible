@@ -529,7 +529,7 @@ public class AudibleGUI implements BookListener {
         try {
             File destDir = Directories.getDir(Directories.WEB);
 
-            ArrayList<Book> list = new ArrayList<Book>();
+            ArrayList<Book> list = new ArrayList<>();
             list.addAll(audible.getBooks());
             Collections.sort(list);
             // sort by purchase date.
@@ -638,7 +638,7 @@ public class AudibleGUI implements BookListener {
     // if search text is filled, return books that match.
     // otherwise, return all books (default)
     public List<Book> getDisplayedBooks() {
-        ArrayList<Book> displayed = new ArrayList<Book>();
+        ArrayList<Book> displayed = new ArrayList<>();
         if (textFilter.isEmpty())
             displayed.addAll(Audible.instance.getBooks());
         else {

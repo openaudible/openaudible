@@ -167,7 +167,7 @@ public class Application extends GUI {
     }
 
     public void createEventManager() {
-        /** Create the event manager */
+        /* Create the event manager */
         commandCenter = new CommandCenter(display, shell, this);
     }
 

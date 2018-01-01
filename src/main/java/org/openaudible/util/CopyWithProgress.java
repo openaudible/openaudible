@@ -32,14 +32,10 @@ public class CopyWithProgress {
     public static long copyWithProgress(final IProgressTask p, final File in, final File out) throws IOException {
         final String totalBytes = byteCountToString(in.length());
 
-        ByteReporter e = new ByteReporter() {
-
-            @Override
-            public void bytesCopied(long bytesRead) throws IOException {
-                p.setSubTask(byteCountToString(bytesRead) + " of " + totalBytes + " " + out.getName());
-                if (p.wasCanceled())
-                    throw new IOException("Canceled");
-            }
+        ByteReporter e = bytesRead -> {
+            p.setSubTask(byteCountToString(bytesRead) + " of " + totalBytes + " " + out.getName());
+            if (p.wasCanceled())
+                throw new IOException("Canceled");
         };
 
         FileInputStream fis = null;

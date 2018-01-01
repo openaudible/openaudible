@@ -32,8 +32,7 @@ public class HTMLUtil {
     public static Collection<Node> getChildren(DomNode h) {
         ArrayList<Node> list = new ArrayList<>();
         DomNodeList<DomNode> l = h.getChildNodes();
-        for (DomNode i : l)
-            list.add(i);
+        list.addAll(l);
 
         return list;
     }
@@ -57,11 +56,11 @@ public class HTMLUtil {
 
             if (cleanText) {
                 s = s.trim();
-                s = s.replaceAll("\n", " ");
-                s = s.replaceAll("\r", " ");
-                s = s.replaceAll("\t", " ");
+                s = s.replace("\n", " ");
+                s = s.replace("\r", " ");
+                s = s.replace("\t", " ");
                 while (s.contains("  "))
-                    s = s.replaceAll("  ", " ");
+                    s = s.replace("  ", " ");
             }
 
             return s;
@@ -111,7 +110,7 @@ public class HTMLUtil {
     }
 
     public static List<HtmlTable> getTables(DomNode page) {
-        ArrayList<HtmlTable> list = new ArrayList<HtmlTable>();
+        ArrayList<HtmlTable> list = new ArrayList<>();
         list.addAll((Collection<? extends HtmlTable>) page.getByXPath("//table"));
         return list;
     }

@@ -47,8 +47,8 @@ public class FontShop {
 /*
 
     */
-/**
-     * This utility class constructor is hidden
+/*
+      This utility class constructor is hidden
      *//*
 
     private FontShop() {
