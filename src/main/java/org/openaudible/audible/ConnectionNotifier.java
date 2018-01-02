@@ -24,9 +24,8 @@ public class ConnectionNotifier extends EventNotifier<ConnectionListener> implem
         }
     }
 
-    public boolean isConnected()
-    {
-        return getState()==State.Connected;
+    public boolean isConnected() {
+        return getState() == State.Connected;
     }
 
     public State getState() {

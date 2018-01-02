@@ -113,9 +113,11 @@ public class SimpleProcess {
     public class Results {
         public byte output[];
         public byte error[];
+
         public String getErrorString() {
             return new String(error);
         }
+
         public String getOutputString() {
             return new String(output);
         }

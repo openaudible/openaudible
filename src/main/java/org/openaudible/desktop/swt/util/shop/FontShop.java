@@ -133,7 +133,6 @@ public class FontShop {
     }
 
 
-
     private Font newDefaultFont(int id) {
         Display display = Display.getCurrent();
         int bump = 0;

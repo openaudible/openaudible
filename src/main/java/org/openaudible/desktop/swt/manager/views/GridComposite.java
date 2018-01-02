@@ -6,8 +6,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -694,7 +692,7 @@ public class GridComposite extends Composite {
         if (keyListener != null)
             t.addKeyListener(keyListener);
 
-        GridData gdt = LayoutDataShop.createGridData( GridData.HORIZONTAL_ALIGN_FILL, 1);
+        GridData gdt = LayoutDataShop.createGridData(GridData.HORIZONTAL_ALIGN_FILL, 1);
         gdt.widthHint = 200;
         t.setLayoutData(gdt);
         WidgetShop.tweakTextWidget(t);

@@ -24,7 +24,6 @@ import org.openaudible.util.queues.ThreadedQueue;
 import org.xml.sax.SAXException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
@@ -159,7 +158,7 @@ public class Audible implements IQueueListener<Book> {
         BookElement required[] = {BookElement.product_id, BookElement.fullTitle};
         for (BookElement e : required) {
             if (!b.has(e))
-                return "required:" +e+" missing from "+b;
+                return "required:" + e + " missing from " + b;
         }
         return "";
 
@@ -195,8 +194,7 @@ public class Audible implements IQueueListener<Book> {
                     takeBook(b);
                 }
             }
-        } finally
-        {
+        } finally {
             BookNotifier.getInstance().setEnabled(true);
             BookNotifier.getInstance().booksUpdated();
         }
@@ -449,28 +447,28 @@ public class Audible implements IQueueListener<Book> {
         return Directories.ART.getDir(b.getProduct_id() + ".jpg");
     }
 
-    // http://cds.audible.com/download?user_id=XXXXXX-yyyyQ&product_id=BK_ADBL_000870&codec=LC_64_22050_ster&awtype=AAX&cust_id=voPugT9UF9LMasoohuQb0ZOtJa0RUZKxSW-qFChFNz1hF6gWyW9IN-eGaigd6Q
-    // title, user_id,product_id,codec,awtype,cust_id
-
-    public void export() throws Exception {
-        FileOutputStream fos = new FileOutputStream("index.txt");
-        String sep = "\n";
+    // quick hack to export as text file.
+    // lots of room for improvement.
+    // Available as json file when exported as web page.
+    public void export(File f) throws IOException {
+        FileOutputStream fos = new FileOutputStream(f);
+        String sep = System.getProperty("line.separator");
         String tab = "\t";
-
-        BookElement items[] = {BookElement.fullTitle, BookElement.author, BookElement.narratedBy, BookElement.duration, BookElement.format, BookElement.rating_average, BookElement.rating_count,
-                BookElement.summary};
-
+        BookElement items[] = BookElement.values();
         String line = "";
         for (BookElement e : items)
-            line += e.name() + tab;
-
+            line += e.displayName() + tab;
         line += sep;
-        fos.write(line.getBytes());
 
+        fos.write(line.getBytes());
         for (Book b : getBooks()) {
             line = "";
-            for (BookElement e : items)
-                line += b.get(e).replace('\t', ' ') + tab;
+            for (BookElement e : items) {
+                String value = b.get(e);
+                value = value.replace(tab, " ");
+                value = value.replace(sep, " ");
+                line += value + tab;
+            }
             line += sep;
             fos.write(line.getBytes());
         }
@@ -706,7 +704,7 @@ public class Audible implements IQueueListener<Book> {
         try {
             save();
         } catch (Throwable e) {
-            LOG.error("error saving...",e);
+            LOG.error("error saving...", e);
         }
     }
 

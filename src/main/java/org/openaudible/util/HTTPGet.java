@@ -16,8 +16,7 @@ import java.io.IOException;
 public enum HTTPGet {
     instance;
 
-    public JsonObject getJSON(String url) throws IOException
-    {
+    public JsonObject getJSON(String url) throws IOException {
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             HttpGet httpget = new HttpGet(Version.versionLink);
             try (CloseableHttpResponse httpResponse = httpclient.execute(httpget)) {

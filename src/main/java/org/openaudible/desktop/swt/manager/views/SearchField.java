@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.openaudible.desktop.swt.manager.AudibleGUI;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
+
 // Small search text input field for filtering results based on string.
 public class SearchField extends GridComposite {
     Text text;

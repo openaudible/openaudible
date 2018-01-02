@@ -861,7 +861,7 @@ public class SuperTable<E extends SuperTableData<? extends Comparable>> implemen
     }
 
 	/*
-	 * NOT WORKING.. 
+     * NOT WORKING..
 	public void setSelectedList(Collection<?> list)
 	{
 		if (list.size() == 0)
@@ -1066,7 +1066,7 @@ public class SuperTable<E extends SuperTableData<? extends Comparable>> implemen
         } catch (Throwable t) {
             // got one report of an error somewhere in this function.
             // search bug reports for mccary@hotmail.com
-			/*
+            /*
 			 *
 			 * error_stacktrace=java.lang.ArrayIndexOutOfBoundsException: 4 at
 			 * org.eclipse.swt.widgets.Table._getItem(int) at

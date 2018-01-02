@@ -108,10 +108,9 @@ public class DownloadJob implements IQueueJob {
 
             tmp = new File(Directories.getTmpDir(), destFile.getName() + ".part");
 
-            if (tmp.exists())
-            {
+            if (tmp.exists()) {
                 boolean v = tmp.delete();
-                assert(v);
+                assert (v);
             }
 
             fos = new FileOutputStream(tmp);

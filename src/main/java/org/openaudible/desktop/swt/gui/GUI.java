@@ -3,11 +3,8 @@ package org.openaudible.desktop.swt.gui;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.openaudible.desktop.swt.i8n.ITranslatable;
 import org.openaudible.desktop.swt.i8n.Translate;
@@ -52,7 +49,7 @@ public abstract class GUI implements ITranslatable {
     /**
      * Instantiate a new GUI
      *
-     * @param display     The display
+     * @param display The display
      */
     public GUI(Display display) {
         /* Init fields */
@@ -100,9 +97,9 @@ public abstract class GUI implements ITranslatable {
      * @return boolean TRUE if platform is Mac
      */
     public static boolean isMac() {
-    	String platform = SWT.getPlatform();
-    	
-        return (platform.equalsIgnoreCase("carbon")||platform.equalsIgnoreCase("cocoa"));
+        String platform = SWT.getPlatform();
+
+        return (platform.equalsIgnoreCase("carbon") || platform.equalsIgnoreCase("cocoa"));
     }
 
     /**
@@ -263,8 +260,7 @@ public abstract class GUI implements ITranslatable {
         /* Listen for deactivate event */
         shell.addListener(SWT.Deactivate, event -> onDeactivate());
 
-        if (GUI.isLinux())
-        {
+        if (GUI.isLinux()) {
             System.setProperty("SWT_GTK3", "0");
         }
 

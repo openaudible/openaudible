@@ -1,17 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-<script src="books.js" type="text/javascript"></script>
-
+	<meta charset="UTF-8">
+	<script src="assets/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="assets/tidy-table.min.css">
+	<link rel="stylesheet" type="text/css" href="assets/books.css">
+	<script src="assets/tidy-table.min.js"></script>
+	<script src="books.js" type="text/javascript"></script>
 
 	<!-- JavaScript insert start -->
 
-	<script src="tidy/tidy-table.min.js"></script>
 	<script>
+	
 	$(document).ready(function() {
+		if (false)
+		{
+			$.ajax({
+			dataType: "json",
+			url: "books.json",
+			success: populateBooks
+			});
+		} else
+		{
+			populateBooks(window.myBooks);
+		}
 		
-		$('#container')
+	});
+
+	function renderTable(columnValues)
+	{
+	
+			$('#container')
 			.TidyTable({
 				enableCheckbox: false,
 				enableMenu:     false,
@@ -19,7 +38,7 @@
 			},
 			{
 				columnTitles: ['Link', 'Info', 'Summary'],
-				columnValues: populateBooks(),   				
+				columnValues: columnValues,   				
 				menuOptions: [
 				],
 				postProcess: {
@@ -27,8 +46,9 @@
 					column: doColClick
 				}
 			});
-	});
 
+	}
+	
 function trunc(str, len)
 {
 	if (str===undefined) return "";
@@ -38,15 +58,11 @@ function trunc(str, len)
 
 function resizeSummary(table) {
 	table.find('th:nth-child(2), td:nth-child(2)').css('width','200');
-	
-
-	
 }
 
-function populateBooks() 
+function populateBooks(arr) 
 {
 	
-    var arr = window.myBooks;
     var i;
     var out = [];
 
@@ -62,19 +78,16 @@ function populateBooks()
 
 
 		summary = summary.replace(/(?:\r\n|\r|\n)/g, '<p />');
-
-
 		
 		var thumb = "<img src='assets/download.jpg'>";
 		
 		if (book.image !== undefined)
-			thumb = "<img src='thumb/"+encodeURI(book.image)+"' width='200' height='200'>";		// Thumbnail size
+			thumb = "<img src='thumb/"+encodeURIComponent(book.image)+"' width='200' height='200'>";		// Thumbnail size
 		
 		
 		var linkName = trunc(book.title, 90);
-		var mp3 = encodeURI(book.mp3);
+		var mp3 = encodeURIComponent(book.mp3);
 		var thumbLink = "<a href='mp3/"+mp3+"'>"+thumb+"</a> ";
-		// if (book.audible!==undefined) 	title += "<a href='http://audible.com"+book.audible+"' target='_new'><img src='assets/audible.png'></a> ";
 
 		var info = "<strong>"+trunc(book.title, 50)+"</strong><br>";
 	
@@ -89,7 +102,9 @@ function populateBooks()
 		var row = [thumbLink, info, summary];
 		out.push(row);
     }
- 	return out;
+	
+	renderTable(out);
+ 	
  
 }
 
@@ -113,9 +128,7 @@ function populateBooks()
 
 	</script>
 
-	<link rel="stylesheet" type="text/css" href="tidy/tidy-table.min.css">
-	<link rel="stylesheet" type="text/css" href="books.css">
-	<title>A collection of audiobooks...</title>
+	<title>OpenAudible collection of audiobooks</title>
 </head>
 <body>
 
@@ -124,3 +137,4 @@ function populateBooks()
 
 </body>
 </html>
+

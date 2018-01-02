@@ -1,7 +1,6 @@
 package org.openaudible.desktop.swt.manager;
 
 import com.gargoylesoftware.htmlunit.util.Cookie;
-import com.google.gson.JsonObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
@@ -26,7 +25,6 @@ import org.openaudible.desktop.swt.gui.progress.ProgressTask;
 import org.openaudible.desktop.swt.manager.views.AudibleBrowser;
 import org.openaudible.desktop.swt.manager.views.StatusPanel;
 import org.openaudible.feeds.pagebuilder.WebPage;
-import org.openaudible.util.HTTPGet;
 import org.openaudible.util.Platform;
 import org.openaudible.util.queues.IQueueJob;
 import org.openaudible.util.queues.IQueueListener;
@@ -45,26 +43,9 @@ public class AudibleGUI implements BookListener {
     private static final Log LOG = LogFactory.getLog(AudibleGUI.class);
     public static AudibleGUI instance;
     AudibleAutomated audible;
-    // HashMap<Book, File> mp3Files = new HashMap<Book, File>(), aaxFiles = new HashMap<Book, File>();
     boolean hasFFMPEG = false;
     BookNotifier bookNotifier = BookNotifier.getInstance();
     boolean loggedIn = false;
-/*
-
-    void updateFileCache() {
-        aaxFiles.clear();
-        mp3Files.clear();
-        for (Book b : audible.getBooks()) {
-            File a = audible.getAAXFileDest(b);
-            File m = audible.getMP3FileDest(b);
-            if (a.exists())
-                aaxFiles.put(b, a);
-            if (m.exists())
-                mp3Files.put(b, a);
-        }
-
-    }
-*/
     int downloadCount, convertCount;
     String textFilter = "";
     AudibleBrowser browser = null;
@@ -80,15 +61,13 @@ public class AudibleGUI implements BookListener {
 
         try {
             String vers = FFMPEG.getVersion();
-
-            LOG.info("using "+vers);
+            LOG.info("using " + vers);
             hasFFMPEG = true;
         } catch (Exception th) {
             LOG.error("error finding ffmpeg", th);
             MessageBoxFactory.showError(null, "Warning, ffmpeg not found:" + th);
             hasFFMPEG = false;
         }
-
         return hasFFMPEG;
     }
 
@@ -112,7 +91,7 @@ public class AudibleGUI implements BookListener {
             // converting aax to mp3.
             audible.convertQueue.addListener(queueListener);
 
-            checkFFMPEG();
+            new Thread(() -> checkFFMPEG()).start();
 
             LogFactory.getFactory().setAttribute("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
         } catch (Throwable th) {
@@ -440,7 +419,7 @@ public class AudibleGUI implements BookListener {
                     out += " of " + (cq + cl);
                 return out;
             case Connected:
-                return ConnectionNotifier.getInstance().isConnected()? "Yes":"No";
+                return ConnectionNotifier.getInstance().isConnected() ? "Yes" : "No";
 
             default:
                 break;
@@ -475,7 +454,6 @@ public class AudibleGUI implements BookListener {
                 if (Platform.isWindows())
                     cmd = win;
                 // TODO: Support linux.
-                assert (cmd != null);
                 if (cmd != null) {
                     cmd += m.getAbsolutePath() + "\"";
                     System.err.println(cmd);
@@ -515,15 +493,6 @@ public class AudibleGUI implements BookListener {
         }
     }
 
-    public void exportCSV() {
-        try {
-            audible.export();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-    }
 
     public void exportWebPage() {
         try {
@@ -798,51 +767,6 @@ public class AudibleGUI implements BookListener {
 
     }
 
-    public String checkForUpdate(boolean verbose)
-    {
-        String msg = versionCheck();
-        if (!msg.isEmpty())
-        {
-            MessageBoxFactory.showGeneral(null, SWT.ICON_INFORMATION, "Update Check", msg);
-        } else
-        {
-            if (verbose)
-            {
-                String noUpdate = "No updates available";
-                MessageBoxFactory.showGeneral(null, SWT.ICON_INFORMATION, "Using latest version", noUpdate);
-            }
-
-        }
-        return msg;
-    }
-    // return "" if
-    public String versionCheck ()
-    {
-        String url = Version.versionLink;
-        url += "?";
-        url += "platform="+Platform.getPlatform().toString();
-        url += "&version="+Version.appVersion;
-        url += "&count="+audible.getBookCount();
-
-        try {
-            JsonObject obj = HTTPGet.instance.getJSON(url);
-            LOG.info(url+"->"+obj.toString());
-            if (!obj.has("version"))
-                throw new IOException("missing version field\n"+obj);
-            String curVers = obj.get("version").getAsString();
-            if (curVers.equals(Version.appVersion))
-            {
-                return "";
-            }
-            return "An update is available!\nYour version: "+Version.appVersion+"\nLatest Version:"+curVers;
-        }
-        catch(IOException e)
-        {
-            LOG.error("Error checking for latest version: "+e);
-            return "Error checking for latest version.\nError message: "+e.getMessage();
-        }
-    }
-
 
     class PageBuilderTask extends ProgressTask {
         final WebPage pageBuilder;
@@ -850,8 +774,7 @@ public class AudibleGUI implements BookListener {
 
         PageBuilderTask(File dest, final List<Book> list) {
             super("Creating Your Audiobook Web Page");
-            pageBuilder = new WebPage(dest);
-            pageBuilder.setProgress(this);
+            pageBuilder = new WebPage(dest, this);
             books = list;
         }
 

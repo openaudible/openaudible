@@ -15,6 +15,7 @@ import org.openaudible.desktop.swt.gui.GUI;
 import org.openaudible.desktop.swt.gui.MessageBoxFactory;
 import org.openaudible.desktop.swt.manager.Application;
 import org.openaudible.desktop.swt.manager.AudibleGUI;
+import org.openaudible.desktop.swt.manager.VersionCheck;
 import org.openaudible.desktop.swt.manager.views.Preferences;
 import org.openaudible.desktop.swt.util.shop.WidgetShop;
 
@@ -229,11 +230,11 @@ public class CommandCenter {
             case Play:
                 AudibleGUI.instance.play();
                 break;
-            case Export_CSV:
-                AudibleGUI.instance.exportCSV();
+            case Export_Book_List:
+                Application.instance.exportBookList();
                 break;
             case Check_For_Update:
-                AudibleGUI.instance.checkForUpdate(true);
+                VersionCheck.instance.checkForUpdate(true);
                 break;
             case Export_Web_Page:
                 AudibleGUI.instance.exportWebPage();
@@ -305,7 +306,7 @@ public class CommandCenter {
             case Export_Web_Page:
                 return Audible.instance.mp3Count() > 0;
 
-            case Export_CSV:
+            case Export_Book_List:
                 return AudibleGUI.instance.bookCount() > 0;
 
 

@@ -13,7 +13,7 @@ public enum Command {
     Show_MP3, Show_AAX,
     Play,
     Export_Web_Page,
-    Export_CSV,
+    Export_Book_List,
     Refresh_Book_Info,
     Connect,
     Quick_Refresh,
@@ -61,7 +61,7 @@ public enum Command {
                 break;
             case Export_Web_Page:
                 break;
-            case Export_CSV:
+            case Export_Book_List:
                 break;
             case Refresh_Book_Info:
                 break;
@@ -128,7 +128,7 @@ public enum Command {
                 break;
             case Export_Web_Page:
                 break;
-            case Export_CSV:
+            case Export_Book_List:
                 break;
             case Refresh_Book_Info:
                 break;

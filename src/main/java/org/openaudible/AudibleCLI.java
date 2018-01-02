@@ -177,15 +177,8 @@ public class AudibleCLI {
                 break;
 
             case export:
-                audible.export();
+                audible.export(new File("books.csv"));
                 break;
-            /*			case asText:
-                            println(audible.cleanString(audible.page.asText()));
-							break;
-						case asXML:
-							println(audible.cleanString(audible.page.asXml()));
-							break;
-			*/
             case library:
                 audible.updateLibrary(false);
                 break;

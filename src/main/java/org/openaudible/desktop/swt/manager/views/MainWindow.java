@@ -22,7 +22,7 @@ public class MainWindow extends GridComposite {
         createTop(main);
         createBottom(main);
         // top a little bigger than the bottom..
-        int weights[] = {60,40};
+        int weights[] = {60, 40};
         main.setWeights(weights);
 
     }

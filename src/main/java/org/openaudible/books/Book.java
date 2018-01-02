@@ -43,11 +43,10 @@ public class Book implements Comparable<Book>, Serializable {
         map.put(m.name(), v);
         boolean changed = !v.equals(old);
 
-        if (!old.isEmpty() && v.isEmpty())
-        {
+        if (!old.isEmpty() && v.isEmpty()) {
             // clearing required fields is bad..
-            assert(m!=BookElement.fullTitle);
-            assert(m!=BookElement.product_id);
+            assert (m != BookElement.fullTitle);
+            assert (m != BookElement.product_id);
         }
 
 

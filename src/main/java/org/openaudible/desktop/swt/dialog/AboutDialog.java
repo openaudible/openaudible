@@ -35,8 +35,7 @@ public class AboutDialog extends Window implements Version, Listener {
     }
 
 
-    protected int getShellStyle()
-    {
+    protected int getShellStyle() {
         return SWT.NONE;
     }
 
@@ -56,7 +55,7 @@ public class AboutDialog extends Window implements Version, Listener {
         c.newImage(splashImage);
         c.addListener(SWT.MouseDown, this);
         String compileDate = ManifestReader.instance.getBuildVersion(); // from jar's manifest, if available
-        String build = "Build " + Version.appVersion +" "+compileDate;
+        String build = "Build " + Version.appVersion + " " + compileDate;
         c.newLabel(Version.appName).setFont(FontShop.dialogFontBold());
         c.newLabel(build.trim()).setFont(FontShop.dialogFont());
 

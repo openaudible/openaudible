@@ -149,7 +149,7 @@ public class AppLoader implements Version {
 
 
             String java = System.getProperty("java.version");
-            logger.info("Starting " + getAppName() + " build " +Version.appVersion + " for " + SWT.getPlatform() + " swt " + SWT.getVersion() + " jvm " + java);
+            logger.info("Starting " + getAppName() + " build " + Version.appVersion + " for " + SWT.getPlatform() + " swt " + SWT.getVersion() + " jvm " + java);
             // checkNIC();
             GUI.userArgs = null;
             /* Inform MainController about argument if it is valid */

@@ -27,7 +27,7 @@ public class BookInfoPanel extends GridComposite implements BookListener {
 
     private static final Log LOG = LogFactory.getLog(BookInfoPanel.class);
 
-//    , BookElement.codec,  BookElement.genre, BookElement.asin, BookElement.infoLink, , BookElement.summary, BookElement.description,  BookElement.format, BookElement.rating_average, BookElement.rating_count, BookElement.genre, BookElement.shortTitle, BookElement.copyright, BookElement.user_id, BookElement.cust_id };
+    //    , BookElement.codec,  BookElement.genre, BookElement.asin, BookElement.infoLink, , BookElement.summary, BookElement.description,  BookElement.format, BookElement.rating_average, BookElement.rating_count, BookElement.genre, BookElement.shortTitle, BookElement.copyright, BookElement.user_id, BookElement.cust_id };
     final Image cover = PaintShop.getImage("images/cover.png");
     BookElement elems[] = {
             BookElement.fullTitle,

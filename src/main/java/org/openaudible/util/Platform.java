@@ -4,11 +4,10 @@ public enum Platform {
     mac, win, linux;
     private static Platform platform;
 
-    public static Platform getPlatform()
-    {
+    public static Platform getPlatform() {
         if (platform == null) {
             String os = System.getProperty("os.name");
-            if (os==null) os = "";
+            if (os == null) os = "";
             os = os.toLowerCase();
             if (os.contains("mac ")) platform = mac;
             else if (os.contains("windows ")) platform = win;

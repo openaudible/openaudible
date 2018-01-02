@@ -1,9 +1,11 @@
 package org.openaudible.desktop.swt.manager;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.openaudible.Audible;
 import org.openaudible.books.BookNotifier;
 import org.openaudible.desktop.swt.gui.GUI;
@@ -16,6 +18,8 @@ import org.openaudible.desktop.swt.manager.menu.CommandCenter;
 import org.openaudible.desktop.swt.manager.views.MainWindow;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
 
+import java.io.File;
+
 
 public class Application extends GUI {
     public static Application instance;
@@ -24,7 +28,7 @@ public class Application extends GUI {
 
     public Application(Display d) {
         super(d);
-        assert(instance==null);
+        assert (instance == null);
         instance = this;
     }
 
@@ -170,5 +174,28 @@ public class Application extends GUI {
         /* Create the event manager */
         commandCenter = new CommandCenter(display, shell, this);
     }
+
+
+    public void exportBookList() {
+        try {
+            String ext = "*.txt";
+            String name = "Text File";
+            FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+            dialog.setFilterNames(new String[]{name});
+            dialog.setFilterExtensions(new String[]{ext});
+            dialog.setFileName("books.txt");
+            String path = dialog.open();
+            if (path != null)
+                audibleGUI.audible.export(new File(path));
+        } catch (Exception e) {
+
+
+            MessageBoxFactory.showError(shell, e.getMessage());
+
+
+        }
+
+    }
+
 
 }

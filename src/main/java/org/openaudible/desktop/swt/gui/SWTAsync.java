@@ -23,36 +23,31 @@ public abstract class SWTAsync implements Runnable {
     private volatile boolean block = false;
 
 
-    static int interval_count=0;
-    static long interval_start=System.currentTimeMillis();
+    static int interval_count = 0;
+    static long interval_start = System.currentTimeMillis();
     final static long interval_max = 5000;
     final static long interval_warning = 50;        // 50 calls in 5 seconds is too often.
 
 
-
     public SWTAsync(String task) {
         this.taskName = task;
-        if (useStack)
-        {
+        if (useStack) {
             stack = new Exception();
             checkInterval();
         }
     }
 
-    private void checkInterval()
-    {
+    private void checkInterval() {
         interval_count++;
         long now = System.currentTimeMillis();
-        long delta = now-interval_start;
+        long delta = now - interval_start;
 
-        if (interval_count>interval_warning)
-        {
-            System.err.println("Warning: SWTAsync called "+interval_count+" in "+delta+" task="+taskName);
+        if (interval_count > interval_warning) {
+            System.err.println("Warning: SWTAsync called " + interval_count + " in " + delta + " task=" + taskName);
         }
-        if (delta>interval_max)
-        {
-            interval_count=0;
-            interval_start=now;
+        if (delta > interval_max) {
+            interval_count = 0;
+            interval_start = now;
         }
     }
 
@@ -213,6 +208,7 @@ public abstract class SWTAsync implements Runnable {
         long count = 0;
         String id;
         long results[] = new long[timeInts.length];
+
         TimeStats(String id) {
             this.id = id;
         }

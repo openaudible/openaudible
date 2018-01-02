@@ -3,7 +3,10 @@ package org.openaudible.desktop.swt.manager.views;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.openaudible.Audible;
 import org.openaudible.books.Book;
 import org.openaudible.books.BookListener;
@@ -93,7 +96,7 @@ public class BookTable extends EnumTable<Book, BookTableColumn> implements BookL
         SWTAsync.run(new SWTAsync("populate_table") {
             @Override
             public void task() {
-                    setItems(AudibleGUI.instance.getDisplayedBooks());
+                setItems(AudibleGUI.instance.getDisplayedBooks());
             }
         });
     }

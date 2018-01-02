@@ -21,7 +21,6 @@ public class PaintShop {
     private static Hashtable<String, Resource> resourceCache = new Hashtable<>();
 
 
-
     public static boolean contains(Image i) {
         boolean b = imageCache.contains(i);
         return b;
@@ -69,22 +68,22 @@ public class PaintShop {
         if (i == null) {
             try {
 
-                    Thread t = Thread.currentThread();
-                    Class mainClass = t.getClass();
-                    String fn = "/" + s;
+                Thread t = Thread.currentThread();
+                Class mainClass = t.getClass();
+                String fn = "/" + s;
 
-                    InputStream r = mainClass.getResourceAsStream(fn);
+                InputStream r = mainClass.getResourceAsStream(fn);
+                if (r == null) {
+                    r = mainClass.getResourceAsStream(s);
                     if (r == null) {
-                        r = mainClass.getResourceAsStream(s);
-                        if (r == null) {
-                            if (!warn)
-                                return null;
-
-                            logger.error("Missing image:" + fn);
+                        if (!warn)
                             return null;
-                        }
+
+                        logger.error("Missing image:" + fn);
+                        return null;
                     }
-                    i = new Image(GUI.display, r);
+                }
+                i = new Image(GUI.display, r);
 
             } catch (Exception e) {
                 GUI.report(e, s + " not found.");
@@ -118,8 +117,6 @@ public class PaintShop {
             }
         }
     }
-
-
 
 
     /**

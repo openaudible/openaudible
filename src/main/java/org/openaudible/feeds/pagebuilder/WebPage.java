@@ -1,6 +1,7 @@
 package org.openaudible.feeds.pagebuilder;
 
 import com.google.gson.Gson;
+import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.util.IO;
 import org.openaudible.Audible;
 import org.openaudible.BookToFilenameStrategy;
@@ -15,16 +16,20 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class WebPage {
     final File webDir;
-    IProgressTask progress;
-    int thumbSize = 200; // If changed, need to change index.html
+    final IProgressTask progress;   // required
+    int thumbSize = 200; // If changed, need to change html
+    final static String indexName = "books.html";
 
-    public WebPage(File dir) {
+    public WebPage(File dir, IProgressTask t) {
         webDir = dir;
+        progress = t;
+        assert (t != null);
     }
 
     BookInfo toBookInfo(Book b) {
@@ -43,15 +48,14 @@ public class WebPage {
     }
 
     public void subtask(Book b, String s) throws Exception {
-        if (progress != null) {
-            String n = b.getShortTitle();
-            if (n.length() > 32)
-                n = n.substring(0, 28) + "...";
-            progress.setSubTask(s + " " + n);
-            if (progress.wasCanceled())
-                throw new Exception("User canceled");
 
-        }
+        String n = b.getShortTitle();
+        if (n.length() > 32)
+            n = n.substring(0, 28) + "...";
+        progress.setSubTask(s + " " + n);
+        if (progress.wasCanceled())
+            throw new Exception("User canceled");
+
     }
 
     public void buildPage(List<Book> books) throws Exception {
@@ -66,6 +70,7 @@ public class WebPage {
             coverImages.mkdirs();
         if (!thumbImages.exists())
             thumbImages.mkdirs();
+
 
         Gson gson = new Gson();
         ArrayList<BookInfo> list = new ArrayList<>();
@@ -84,8 +89,7 @@ public class WebPage {
             }
         }
         if (toCopy.size() > 0) {
-            if (progress != null)
-                progress.setTask("Copying MP3s to Web Page Directory", "");
+            progress.setTask("Copying MP3s to Web Page Directory", "");
             int count = 1;
             for (Book b : toCopy) {
                 if (progress.wasCanceled())
@@ -95,7 +99,7 @@ public class WebPage {
                 String fileName = getFileName(b); // human readable, without extension.
                 String mp3Name = fileName + ".mp3";
                 File mp3File = new File(mp3Dir, mp3Name);
-                progress.setTask("Copying book " + count + " of " + toCopy.size() + " to "+mp3File.getAbsolutePath());
+                progress.setTask("Copying book " + count + " of " + toCopy.size() + " to " + mp3File.getAbsolutePath());
 
                 CopyWithProgress.copyWithProgress(progress, mp3, mp3File);
 
@@ -104,9 +108,9 @@ public class WebPage {
 
         }
 
-        if (progress != null) {
-            progress.setTask("Creating Book Web Page", "");
-        }
+
+        progress.setTask("Creating Book Web Page", "");
+
 
         for (Book b : books) {
             File mp3 = Audible.instance.getMP3FileDest(b);
@@ -150,17 +154,17 @@ public class WebPage {
 
         }
 
-        if (progress != null) {
-            if (progress.wasCanceled())
-                throw new Exception("User canceled");
-            progress.setTask(null, "Exporting web data");
-        }
+        if (progress.wasCanceled())
+            throw new Exception("User canceled");
+        progress.setTask(null, "Exporting web data");
+
 
         String json = gson.toJson(list);
         FileWriter writer = null;
 
+
         try {
-            writer = new FileWriter(new File(webDir, "index.json"));
+            writer = new FileWriter(new File(webDir, "books.json"));
             writer.write(json);
             writer.close();
 
@@ -173,6 +177,55 @@ public class WebPage {
                 writer.close();
         }
 
+
+        // add basic html pages..
+        addIndex();
+
+
+    }
+
+
+    // this is a hack because I don't know how to write a resource directory to disk.
+    // see ResourceList.java to see if that would work.
+    private void addIndex() throws IOException {
+        String assets[] = {
+                "jquery.min.js",
+                "no-cover.png",
+                "audible.png",
+                "arrow_desc.gif",
+                "arrow_asc.gif",
+                "tidy-table.min.css",
+                "books.css",
+                "download.jpg",
+                "tidy-table.min.js"};
+        File assetsDir = new File(webDir, "assets");
+        if (!assetsDir.exists()) {
+            boolean ok = assetsDir.mkdir();
+            if (!ok) throw new IOException("err");
+        }
+
+        File f = new File(webDir, indexName);
+        copyWebResource(indexName, f);
+
+        for (String a : assets) {
+            f = new File(assetsDir, a);
+            copyWebResource("assets/" + a, f);
+
+        }
+
+    }
+
+    private void copyWebResource(String s, File f) throws IOException {
+        InputStream is = null;
+        try {
+            is = this.getClass().getResourceAsStream("/web_template/" + s);
+            assert (is != null);   //
+            if (is != null)
+                FileUtils.copyToFile(is, f);
+        } finally {
+            if (is != null)
+                is.close();
+        }
     }
 
     private String getFileName(Book b) {
@@ -186,8 +239,6 @@ public class WebPage {
         ImageIO.write(img, "jpg", destFile);
     }
 
-    public void setProgress(IProgressTask progressTask) {
-        progress = progressTask;
-    }
 
 }
+
