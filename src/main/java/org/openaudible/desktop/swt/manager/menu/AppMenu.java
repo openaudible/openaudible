@@ -179,8 +179,8 @@ public class AppMenu implements ITranslatable, SelectionListener {
 
         if (!isMac) {
             newSeparator(fileMenu);
-            MenuItem exit = newMItem(fileMenu, Command.Quit);
         }
+        MenuItem exit = newMItem(fileMenu, Command.Quit);
 
         editMenu = newMenu("Edit");
         newMItem(editMenu, Command.Cut);
@@ -192,9 +192,6 @@ public class AppMenu implements ITranslatable, SelectionListener {
 
         controlMenu = newMenu("Controls");
         for (Command c : appCommands) {
-            if (isMac && c == Command.About)
-                continue;
-
             newMItem(controlMenu, c);
         }
 
