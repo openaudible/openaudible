@@ -670,27 +670,6 @@ public class AudibleGUI implements BookListener {
 
     }
 
-    public void redeemGiftCode() {
-        String e = ""; // get from desktop, example: "XXXXXXXXXXXXX" or "XXXXXXXXXXXXX, YYYYYYYYYYYYY"
-        try {
-            if (e.length() > 0) {
-                if (e.contains(",")) {
-                    for (String s : e.split(","))
-                        audible.redeemGiftCode(s.trim());
-
-                } else {
-                    audible.redeemGiftCode(e.trim());
-
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            MessageBoxFactory.showError(null, "Error redeeming gift code!\n" + ex.getMessage());
-        }
-        // TODO Auto-generated method stub
-
-    }
-
     public void browse() {
         SWTAsync.run(new SWTAsync("browse") {
             @Override

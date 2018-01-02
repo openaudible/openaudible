@@ -23,11 +23,10 @@ public enum Command {
     Convert,
     Download_All,
     Convert_All,
-    Redeem,
     Browser,
     Fetch_Decryption_Key,
     Check_For_Update,
-    Cookies;
+    Cookies, AppWebPage;
 
 
     public char getKeyEquiv() {
@@ -81,8 +80,6 @@ public enum Command {
             case Download_All:
                 break;
             case Convert_All:
-                break;
-            case Redeem:
                 break;
             case Browser:
                 cmd = 'B';
@@ -145,8 +142,6 @@ public enum Command {
             case Download_All:
                 break;
             case Convert_All:
-                break;
-            case Redeem:
                 break;
             case Browser:
                 break;

@@ -696,8 +696,8 @@ public class EnumTable<E extends Object, F extends Enum> implements SelectionLis
         table.addKeyListener(new KeyListener() {
             @Override
             public void keyPressed(KeyEvent e) {
-                int m = e.stateMask | SWT.CTRL;
-                boolean ctlDown = (m != 0);
+                int m = e.stateMask & SWT.CTRL;
+                boolean ctlDown = (m == SWT.CTRL);
                 if (e.keyCode == 97 && ctlDown) {
                     selectAll();
                 }

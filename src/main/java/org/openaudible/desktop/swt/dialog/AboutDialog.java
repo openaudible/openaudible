@@ -55,9 +55,12 @@ public class AboutDialog extends Window implements Version, Listener {
         c.newImage(splashImage);
         c.addListener(SWT.MouseDown, this);
         String compileDate = ManifestReader.instance.getBuildVersion(); // from jar's manifest, if available
-        String build = "Build " + Version.appVersion + " " + compileDate;
+        String build = "Build:  " + Version.appName+" " + Version.appVersion;
+
         // c.newLabel(Version.appName).setFont(FontShop.dialogFontBold());
         c.newLabel(build.trim()).setFont(FontShop.dialogFont());
+        if (!compileDate.isEmpty())
+            c.newLabel("Released: "+ compileDate.trim()).setFont(FontShop.dialogFont());
 
         if (false) {
             Link link = new Link(c, SWT.NONE);

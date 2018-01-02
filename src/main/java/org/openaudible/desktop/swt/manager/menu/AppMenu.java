@@ -20,7 +20,6 @@ public class AppMenu implements ITranslatable, SelectionListener {
     public static final int kNoEquiv = 0;
     public static AppMenu instance;
     private final CommandCenter commandCenter;
-    private boolean languageChange;
     private final Application app;
     private final Shell shell;
     private final boolean isMac;
@@ -28,17 +27,16 @@ public class AppMenu implements ITranslatable, SelectionListener {
     private Menu fileMenu;
     private Menu editMenu;
     private Menu controlMenu;
+    private Menu aboutMenu;
     private final Command[] actionCommands = {Command.ViewInAudible, Command.Show_MP3, Command.Play, Command.Download, Command.Convert, Command.Refresh_Book_Info};
     private final Command[] appCommands = {Command.Connect, Command.Quick_Refresh, Command.Rescan_Library, Command.Download_All, Command.Convert_All, Command.Fetch_Decryption_Key,
-            Command.Browser, Command.Check_For_Update, Command.About};
-    Menu debugMenu = null;
+            Command.Browser};
+
+    private final Command[] aboutCommands = {Command.AppWebPage, Command.Check_For_Update, Command.About};
+
     private final ArrayList<MenuItem> menuItems = new ArrayList<>();
-    boolean showUnimplemented = true;
     private Menu actionMenu;
 
-    /**
-     * Instantiate a new Menu.
-     */
     public AppMenu(Application app, Shell shell, CommandCenter commandCenter) {
         this.app = app;
         this.shell = shell;
@@ -48,13 +46,6 @@ public class AppMenu implements ITranslatable, SelectionListener {
         instance = this;
     }
 
-    public AppMenu(Shell shell) {
-        this(Application.instance, shell, Application.instance.commandCenter);
-    }
-
-    public Menu getActionMenu() {
-        return actionMenu;
-    }
 
     private MenuItem getItem(Menu m, Command cmd) {
         if (m != null) {
@@ -71,7 +62,6 @@ public class AppMenu implements ITranslatable, SelectionListener {
         }
         Application.report("getItem error " + cmd + " for " + m);
         return null;
-        // return menuTable.get(new Integer(id));
     }
 
     private MenuItem newSeparator(Menu parent) {
@@ -83,6 +73,7 @@ public class AppMenu implements ITranslatable, SelectionListener {
     }
 
 
+    // Mac uses a system menu for 3 items. Implement these differently.
     private MenuItem installSystemMenu(final Command cmd) {
         if (isMac) {
             int id = 0;
@@ -163,9 +154,7 @@ public class AppMenu implements ITranslatable, SelectionListener {
 
     private Menu newMenu(int style) {
         final Menu m = new Menu(shell, style);
-
         m.addListener(SWT.Show, event -> updateMenus());
-
         return m;
     }
 
@@ -173,14 +162,13 @@ public class AppMenu implements ITranslatable, SelectionListener {
         mbar = new Menu(shell, SWT.BAR);
 
         fileMenu = newMenu("File");
-
         newMItem(fileMenu, Command.Export_Web_Page);
         newMItem(fileMenu, Command.Export_Book_List);
-
         if (!isMac) {
             newSeparator(fileMenu);
         }
-        MenuItem exit = newMItem(fileMenu, Command.Quit);
+        newMItem(fileMenu, Command.Quit);
+
 
         editMenu = newMenu("Edit");
         newMItem(editMenu, Command.Cut);
@@ -198,6 +186,11 @@ public class AppMenu implements ITranslatable, SelectionListener {
         actionMenu = newMenu("Actions");
         for (Command c : actionCommands) {
             newMItem(actionMenu, c);
+        }
+
+        aboutMenu = newMenu("Help");
+        for (Command c : aboutCommands) {
+            newMItem(aboutMenu, c);
         }
 
         shell.setMenuBar(mbar);
@@ -282,19 +275,11 @@ public class AppMenu implements ITranslatable, SelectionListener {
         }
     }
 
-
-    /**
-     * Update all controlls text with i18n
-     */
     public void updateI18N() {
-        languageChange = true;
-		/* Update accelerators */
-		/* Update the mnemonics */
         initMnemonics();
     }
 
 
-    // boolean useSleak = false;
     public void widgetSelected(SelectionEvent selectionevent) {
         Object obj = selectionevent.getSource();
         if (obj instanceof MenuItem) {
@@ -317,9 +302,7 @@ public class AppMenu implements ITranslatable, SelectionListener {
 
     private void registerMenuItem(final MenuItem mi) {
         menuItems.add(mi);
-
         mi.addListener(SWT.Dispose, event -> menuItems.remove(mi));
-
     }
 
     public Menu getBookTableMenu() {

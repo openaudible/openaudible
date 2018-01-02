@@ -20,7 +20,7 @@
         <main.class>org.openaudible.desktop.Application</main.class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <timestamp>${maven.build.timestamp}</timestamp>
-        <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+        <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
     </properties>
 
 
@@ -117,7 +117,7 @@
                             <Main-Class>${main.class}</Main-Class>
                             <Application-Name>OpenAudible</Application-Name>
                             <Build-Date>${maven.build.timestamp}</Build-Date>
-                            <Built-By>Emos</Built-By>
+                            <Built-By>OpenAudible Group</Built-By>
                         </manifestEntries>
                     </archive>
                 </configuration>

@@ -15,6 +15,7 @@ import org.openaudible.desktop.swt.gui.GUI;
 import org.openaudible.desktop.swt.gui.MessageBoxFactory;
 import org.openaudible.desktop.swt.manager.Application;
 import org.openaudible.desktop.swt.manager.AudibleGUI;
+import org.openaudible.desktop.swt.manager.Version;
 import org.openaudible.desktop.swt.manager.VersionCheck;
 import org.openaudible.desktop.swt.manager.views.Preferences;
 import org.openaudible.desktop.swt.util.shop.WidgetShop;
@@ -200,9 +201,6 @@ public class CommandCenter {
             case Convert:
                 AudibleGUI.instance.convertSelected();
                 break;
-            case Redeem:
-                AudibleGUI.instance.redeemGiftCode();
-                break;
 
             case Rescan_Library:
                 AudibleGUI.instance.refreshLibrary(false);
@@ -242,6 +240,10 @@ public class CommandCenter {
             case Refresh_Book_Info:
                 AudibleGUI.instance.refreshBookInfo();
                 break;
+            case AppWebPage:
+                AudibleGUI.instance.browse(Version.appLink);
+                break;
+
             case ParseAAX:
                 AudibleGUI.instance.parseAAX();
                 break;
@@ -321,13 +323,12 @@ public class CommandCenter {
             case Convert_All:
                 return AudibleGUI.instance.canConvertAll();
 
-            case Redeem:
-                break;
             case Preferences:
             case Quit:
             case About:
             case Browser:
             case Cookies:
+                case AppWebPage:
                 return true;
 
             case Copy:
