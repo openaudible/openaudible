@@ -2,15 +2,27 @@
 
 A desktop application for downloading and managing your audible.com content.
 
-## Getting Started
+## Download Installer
+A binary installer for Windows, Mac and Linux is to be available, generated with install4j.
+* [OpenAudible_macos_0_9.dmg](https://github.com/openaudible/openaudible/releases/download/v0.9/OpenAudible_macos_0_9.dmg)
+* [OpenAudible_windows-x64_0_9.exe](https://github.com/openaudible/openaudible/releases/download/v0.9/OpenAudible_windows-x64_0_9.exe)
+* [OpenAudible_unix_0_9.sh](https://github.com/openaudible/openaudible/releases/download/v0.9/OpenAudible_unix_0_9.sh)
 
-Import as a standard java Maven project.
-You'll need a copy of ffmpeg-- I put a copy in the root directory but can be anywhere if available in your system's PATH.
+## Features
+* Import audible books from your account
+* Convert to mp3 with all tags
+* Display all your books in searchable
+* Export web page/javascript file with all your books
+
+## Screenshot
+![Windows Screenshot](https://openaudible.github.io/images/open_audible_win.png)
+Windows User Interface
+
+## Building 
+OpenAudible is a java application that uses Maven for building. 
 
 ### Prerequisites
 Java 8, Maven, and git. Windows, Mac or Linux Desktop.
-
-## Building 
 
 Clone the [git repo](https://github.com/openaudible/openaudible)
 
@@ -72,28 +84,14 @@ Enter that into the VM Arguments on your debugger/run dialog if using an IDE.
 
 You should see the user interface. You may see an error, or a warning about where you can go to preferences and enter your audible account details.
 
-Open the Preferences from the Edit Menu.
-Enter your audible user name (email) and password.
-Before logging in with the application, go to the Controls: Browser menu and log into your audible account.
-This is only required if logging in fails or if the browser cookies expire.
+Open the Preferences from the Edit Menu. <br />
+Enter your audible user name (email) and password. <br />
+Before logging in with the application, go to the Controls: Browser menu and log into your audible account. <br />
+This is only required if logging in fails or if the browser cookies expire. <br />
 
 The application will use cookies to expedite logging in-- and bypassing some of the "are you a human" checks.
 
 Errors are logged to an "error.log" file, usually written out to the application directory.
-
-## Installer
-A binary installer for Windows, Mac and Linux is to be available, generated with install4j.
-
-
-## Screenshot
-![Windows Screenshot](https://openaudible.github.io/images/open_audible_win.png)
-Windows User Interface
-
-## Features
-* Import audible books from your account
-* Convert to mp3 with all tags
-* Display all your books in searchable
-* Export web page/javascript file with all your books
 
 ## Built With
 
