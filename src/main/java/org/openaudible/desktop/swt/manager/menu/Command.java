@@ -101,7 +101,7 @@ public enum Command {
         switch (this) {
 
             case Preferences:
-                file = "prefs16.png";
+                file = "cog.png";
                 break;
             case Quit:
                 break;
@@ -110,13 +110,11 @@ public enum Command {
                 break;
             case Copy:
                 file = "copy.gif";
-
                 break;
             case Paste:
                 file = "paste.gif";
                 break;
             case About:
-                file = "16x16.png";
                 break;
             case ViewInAudible:
                 break;

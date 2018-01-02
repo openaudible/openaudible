@@ -20,7 +20,7 @@ import org.openaudible.util.ManifestReader;
  * Class displays a splash screen with info
  */
 public class AboutDialog extends Window implements Version, Listener {
-    final static String splashname = "48x48.png";
+    final static String splashname = "images/cover.png";
     Color bgColor = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
     Image splashImage = null;
 
@@ -56,18 +56,24 @@ public class AboutDialog extends Window implements Version, Listener {
         c.addListener(SWT.MouseDown, this);
         String compileDate = ManifestReader.instance.getBuildVersion(); // from jar's manifest, if available
         String build = "Build " + Version.appVersion + " " + compileDate;
-        c.newLabel(Version.appName).setFont(FontShop.dialogFontBold());
+        // c.newLabel(Version.appName).setFont(FontShop.dialogFontBold());
         c.newLabel(build.trim()).setFont(FontShop.dialogFont());
 
-        Link link = new Link(c, SWT.NONE);
-        link.setText(Version.appLink);
-        link.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent event) {
-                String u = event.text;
-                System.out.println(u);
-            }
-        });
+        if (false) {
+            Link link = new Link(c, SWT.NONE);
+            link.setText(Version.appLink);
+            link.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent event) {
+                    String u = event.text;
+                    System.out.println(u);
+                }
+            });
+        }
+        c.newLabel("");
+        c.newLabel("An open source project").setFont(FontShop.dialogFont());
+        c.newLabel("github.com/openaudible").setFont(FontShop.dialogFont());
+
         c.newLabel("");
         c.newLabel("Not affiliated with audible.com").setFont(FontShop.dialogFont());
         return null;
