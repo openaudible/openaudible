@@ -4,9 +4,9 @@ A desktop application for downloading and managing your audible.com content.
 
 ## Download Installer
 A binary installer for Windows, Mac and Linux is to be available, generated with install4j.
-* [OpenAudible_macos_0_9.dmg](https://github.com/openaudible/openaudible/releases/download/v0.9/OpenAudible_macos_0_9.dmg)
-* [OpenAudible_windows-x64_0_9.exe](https://github.com/openaudible/openaudible/releases/download/v0.9/OpenAudible_windows-x64_0_9.exe)
-* [OpenAudible_unix_0_9.sh](https://github.com/openaudible/openaudible/releases/download/v0.9/OpenAudible_unix_0_9.sh)
+* **Mac OS**    [OpenAudible_macos.dmg](http://openaudible.org/OpenAudible_macos.dmg)
+* **Win 64**    [OpenAudible_windows-x64.exe](http://openaudible.org/OpenAudible_windows-x64.exe)
+* **Linux**     [OpenAudible_unix.sh](http://openaudible.org/OpenAudible_unix.sh)
 
 ## Features
 * Import audible books from your account
@@ -15,11 +15,11 @@ A binary installer for Windows, Mac and Linux is to be available, generated with
 * Export web page/javascript file with all your books
 
 ## Screenshot
-![Windows Screenshot](https://openaudible.github.io/images/open_audible_win.png)
+![Windows Screenshot](http://openaudible.org/images/open_audible_win.png)
 Windows User Interface
 
-## Building 
-OpenAudible is a java application that uses Maven for building. 
+## Building
+OpenAudible is a java application that uses Maven for building.
 
 ### Prerequisites
 Java 8, Maven, and git. Windows, Mac or Linux Desktop.
@@ -107,7 +107,6 @@ This is a work in progress. It needs testing and bug reporting for all platforms
 * The UI needs cleaning up, especially for Linux.
 * Improved "first time setup" and connection needs major improvement
 * Support for multiple audible accounts would be nice
-* Create Web page at [openaudible.github.io](https://openaudible.github.io/) - for releases and information
 
 Please feel free to submit pull requests.
 

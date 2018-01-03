@@ -62,20 +62,9 @@ public class AboutDialog extends Window implements Version, Listener {
         if (!compileDate.isEmpty())
             c.newLabel("Released: "+ compileDate.trim()).setFont(FontShop.dialogFont());
 
-        if (false) {
-            Link link = new Link(c, SWT.NONE);
-            link.setText(Version.appLink);
-            link.addSelectionListener(new SelectionAdapter() {
-                @Override
-                public void widgetSelected(SelectionEvent event) {
-                    String u = event.text;
-                    System.out.println(u);
-                }
-            });
-        }
         c.newLabel("");
         c.newLabel("An open source project").setFont(FontShop.dialogFont());
-        c.newLabel("github.com/openaudible").setFont(FontShop.dialogFont());
+        c.newLabel(Version.appLink).setFont(FontShop.dialogFont());
 
         c.newLabel("");
         c.newLabel("Not affiliated with audible.com").setFont(FontShop.dialogFont());
