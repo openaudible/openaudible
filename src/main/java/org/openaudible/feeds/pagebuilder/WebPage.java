@@ -158,34 +158,25 @@ public class WebPage {
             throw new Exception("User canceled");
         progress.setTask(null, "Exporting web data");
 
-
         String json = gson.toJson(list);
-        FileWriter writer = null;
 
-
-        try {
-            writer = new FileWriter(new File(webDir, "books.json"));
+        try ( FileWriter writer = new FileWriter(new File(webDir, "books.json")))
+        {
             writer.write(json);
-            writer.close();
+        }
 
-            writer = new FileWriter(new File(webDir, "books.js"));
+        try (FileWriter writer = new FileWriter(new File(webDir, "books.js")))
+        {
             writer.write("window.myBooks=");
             writer.write(json);
             writer.write(";");
-        } finally {
-            if (writer != null)
-                writer.close();
         }
-
 
         // add basic html pages..
         addIndex();
-
-
     }
 
-
-    // this is a hack because I don't know how to write a resource directory to disk.
+    // this is a hack because I don't know an easy way to write a resource directory to disk.
     // see ResourceList.java to see if that would work.
     private void addIndex() throws IOException {
         String assets[] = {

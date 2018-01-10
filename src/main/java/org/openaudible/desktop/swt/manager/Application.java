@@ -178,21 +178,43 @@ public class Application extends GUI {
 
     public void exportBookList() {
         try {
-            String ext = "*.txt";
-            String name = "Text File";
+            String ext = "*.csv";
+            String name = "CSV (Excel) File";
             FileDialog dialog = new FileDialog(shell, SWT.SAVE);
             dialog.setFilterNames(new String[]{name});
             dialog.setFilterExtensions(new String[]{ext});
-            dialog.setFileName("books.txt");
+            dialog.setFileName("books.csv");
             String path = dialog.open();
-            if (path != null)
-                audibleGUI.audible.export(new File(path));
+            if (path != null) {
+                File f = new File(path);
+                audibleGUI.audible.export(f);
+                if (f.exists())
+                    logger.info("exported books to: "+f.getAbsolutePath());
+            }
+
         } catch (Exception e) {
-
-
             MessageBoxFactory.showError(shell, e.getMessage());
+        }
 
+    }
+    public void exportBookJSON() {
+        try {
+            String ext = "*.json";
+            String name = "JSON File";
+            FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+            dialog.setFilterNames(new String[]{name});
+            dialog.setFilterExtensions(new String[]{ext});
+            dialog.setFileName("books.json");
+            String path = dialog.open();
+            if (path != null) {
+                File f = new File(path);
+                audibleGUI.audible.export(f);
+                if (f.exists())
+                    logger.info("exported books to: "+f.getAbsolutePath());
+            }
 
+        } catch (Exception e) {
+            MessageBoxFactory.showError(shell, e.getMessage());
         }
 
     }

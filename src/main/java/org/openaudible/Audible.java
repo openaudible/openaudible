@@ -5,6 +5,7 @@ import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.opencsv.CSVWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openaudible.audible.AudibleScraper;
@@ -23,9 +24,7 @@ import org.openaudible.util.queues.IQueueListener;
 import org.openaudible.util.queues.ThreadedQueue;
 import org.xml.sax.SAXException;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class Audible implements IQueueListener<Book> {
@@ -447,36 +446,45 @@ public class Audible implements IQueueListener<Book> {
         return Directories.ART.getDir(b.getProduct_id() + ".jpg");
     }
 
-    // quick hack to export as text file.
-    // lots of room for improvement.
-    // Available as json file when exported as web page.
-    public void export(File f) throws IOException {
-        FileOutputStream fos = new FileOutputStream(f);
-        String sep = System.getProperty("line.separator");
-        String tab = "\t";
+    public void export(Writer w, List<Book> bookList) throws IOException {
+        CSVWriter writer = new CSVWriter(w, ',');
+
         BookElement items[] = BookElement.values();
-        String line = "";
+
+        // header values.
+        String line[] = new String[BookElement.values().length];
         for (BookElement e : items)
-            line += e.displayName() + tab;
-        line += sep;
+            line[e.ordinal()] = e.displayName();
+        writer.writeNext(line);
 
-        fos.write(line.getBytes());
-        for (Book b : getBooks()) {
-            line = "";
+
+        for (Book b:bookList) {
             for (BookElement e : items) {
-                String value = b.get(e);
-                value = value.replace(tab, " ");
-                value = value.replace(sep, " ");
-                line += value + tab;
+                String v = b.get(e);
+                line[e.ordinal()] = v;
             }
-            line += sep;
-            fos.write(line.getBytes());
+            writer.writeNext(line, true);
         }
-        fos.close();
+
+        writer.close();
     }
 
-    void setTask(String task, String subTask) {
+    public void export(File f) throws IOException {
+        try (FileWriter out = new FileWriter(f))
+        {
+            export(out, getBooks());
+        }
     }
+
+    public void exportJSON(List<Book>list, File f) throws IOException {
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        try (FileWriter writer = new FileWriter(f))
+        {
+            writer.write(json);
+        }
+    }
+
 
     public File getAAXFileDest(Book b) {
         if (b.getProduct_id().length() == 0) {
