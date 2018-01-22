@@ -12,7 +12,7 @@ public enum AudibleRegion {
                 return "https://www.audible.com";
 
             case UK:
-                return "https://www.audible.com.uk";
+                return "https://www.audible.co.uk";
             default:
                 throw new InvalidParameterException("Invalid region:"+this);
         }
@@ -38,7 +38,7 @@ public enum AudibleRegion {
                     return "www.audible.com (US)";
 
                 case UK:
-                    return "www.audible.com.uk (UK)";
+                    return "www.audible.co.uk (UK)";
                 default:
                     throw new InvalidParameterException("Invalid region:"+this);
             }

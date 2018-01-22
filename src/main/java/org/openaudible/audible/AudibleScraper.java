@@ -447,7 +447,7 @@ public class AudibleScraper {
             setURL("/access"); // http is fine... better?
             return;
         }
-        
+
         boolean saved = true;
         if (true)
             getWebClient().setJavascriptEnabled(true);
