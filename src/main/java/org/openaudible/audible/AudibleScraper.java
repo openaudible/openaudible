@@ -15,6 +15,8 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.eclipse.jetty.util.IO;
 import org.openaudible.Audible;
+import org.openaudible.AudibleAccountPrefs;
+import org.openaudible.AudibleRegion;
 import org.openaudible.Directories;
 import org.openaudible.books.Book;
 import org.openaudible.books.BookElement;
@@ -40,18 +42,19 @@ public class AudibleScraper {
     private static final Log LOG = LogFactory.getLog(Audible.class);
     private final AudibleClient webClient;
     public HtmlPage page;
-    String audibleUser = null;
-    String audiblePass = null;
+    final AudibleAccountPrefs account;
+
     boolean debugCust = false;
     boolean loggedIn = false;
     String clickToDownload = "Click to download ";
-    private String activationBytes = "";
+
     private IProgressTask progress;
 
-    public AudibleScraper(String user, String password) {
-        this();
-        audibleUser = user;
-        audiblePass = password;
+
+
+    public AudibleScraper(AudibleAccountPrefs account) {
+        webClient = new AudibleClient();
+        this.account = account;
         try {
             loadCookies();
         } catch (IOException e) {
@@ -59,9 +62,6 @@ public class AudibleScraper {
         }
     }
 
-    AudibleScraper() {
-        webClient = new AudibleClient();
-    }
 
     private static String extract_activation_bytes(byte b[]) throws Exception {
         LOG.info("extract_activation_bytes");
@@ -346,9 +346,9 @@ public class AudibleScraper {
     }
 
     private boolean login() throws IOException {
-        if (audibleUser.length() == 0)
+        if (account.audibleUser.length() == 0)
             throw new IOException("audibleUser not set");
-        if (audiblePass.length() == 0)
+        if (account.audiblePassword.length() == 0)
             throw new IOException("audiblePass not set");
 
         if (getProgress() != null)
@@ -395,8 +395,8 @@ public class AudibleScraper {
         }
 
         LOG.info("Submitting login credentials");
-        pass.setValueAttribute(audiblePass);
-        email.setValueAttribute(audibleUser);
+        pass.setValueAttribute(account.audiblePassword);
+        email.setValueAttribute(account.audibleUser);
 
         if (getProgress() != null)
             getProgress().setTask("Submitting credentials...");
@@ -442,23 +442,18 @@ public class AudibleScraper {
     }
 
     public void home() throws FailingHttpStatusCodeException, IOException, AudibleLoginError, InterruptedException {
-        String homeURL = "http://www.audible.com/access";
 
         if (checkLoggedIn()) {
-            setURL(homeURL); // http is fine... better?
+            setURL("/access"); // http is fine... better?
             return;
         }
-
-
-        if (getProgress() != null)
-            getProgress().setTask("Connecting to audible.com");
-
+        
         boolean saved = true;
         if (true)
             getWebClient().setJavascriptEnabled(true);
         try {
             // setURL(""); // http is fine... better?
-            setURL("http://www.audible.com/access"); // http is fine... better?
+            setURL("/access"); // http is fine... better?
             if (checkLoggedIn()) return;
 
             HtmlAnchor signIn = getAnchor("/sign-in");
@@ -509,7 +504,7 @@ public class AudibleScraper {
         if (getProgress() != null)
             getProgress().setTask("Loading Library");
 
-        setURL("https://www.audible.com/lib");
+        setURL("/lib");
 
         if (!checkLoggedIn()) {
             getWebClient().waitForBackgroundJavaScript(10000);  // needed? prob. not.
@@ -541,11 +536,21 @@ public class AudibleScraper {
         return null;
     }
 
+
+    public String getAudibleBase()
+    {
+        return account.audibleRegion.getBaseURL();
+    }
+
     public Page setURL(String u) throws FailingHttpStatusCodeException, IOException {
+
+        if (getProgress() != null)
+            getProgress().setSubTask(u);
+
 
         EventTimer evt = new EventTimer();
         if (u.startsWith("/"))
-            u = "https://www.audible.com" + u;
+            u = getAudibleBase()+ u;
 
         if (getProgress() != null)
             getProgress().setSubTask(u);
@@ -603,7 +608,7 @@ public class AudibleScraper {
 
     private DomDocumentFragment getLibraryFragment(int pageNum, int items) throws IOException, SAXException {
         EventTimer evt = new EventTimer();
-        String url = "https://www.audible.com/lib-ajax";
+        String url = getAudibleBase()+"/lib-ajax";
         WebRequest webRequest = new WebRequest(new URL(url), HttpMethod.POST);
         webRequest.setRequestBody("progType=all&timeFilter=all&itemsPerPage=" + items + "&searchTerm=&searchType=&sortColumn=&sortType=down&page=" + pageNum + "&mode=normal&subId=&subTitle=");
         WebResponse webResponse = getWebClient().getWebConnection().getResponse(webRequest);
@@ -617,9 +622,9 @@ public class AudibleScraper {
     public DomDocumentFragment redeemGiftCode(String code) throws IOException, SAXException {
         if (!loggedIn)
             throw new IOException("Not logged in");
-        setURL("https://www.audible.com/mt/giftmembership");
+        setURL("/mt/giftmembership");
 
-        String url = "https://www.audible.com/gift-redemption?isGM=gm";
+        String url = getAudibleBase()+"/gift-redemption?isGM=gm";
 
         WebRequest webRequest = new WebRequest(new URL(url), HttpMethod.POST);
         webRequest.setRequestBody("giftClaimCode=" + code);
@@ -688,9 +693,10 @@ public class AudibleScraper {
     }
 
     public String getAudibleBookURL(Book b) {
-        String url = "https://www.audible.com" + b.getInfoLink();
+        String url = getAudibleBase() + b.getInfoLink();
         return url;
     }
+/*
 
     public String getActivationBytes() {
         return activationBytes;
@@ -699,6 +705,7 @@ public class AudibleScraper {
     public void setActivationBytes(String activationBytes) {
         this.activationBytes = activationBytes;
     }
+*/
 
     public String getURLField(String u, String which) throws URISyntaxException {
         for (NameValuePair nvp : URLEncodedUtils.parse(new URI(u), "UTF-8")) {
@@ -747,7 +754,7 @@ public class AudibleScraper {
             if (getProgress() != null)
                 getProgress().setSubTask("Authorizing");
 
-            String u = "https://www.audible.com/player-auth-token?playerType=software&bp_ua=y&playerModel=Desktop&playerId=" + playerId + "&playerManufacturer=Audible&serial=";
+            String u = getAudibleBase()+"/player-auth-token?playerType=software&bp_ua=y&playerModel=Desktop&playerId=" + playerId + "&playerManufacturer=Audible&serial=";
             LOG.info(u);
             Page p = getWebClient().getPage(u);
             page = null;
@@ -789,7 +796,7 @@ public class AudibleScraper {
 
             // # Step 4
 
-            u = "https://www.audible.com/license/licenseForCustomerToken?" + "customer_token=" + playerToken;
+            u = getAudibleBase()+"/license/licenseForCustomerToken?" + "customer_token=" + playerToken;
             LOG.info(u);
 
             if (getProgress() != null)
@@ -816,7 +823,7 @@ public class AudibleScraper {
             if (getProgress() != null)
                 getProgress().setSubTask("Unregistering client");
             LOG.info("Unregistering client");
-            String u = "https://www.audible.com/license/licenseForCustomerToken?customer_token=" + playerToken + "&action=de-register";
+            String u = "/license/licenseForCustomerToken?customer_token=" + playerToken + "&action=de-register";
             setURL(u);
             Page resultPage = getWebClient().getPage(u);
             WebResponse response = resultPage.getWebResponse();

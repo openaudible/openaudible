@@ -255,7 +255,7 @@ public class AudibleGUI implements BookListener {
 
     private AudibleScraper connect(ProgressTask progressTask) throws Exception {
         audible.setProgress(progressTask);
-        progressTask.setTask("Connecting to audible.com...", "");
+        progressTask.setTask("Connecting...", "");
         AudibleScraper s = audible.getScraper(false);
         if (s != null && !s.isLoggedIn()) {
             LOG.info("Setting cookies 1");

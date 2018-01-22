@@ -10,8 +10,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.openaudible.Audible;
 import org.openaudible.AudibleAccountPrefs;
+import org.openaudible.AudibleRegion;
 import org.openaudible.Directories;
 import org.openaudible.desktop.swt.gui.MessageBoxFactory;
+
+import java.io.IOException;
 
 public class Preferences extends Dialog {
 
@@ -20,7 +23,8 @@ public class Preferences extends Dialog {
     final Directories dirs[] = {Directories.BASE, Directories.WEB};
     final String paths[] = new String[Directories.values().length];
     final Text dirText[] = new Text[dirs.length];
-    private Button cancelButton, okButton;
+    Combo region;
+
     private Text email, password, key;
     private boolean pathsChanged = false;
 
@@ -44,6 +48,15 @@ public class Preferences extends Dialog {
         try {
             Preferences p = instance = new Preferences(s);
             int result = instance.open();
+            if (result==0)
+            {
+                try {
+                    Audible.instance.save();
+                } catch (IOException e) {
+                    MessageBoxFactory.showError(null, "Error saving preferences");
+                    e.printStackTrace();
+                }
+            }
         } finally {
             instance = null;
         }
@@ -53,6 +66,7 @@ public class Preferences extends Dialog {
         email.setText(Audible.instance.getAccount().audibleUser);
         password.setText(Audible.instance.getAccount().audiblePassword);
         key.setText(Audible.instance.getAccount().audibleKey);
+        region.select(Audible.instance.getAccount().audibleRegion.ordinal());
 
         for (Text t : dirText) {
             Directories d = (Directories) t.getData();
@@ -70,15 +84,18 @@ public class Preferences extends Dialog {
         AudibleAccountPrefs prefs = Audible.instance.getAccount();
         boolean changed = false;
 
+        AudibleRegion r = AudibleRegion.fromText(region.getText());
+
         if (!prefs.audiblePassword.equals(p)) changed = true;
         if (!prefs.audibleUser.equals(u)) changed = true;
         if (!prefs.audibleKey.equals(k)) changed = true;
+        if (!prefs.audibleRegion.equals(r)) changed = true;
         if (changed) {
             prefs.audibleUser = u;
             prefs.audiblePassword = p;
             prefs.audibleKey = k;
+            prefs.audibleRegion = r;
         }
-
 
         if (pathsChanged) {
             for (Directories d : dirs) {
@@ -160,12 +177,25 @@ public class Preferences extends Dialog {
 
         Group group = c.newGroup("Audible Account", 2);
         group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
+
+        region = GridComposite.newCombo(group, "Region");
+        for (AudibleRegion r:AudibleRegion.values())
+        {
+            region.add(r.displayName());
+        }
+
         email = GridComposite.newTextPair(group, "Audible Email");
         GridData gd = new GridData();
         gd.widthHint = 250;
         email.setLayoutData(gd);
         password = GridComposite.newPasswordPair(group, "Password");
         key = GridComposite.newTextPair(group, "Key");
+
+
+        gd = new GridData();
+        gd.widthHint = 150;
+        region.setLayoutData(gd);
+
         // key.setEditable(false);
     }
 

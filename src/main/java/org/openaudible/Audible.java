@@ -49,7 +49,7 @@ public class Audible implements IQueueListener<Book> {
     private IProgressTask progress;
     private boolean autoConvertToMP3 = false;
     private final HashMap<String, Book> books = new HashMap<>(); // Book.id(), Book
-
+    AudibleRegion region = AudibleRegion.US;
 
     public Audible() {
         LOG.info("openaudible " + version);
@@ -207,8 +207,6 @@ public class Audible implements IQueueListener<Book> {
         if (audibleScraper != null) {
             audibleScraper.saveCookies();
         }
-
-
     }
 
     public void update() throws Exception {
@@ -574,7 +572,7 @@ public class Audible implements IQueueListener<Book> {
 //                throw new Exception("audible password not set");
 
 
-            audibleScraper = new AudibleScraper(account.audibleUser, account.audiblePassword);
+            audibleScraper = new AudibleScraper(account);
 
 
             if (getProgress() != null)
