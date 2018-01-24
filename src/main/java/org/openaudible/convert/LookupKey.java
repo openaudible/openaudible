@@ -23,7 +23,7 @@ public enum LookupKey {
 
 
     public void load(File prefsFile) throws IOException {
-
+        if (false) return;  // for testing without cache.
         if (prefsFile.exists()) {
             Gson gson = new GsonBuilder().create();
             String content = HTMLUtil.readFile(prefsFile);
@@ -35,7 +35,7 @@ public enum LookupKey {
     }
 
     public void save() throws IOException {
-        if (prefs!=null)
+        if (prefs!=null && map.size()>0)
         {
             Gson gson = new Gson();
             String json = gson.toJson(map);
@@ -43,7 +43,6 @@ public enum LookupKey {
             {
                 writer.write(json);
             }
-
         }
     }
 
@@ -97,22 +96,19 @@ public enum LookupKey {
     public String lookupKey(String hash) throws IOException, InterruptedException {
 
         String result = map.get(hash);
-        if (result!=null)
+        if (result != null)
             return result;
 
         File tablesDir = new File("bin" + File.separatorChar + "tables");
         if (!tablesDir.exists())
             throw new IOException("fnf:" + tablesDir.getAbsolutePath());
 
-        assert (hash.length() > 10);
-
+        assert (hash.length() > 10);    // should be hex string.
 
         ArrayList<String> args = new ArrayList<>();
         args.add(getExecutable());
         if (!Platform.isWindows())
         {
-  //      	args.add(tablesDir.getAbsolutePath()+"/*.rt");
-//
         	for (File f:tablesDir.listFiles())
         		if (f.getName().contains(".rt"))
         			args.add(f.getAbsolutePath());
@@ -133,10 +129,10 @@ public enum LookupKey {
 
         int ch = r.indexOf(find);
         if (ch == -1) {
-
-
+            LOG.info(results.getErrorString());
             throw new IOException("Unable to find expected output: " + find);
         }
+
         r = r.substring(ch + find.length(), r.length());
         ch = r.indexOf("\n");
         if (ch == -1)
