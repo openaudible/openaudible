@@ -16,7 +16,6 @@ import org.apache.http.impl.cookie.BasicClientCookie;
 import org.eclipse.jetty.util.IO;
 import org.openaudible.Audible;
 import org.openaudible.AudibleAccountPrefs;
-import org.openaudible.AudibleRegion;
 import org.openaudible.Directories;
 import org.openaudible.books.Book;
 import org.openaudible.books.BookElement;

@@ -239,7 +239,9 @@ public class Audible implements IQueueListener<Book> {
 
     public HashSet<File> getFileSet(Directories dir) {
         HashSet<File> set = new HashSet<>();
-        Collections.addAll(set, dir.getDir().listFiles());
+        File d = dir.getDir();
+        
+        Collections.addAll(set, d.listFiles());
         return set;
     }
 

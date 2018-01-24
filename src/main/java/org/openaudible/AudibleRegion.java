@@ -14,7 +14,7 @@ public enum AudibleRegion {
     public String getBaseDomain() {
         switch (this) {
             case US:
-                return "audible.com";
+                return "www.audible.com";
             case UK:
                 return "audible.co.uk";
             case DE:

@@ -506,7 +506,7 @@ public class AudibleGUI implements BookListener {
                     cmd = win;
                 // TODO: Support linux.
                 if (cmd != null) {
-                    cmd += m.getAbsolutePath() + "\"";
+                    cmd += "\""+ m.getAbsolutePath() + "\"";
                     System.err.println(cmd);
                     Runtime.getRuntime().exec(cmd);
                 }

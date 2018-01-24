@@ -12,6 +12,7 @@ public enum Command {
     ViewInAudible,
     Show_MP3, Show_AAX,
     Play,
+    Console,
     Export_Web_Page,
     Export_Book_List,
     Refresh_Book_Info,
@@ -84,6 +85,8 @@ public enum Command {
                 cmd = 'B';
                 break;
             case Cookies:
+                break;
+            case Console:
                 break;
         }
         return cmd;

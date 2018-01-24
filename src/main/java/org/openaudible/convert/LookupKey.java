@@ -28,7 +28,8 @@ public enum LookupKey {
             Gson gson = new GsonBuilder().create();
             String content = HTMLUtil.readFile(prefsFile);
             HashMap m = gson.fromJson(content, HashMap.class);
-            map.putAll(m);
+            if (m!=null)
+            	map.putAll(m);
         }
         prefs = prefsFile;
     }
@@ -108,7 +109,18 @@ public enum LookupKey {
 
         ArrayList<String> args = new ArrayList<>();
         args.add(getExecutable());
-        args.add(tablesDir.getAbsolutePath());
+        if (!Platform.isWindows())
+        {
+  //      	args.add(tablesDir.getAbsolutePath()+"/*.rt");
+//
+        	for (File f:tablesDir.listFiles())
+        		if (f.getName().contains(".rt"))
+        			args.add(f.getAbsolutePath());
+        } else
+        {
+        	args.add(tablesDir.getAbsolutePath());
+        }
+        
         args.add("-h");
         args.add(hash);
 

@@ -162,6 +162,8 @@ public class AppMenu implements ITranslatable, SelectionListener {
         mbar = new Menu(shell, SWT.BAR);
 
         fileMenu = newMenu("File");
+        newMItem(fileMenu, Command.Console);
+        newSeparator(fileMenu);
         newMItem(fileMenu, Command.Export_Web_Page);
         newMItem(fileMenu, Command.Export_Book_List);
         if (!isMac) {

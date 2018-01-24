@@ -116,6 +116,8 @@ public class Application extends GUI {
 
 
                 } catch (Exception e) {
+                    logger.error("Error starting", e);
+
                     MessageBoxFactory.showError(null, e);// , "loading library");
                 } finally {
                     audible.setProgress(null);

@@ -10,7 +10,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.*;
 import org.openaudible.Audible;
 import org.openaudible.audible.ConnectionNotifier;
-import org.openaudible.desktop.swt.dialog.AboutDialog;
+import org.openaudible.desktop.swt.view.AboutDialog;
 import org.openaudible.desktop.swt.gui.GUI;
 import org.openaudible.desktop.swt.gui.MessageBoxFactory;
 import org.openaudible.desktop.swt.manager.Application;
@@ -19,6 +19,7 @@ import org.openaudible.desktop.swt.manager.Version;
 import org.openaudible.desktop.swt.manager.VersionCheck;
 import org.openaudible.desktop.swt.manager.views.Preferences;
 import org.openaudible.desktop.swt.util.shop.WidgetShop;
+import org.openaudible.desktop.swt.view.LogWindow;
 
 /**
  * The CommandCenter is responsible to react on user-action. User action may for example occur when any item from the main menu is selected. The execute command is the main switch for running commands
@@ -248,6 +249,10 @@ public class CommandCenter {
             case Convert_All:
                 AudibleGUI.instance.convertAll();
                 break;
+            case Console:
+                LogWindow.show();
+                break;
+
             default:
                 logger.info("Unknown cmd: " + c);
         }
@@ -280,6 +285,8 @@ public class CommandCenter {
                 break;
             case Play:
                 return AudibleGUI.instance.canPlay();
+            case Console:
+                break;
             case Export_Web_Page:
                 return Audible.instance.mp3Count() > 0;
             case Export_Book_List:
