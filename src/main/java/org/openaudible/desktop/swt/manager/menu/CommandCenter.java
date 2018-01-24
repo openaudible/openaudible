@@ -48,10 +48,6 @@ public class CommandCenter {
         MessageBoxFactory.showMessage(shell, SWT.ICON_INFORMATION, GUI.i18n.getTranslation("Unexpected event"), s);
     }
 
-    public void actionConfigurationWizard() {
-
-    }
-
     public void handleMenuAction(MenuItem item) {
         Object obj = item.getData();
         if (obj != null) {
@@ -189,11 +185,9 @@ public class CommandCenter {
             case Preferences:
                 Preferences.show(null);
                 break;
-
             case Quit:
                 e.actionExit();
                 break;
-
             case Cut:
             case Copy:
             case Paste:
@@ -201,28 +195,21 @@ public class CommandCenter {
             case Convert:
                 AudibleGUI.instance.convertSelected();
                 break;
-
             case Rescan_Library:
                 AudibleGUI.instance.refreshLibrary(false);
                 break;
             case Quick_Refresh:
                 AudibleGUI.instance.refreshLibrary(true);
                 break;
-
             case Download:
                 AudibleGUI.instance.downloadSelected();
                 break;
-            case Fetch_Decryption_Key:
-                AudibleGUI.instance.fetchDecryptionKey();
-                break;
-
             case ViewInAudible:
                 AudibleGUI.instance.viewInAudible();
                 break;
             case Show_MP3:
                 AudibleGUI.instance.explore();
                 break;
-
             case Show_AAX:
                 break;
             case Play:
@@ -232,7 +219,7 @@ public class CommandCenter {
                 Application.instance.exportBookList();
                 break;
             case Check_For_Update:
-                VersionCheck.instance.checkForUpdate(true);
+                VersionCheck.instance.checkForUpdate(shell, true);
                 break;
             case Export_Web_Page:
                 AudibleGUI.instance.exportWebPage();
@@ -243,7 +230,6 @@ public class CommandCenter {
             case AppWebPage:
                 AudibleGUI.instance.browse(Version.appLink);
                 break;
-
             case ParseAAX:
                 AudibleGUI.instance.parseAAX();
                 break;
@@ -256,7 +242,6 @@ public class CommandCenter {
             case Connect:
                 AudibleGUI.instance.connect();
                 break;
-
             case Download_All:
                 AudibleGUI.instance.downloadAll();
                 break;
@@ -285,44 +270,28 @@ public class CommandCenter {
         return true;
     }
 
-    public int saveChanges(String msg) {
-        MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO | SWT.CANCEL);
-        messageBox.setMessage(msg);
-        messageBox.setText("Save Changes");
-        return messageBox.open();
-    }
-
     public boolean getEnabled(Command c) {
         switch (c) {
             case Convert:
                 return AudibleGUI.instance.canConvert();
-
             case Download:
                 return AudibleGUI.instance.canDownload();
-
             case Show_AAX:
                 break;
             case Play:
                 return AudibleGUI.instance.canPlay();
-
             case Export_Web_Page:
                 return Audible.instance.mp3Count() > 0;
-
             case Export_Book_List:
                 return AudibleGUI.instance.bookCount() > 0;
-
-
             case ViewInAudible:
                 return AudibleGUI.instance.canViewInAudible();
-
             case Show_MP3:
                 return AudibleGUI.instance.canViewInSystem();
-
             case Download_All:
                 return AudibleGUI.instance.canDownloadAll();
             case Convert_All:
                 return AudibleGUI.instance.canConvertAll();
-
             case Preferences:
             case Quit:
             case About:
@@ -330,30 +299,21 @@ public class CommandCenter {
             case Cookies:
                 case AppWebPage:
                 return true;
-
             case Copy:
             case Cut:
             case Paste:
                 return false;
-
             case Refresh_Book_Info:
                 return AudibleGUI.instance.getSelected().size() > 0;
-
             case Rescan_Library:
             case Quick_Refresh:
                 return AudibleGUI.instance.hasLogin();
-
             case Connect:
                 return !ConnectionNotifier.getInstance().isConnected();
-
             case ParseAAX:
                 return AudibleGUI.instance.selectedAAXCount() > 0;
-
-            case Fetch_Decryption_Key:
-                return AudibleGUI.instance.canGetDecryptionKey();
             case Check_For_Update:
                 return true;
-
             default:
                 assert (false);
                 break;

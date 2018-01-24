@@ -1,12 +1,10 @@
-# OpenAudible
+# [OpenAudible](http://openaudible.org)
+A desktop application for downloading and managing your [audible.com](https://audible.com) content.
 
-A desktop application for downloading and managing your audible.com content.
+## Latest Release
 
-## Download Installer
 A binary installer for Windows, Mac and Linux is to be available, generated with install4j.
-* **Mac OS**    [OpenAudible_macos.dmg](http://openaudible.org/OpenAudible_macos.dmg)
-* **Win 64**    [OpenAudible_windows-x64.exe](http://openaudible.org/OpenAudible_windows-x64.exe)
-* **Linux**     [OpenAudible_unix.sh](http://openaudible.org/OpenAudible_unix.sh)
+[Latest Releaes](https://github.com/openaudible/openaudible/releases/latest)
 
 ## Features
 * Import audible books from your account
@@ -103,6 +101,7 @@ Errors are logged to an "error.log" file, usually written out to the application
 This is a work in progress. It needs testing and bug reporting for all platforms.
 
 * Exporting to a podcast format is planned
+* Testing with regions is needed
 * Exporting to a format that supports the best mobile audio book players is the goal.
 * The UI needs cleaning up, especially for Linux.
 * Improved "first time setup" and connection needs major improvement

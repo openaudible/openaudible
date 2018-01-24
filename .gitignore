@@ -1,5 +1,6 @@
 
 installers/
+*.aax
 
 #generic
 tmp/
@@ -11,6 +12,8 @@ tmp/
 
 # macosx
 *.DS_Store
+__MACOSX/
+unused/
 
 # windows
 cachesThumbs.db

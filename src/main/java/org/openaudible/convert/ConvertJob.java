@@ -82,18 +82,16 @@ public class ConvertJob implements IQueueJob, LineListener {
         } else {
             nextMeta = s.contains("Metadata:");
         }
-
     }
+
+
 
     public void createMP3() throws IOException, InterruptedException {
         ArrayList<String> args = new ArrayList<>();
         args.add(getExecutable());
 
-        if (Audible.instance.getActivationBytes().isEmpty())
-            throw new IOException("Activation bytes not set");
-
         args.add("-activation_bytes");
-        args.add(Audible.instance.getActivationBytes());
+        args.add(getActivationBytes(aax));
 
         args.add("-i");
         args.add(aax.getAbsolutePath());
@@ -166,10 +164,26 @@ public class ConvertJob implements IQueueJob, LineListener {
             if (!success) {
                 temp.delete();
             }
-
         }
-
     }
+
+    private synchronized String getActivationBytes(File aaxFile) throws IOException, InterruptedException {
+        // synchronized -- if two files have same hash, only do lookup once.
+
+        return LookupKey.instance.getKeyFromAAX(aaxFile);
+        /*
+        String hash = LookupKey.instance.getFileChecksum(aaxFile.getAbsolutePath());
+        String out = KeyCache.instance.get(hash);
+        // String out = Audible.instance.getActivationBytes();
+        if (out == null)
+        {
+            out = LookupKey.instance.getKeyFromAAX(aaxFile);
+            KeyCache.instance.add(hash, out);
+            KeyCache.instance.save();
+        }
+        return out;*/
+    }
+
 
     public void tagMP3() throws Exception {
         TagMP3AudioBook.setMP3Tags(book, temp, image);

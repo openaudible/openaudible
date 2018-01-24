@@ -17,6 +17,7 @@ import org.openaudible.books.BookListener;
 import org.openaudible.books.BookNotifier;
 import org.openaudible.convert.AAXParser;
 import org.openaudible.convert.FFMPEG;
+import org.openaudible.convert.LookupKey;
 import org.openaudible.desktop.swt.gui.GUI;
 import org.openaudible.desktop.swt.gui.MessageBoxFactory;
 import org.openaudible.desktop.swt.gui.SWTAsync;
@@ -54,7 +55,7 @@ public class AudibleGUI implements BookListener {
         assert (instance == null);
         instance = this;
         bookNotifier.addListener(this);
-        LOG.info("audible desktop " + Version.appVersion + " core " + Audible.version);
+        LOG.info("audible desktop " + Version.appVersion);
     }
 
     public boolean checkFFMPEG() {
@@ -101,21 +102,75 @@ public class AudibleGUI implements BookListener {
         }
     }
 
-    public void fetchDecryptionKey() {
+
+/*
+    public void fetchDecryptionKeyOld() {
         try {
             if (!audible.getAccount().audibleKey.isEmpty())
                 throw new Exception("Audible key already set.");
 
             String key = audible.getScraper(true).fetchDecrpytionKey();
-
             audible.getAccount().audibleKey = key;
             audible.save();
-
         } catch (Throwable th) {
             LOG.info("Error getting key.", th);
             MessageBoxFactory.showError(null, "Unable to get Key\nError:" + th);
         }
     }
+    public void fetchDecryptionKey() {
+        try {
+            File aax = null;
+            for (Book b:getSelected())
+            {
+
+            }
+
+            if (!audible.getAccount().audibleKey.isEmpty())
+                throw new Exception("Audible key already set.");
+
+            String key = audible.getScraper(true).fetchDecrpytionKey();
+            audible.getAccount().audibleKey = key;
+            audible.save();
+        } catch (Throwable th) {
+            LOG.info("Error getting key.", th);
+            MessageBoxFactory.showError(null, "Unable to get Key\nError:" + th);
+        }
+    }
+
+
+    public String lookupKey(final File aaxFile) {
+
+        class LookupTask extends ProgressTask {
+            LookupTask() {
+                super("Look up encrpytion key...");
+
+            }
+
+            String result = null;
+            String err = null;
+
+            public void run() {
+                try {
+                    result = LookupKey.instance.getKeyFromAAX(aaxFile, this);
+                } catch (Exception e) {
+                    err = e.getMessage();
+
+                }
+            }
+        }
+        ;
+        LookupTask task = new LookupTask();
+
+        ProgressDialog.doProgressTask(task);
+        if (task.err != null) {
+            MessageBoxFactory.showError(null, "Unable to get Key\nError:" + task.err);
+            return null;
+        } else {
+            return task.result;
+        }
+
+    }
+*/
 
     public int selectedAAXCount() {
         int count = 0;
@@ -126,10 +181,6 @@ public class AudibleGUI implements BookListener {
         return count;
     }
 
-    public boolean canGetDecryptionKey() {
-        AudibleAccountPrefs a = audible.getAccount();
-        return audible.hasLogin() && a.audibleKey.isEmpty();
-    }
 
     public boolean canDownloadAll() {
         return audible.aaxCount() < audible.getBookCount() && audible.hasLogin();

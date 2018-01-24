@@ -29,7 +29,7 @@ public class AppMenu implements ITranslatable, SelectionListener {
     private Menu controlMenu;
     private Menu aboutMenu;
     private final Command[] actionCommands = {Command.ViewInAudible, Command.Show_MP3, Command.Play, Command.Download, Command.Convert, Command.Refresh_Book_Info};
-    private final Command[] appCommands = {Command.Connect, Command.Quick_Refresh, Command.Rescan_Library, Command.Download_All, Command.Convert_All, Command.Fetch_Decryption_Key,
+    private final Command[] appCommands = {Command.Connect, Command.Quick_Refresh, Command.Rescan_Library, Command.Download_All, Command.Convert_All,
             Command.Browser};
 
     private final Command[] aboutCommands = {Command.AppWebPage, Command.Check_For_Update, Command.About};

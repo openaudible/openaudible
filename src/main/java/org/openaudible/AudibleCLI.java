@@ -114,9 +114,6 @@ public class AudibleCLI {
                 audible.save();
                 break;
             case convert:
-                if (audible.getActivationBytes().isEmpty())
-                    throw new Exception("No activation bytes found. Run 'act' to get them!");
-
                 if (args.length() > 0) {
                     audible.convertQueue.add(audible.findFirst(args, true));
                 } else {
@@ -181,10 +178,6 @@ public class AudibleCLI {
                 break;
             case library:
                 audible.updateLibrary(false);
-                break;
-
-            case act:
-                Audible.instance.fetchDecrpytionKey();
                 break;
 
             case test2:

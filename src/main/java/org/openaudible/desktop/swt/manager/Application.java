@@ -2,10 +2,7 @@ package org.openaudible.desktop.swt.manager;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.*;
 import org.openaudible.Audible;
 import org.openaudible.books.BookNotifier;
 import org.openaudible.desktop.swt.gui.GUI;
@@ -115,6 +112,7 @@ public class Application extends GUI {
                     // audibleGUI.updateFileCache();
 
                     BookNotifier.getInstance().booksUpdated();
+                    backgroundVersionCheck();
 
 
                 } catch (Exception e) {
@@ -126,6 +124,19 @@ public class Application extends GUI {
             }
         };
         ProgressDialog.doProgressTask(task);
+    }
+
+    private void backgroundVersionCheck() {
+        new Thread(() -> {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // only alert if new version is available.
+            VersionCheck.instance.checkForUpdate(shell, false);
+
+        }).start();
     }
 
     protected void shutDown() {

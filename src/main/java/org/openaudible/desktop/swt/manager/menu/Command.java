@@ -24,7 +24,6 @@ public enum Command {
     Download_All,
     Convert_All,
     Browser,
-    Fetch_Decryption_Key,
     Check_For_Update,
     Cookies, AppWebPage;
 
@@ -84,8 +83,6 @@ public enum Command {
             case Browser:
                 cmd = 'B';
                 break;
-            case Fetch_Decryption_Key:
-                break;
             case Cookies:
                 break;
         }
@@ -144,8 +141,6 @@ public enum Command {
             case Convert_All:
                 break;
             case Browser:
-                break;
-            case Fetch_Decryption_Key:
                 break;
             case Cookies:
                 break;

@@ -15,6 +15,7 @@ import org.openaudible.books.BookNotifier;
 import org.openaudible.convert.AAXParser;
 import org.openaudible.convert.BookMerge;
 import org.openaudible.convert.ConvertQueue;
+import org.openaudible.convert.LookupKey;
 import org.openaudible.download.DownloadQueue;
 import org.openaudible.progress.IProgressTask;
 import org.openaudible.util.EventTimer;
@@ -28,7 +29,6 @@ import java.io.*;
 import java.util.*;
 
 public class Audible implements IQueueListener<Book> {
-    public final static int version = 20170805;
     private static final Log LOG = LogFactory.getLog(Audible.class);
     public static Audible instance; // Singleton
     public DownloadQueue downloadQueue;
@@ -39,6 +39,7 @@ public class Audible implements IQueueListener<Book> {
     String prefsFileName = "account.json";
     String cookiesFileName = "cookies.json";
     String bookFileName = "books.json";
+    final String keysFileName = "keys.json";
     HashSet<File> mp3Files = null;
     HashSet<File> aaxFiles = null;
     long needFileCacheUpdate = 0;
@@ -52,7 +53,7 @@ public class Audible implements IQueueListener<Book> {
     AudibleRegion region = AudibleRegion.US;
 
     public Audible() {
-        LOG.info("openaudible " + version);
+
     }
 
     public static int getRatingByte(Book b) {
@@ -198,6 +199,10 @@ public class Audible implements IQueueListener<Book> {
             BookNotifier.getInstance().booksUpdated();
         }
         updateFileCache();
+        LookupKey.instance.load(Directories.BASE.getDir(keysFileName));
+
+
+
     }
 
     public synchronized void save() throws IOException {
@@ -539,24 +544,11 @@ public class Audible implements IQueueListener<Book> {
 
     }
 
-    public String getActivationBytes() {
-        if (account.audibleKey == null)
-            account.audibleKey = "";
-        return account.audibleKey;
-    }
-
-    public void setActivationBytes(String activationBytes) {
-        account.audibleKey = activationBytes;
-    }
 
     public void updateInfo(Book b) throws Exception {
         getScraper().getInfo(b);
     }
 
-    public void fetchDecrpytionKey() throws Exception {
-        account.audibleKey = getScraper().fetchDecrpytionKey();
-        save();
-    }
 
     public AudibleScraper getScraper() throws Exception {
         return getScraper(true);

@@ -38,7 +38,7 @@ public class SimpleProcess {
         if (fail)
             throw new IOException("Illegal null argument.");
 
-        LOG.debug("Running: " + line);
+        LOG.info("Running: " + line);
 
     }
 

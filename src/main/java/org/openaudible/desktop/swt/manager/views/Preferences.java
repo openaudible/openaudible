@@ -25,7 +25,7 @@ public class Preferences extends Dialog {
     final Text dirText[] = new Text[dirs.length];
     Combo region;
 
-    private Text email, password, key;
+    private Text email, password;
     private boolean pathsChanged = false;
 
     public Preferences(Shell parent) {
@@ -65,7 +65,6 @@ public class Preferences extends Dialog {
     private void populate() {
         email.setText(Audible.instance.getAccount().audibleUser);
         password.setText(Audible.instance.getAccount().audiblePassword);
-        key.setText(Audible.instance.getAccount().audibleKey);
         region.select(Audible.instance.getAccount().audibleRegion.ordinal());
 
         for (Text t : dirText) {
@@ -80,7 +79,6 @@ public class Preferences extends Dialog {
 
         String u = email.getText();
         String p = password.getText();
-        String k = key.getText();
         AudibleAccountPrefs prefs = Audible.instance.getAccount();
         boolean changed = false;
 
@@ -88,12 +86,10 @@ public class Preferences extends Dialog {
 
         if (!prefs.audiblePassword.equals(p)) changed = true;
         if (!prefs.audibleUser.equals(u)) changed = true;
-        if (!prefs.audibleKey.equals(k)) changed = true;
         if (!prefs.audibleRegion.equals(r)) changed = true;
         if (changed) {
             prefs.audibleUser = u;
             prefs.audiblePassword = p;
-            prefs.audibleKey = k;
             prefs.audibleRegion = r;
         }
 
@@ -189,7 +185,6 @@ public class Preferences extends Dialog {
         gd.widthHint = 250;
         email.setLayoutData(gd);
         password = GridComposite.newPasswordPair(group, "Password");
-        key = GridComposite.newTextPair(group, "Key");
 
 
         gd = new GridData();
