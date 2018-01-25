@@ -1,18 +1,19 @@
 package org.openaudible.audible;
 
 
+import org.openaudible.AudibleAccountPrefs;
 import org.openaudible.util.EventNotifier;
 
 
 public class ConnectionNotifier extends EventNotifier<ConnectionListener> implements ConnectionListener {
-    private static ConnectionNotifier ourInstance = new ConnectionNotifier();
+    public static final ConnectionNotifier instance = new ConnectionNotifier();
     State state = State.Not_Connected;
 
     private ConnectionNotifier() {
     }
 
     public static ConnectionNotifier getInstance() {
-        return ourInstance;
+        return instance;
     }
 
     @Override
@@ -28,6 +29,19 @@ public class ConnectionNotifier extends EventNotifier<ConnectionListener> implem
         return getState() == State.Connected;
     }
 
+    // allow gui to pass back new credentials.
+    public AudibleAccountPrefs getAccountPrefs(AudibleAccountPrefs in)
+    {
+        AudibleAccountPrefs out = in;
+
+        for (ConnectionListener l : getListeners()) {
+            out = l.getAccountPrefs(out);
+            if (out==null) return null; // canceled
+        }
+        return out;
+    }
+
+
     public State getState() {
         return state;
     }
@@ -36,5 +50,14 @@ public class ConnectionNotifier extends EventNotifier<ConnectionListener> implem
         return state.name().replace('_', ' ');
     }
 
+    public boolean isDisconnected() {
+        return getState()==State.Disconnected;
+    }
+
+    // not connected is unknown.
+    // connected means in account
+    // disconnected means a password is being asked for.
     enum State {Not_Connected, Connected, Disconnected}
 }
+
+

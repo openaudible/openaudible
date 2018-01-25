@@ -10,7 +10,6 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.*;
 import org.openaudible.Audible;
 import org.openaudible.audible.ConnectionNotifier;
-import org.openaudible.desktop.swt.view.AboutDialog;
 import org.openaudible.desktop.swt.gui.GUI;
 import org.openaudible.desktop.swt.gui.MessageBoxFactory;
 import org.openaudible.desktop.swt.manager.Application;
@@ -19,6 +18,7 @@ import org.openaudible.desktop.swt.manager.Version;
 import org.openaudible.desktop.swt.manager.VersionCheck;
 import org.openaudible.desktop.swt.manager.views.Preferences;
 import org.openaudible.desktop.swt.util.shop.WidgetShop;
+import org.openaudible.desktop.swt.view.AboutDialog;
 import org.openaudible.desktop.swt.view.LogWindow;
 
 /**
@@ -80,7 +80,7 @@ public class CommandCenter {
                 /* User has selected text */
                 if (((StyledText) text).getSelectionCount() > 0)
                     cb.setContents(new Object[]{((StyledText) text).getSelectionText()}, new Transfer[]{TextTransfer.getInstance()});
-                /* User has not selected text */
+                    /* User has not selected text */
                 else
                     cb.setContents(new Object[]{((StyledText) text).getText()}, new Transfer[]{TextTransfer.getInstance()});
             }
@@ -237,9 +237,6 @@ public class CommandCenter {
             case Browser:
                 AudibleGUI.instance.browse();
                 break;
-            case Cookies:
-                AudibleGUI.instance.updateCookies(false);
-                break;
             case Connect:
                 AudibleGUI.instance.connect();
                 break;
@@ -251,6 +248,9 @@ public class CommandCenter {
                 break;
             case Console:
                 LogWindow.show();
+                break;
+            case Logout:
+                AudibleGUI.instance.logout();
                 break;
 
             default:
@@ -286,7 +286,8 @@ public class CommandCenter {
             case Play:
                 return AudibleGUI.instance.canPlay();
             case Console:
-                break;
+                return true;
+
             case Export_Web_Page:
                 return Audible.instance.mp3Count() > 0;
             case Export_Book_List:
@@ -299,12 +300,14 @@ public class CommandCenter {
                 return AudibleGUI.instance.canDownloadAll();
             case Convert_All:
                 return AudibleGUI.instance.canConvertAll();
+            case Logout:
+                return ConnectionNotifier.getInstance().isConnected();
+
             case Preferences:
             case Quit:
             case About:
             case Browser:
-            case Cookies:
-                case AppWebPage:
+            case AppWebPage:
                 return true;
             case Copy:
             case Cut:
@@ -322,7 +325,7 @@ public class CommandCenter {
             case Check_For_Update:
                 return true;
             default:
-                assert (false);
+                logger.info("no case for getEnabled: " + c);
                 break;
 
         }

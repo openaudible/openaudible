@@ -27,7 +27,7 @@ public class AudibleClient extends WebClient {
         String chrome = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
     */
     // want a consistent user agent.. but not sure how much it makes a difference, if any.
-    String swtWindows = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; Trident/7.0; rv:11.0) like Gecko";
+    public static String swtWindows = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; Trident/7.0; rv:11.0) like Gecko";
 
     public AudibleClient() {
         super(BrowserVersion.BEST_SUPPORTED);

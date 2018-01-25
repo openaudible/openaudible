@@ -50,7 +50,7 @@ public class Audible implements IQueueListener<Book> {
     private IProgressTask progress;
     private boolean autoConvertToMP3 = false;
     private final HashMap<String, Book> books = new HashMap<>(); // Book.id(), Book
-    AudibleRegion region = AudibleRegion.US;
+    // AudibleRegion region = AudibleRegion.US;
 
     public Audible() {
 
@@ -172,6 +172,9 @@ public class Audible implements IQueueListener<Book> {
             if (prefsFile.exists()) {
                 String content = HTMLUtil.readFile(prefsFile);
                 account = gson.fromJson(content, AudibleAccountPrefs.class);
+                if (account.audibleRegion==null)
+                    account.audibleRegion=AudibleRegion.US;
+
             }
         } catch (Throwable th) {
             LOG.info("Error loading account", th);
@@ -560,8 +563,8 @@ public class Audible implements IQueueListener<Book> {
         boolean ok = false;
 
         if (audibleScraper == null) {
-            if (account == null || account.audibleUser.isEmpty())
-                throw new Exception("audible user name not set");
+
+            // if (account == null || account.audibleUser.isEmpty())  throw new Exception("audible user name not set");
 //            if (account == null || account.audiblePassword.isEmpty())
 //                throw new Exception("audible password not set");
 
@@ -638,22 +641,19 @@ public class Audible implements IQueueListener<Book> {
         return out;
     }
 
-    public void setExternalCookies(Collection<Cookie> cookies) throws Exception {
-        AudibleScraper s = getScraper(false);
+    public void setExternalCookies(AudibleScraper s, Collection<Cookie> cookies) throws Exception {
         CookieManager cm = s.getWebClient().getCookieManager();
-        // cm.clearCookies();
 
-        try {
-            // s.setURL("https://www.audible.com/"); // http is fine... better?
-            s.home();
-            if (s.checkLoggedIn())
-                return;
-        } catch (Throwable th) {
-            th.printStackTrace();
-        }
+//        try {
+//            s.home();
+//            if (s.checkLoggedIn())
+//                return;
+//        } catch (Throwable th) {
+//            th.printStackTrace();
+//        }
 
-        LOG.info("CookieManager: " + inspectCookies(cm.getCookies()));
-        LOG.info("Browser Cooks: " + inspectCookies(cookies));
+        LOG.info("Scraper Cookies: " + inspectCookies(cm.getCookies()));
+        LOG.info("Browser Cookies: " + inspectCookies(cookies));
 
         int updated = 0;
         int found = 0;
@@ -679,7 +679,6 @@ public class Audible implements IQueueListener<Book> {
         }
 
         LOG.info("Found " + found + " cookies. updated:" + updated);
-        s.home();
     }
 
     @Override
@@ -713,11 +712,23 @@ public class Audible implements IQueueListener<Book> {
         return account;
     }
 
+    public void logout() {
+
+        if (audibleScraper!=null)
+            audibleScraper.logout();
+
+    }
+    public String getAudibleURL()
+    {
+        return getAccount().audibleRegion.getBaseURL();
+    }
+    /*
     public boolean hasLogin() {
         if (account == null)
             return false;
 
         return !account.audiblePassword.isEmpty() && !account.audibleUser.isEmpty();
     }
+*/
 
 }

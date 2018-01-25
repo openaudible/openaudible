@@ -28,9 +28,10 @@ public class AppMenu implements ITranslatable, SelectionListener {
     private Menu editMenu;
     private Menu controlMenu;
     private Menu aboutMenu;
-    private final Command[] actionCommands = {Command.ViewInAudible, Command.Show_MP3, Command.Play, Command.Download, Command.Convert, Command.Refresh_Book_Info};
+    private final Command[] actionCommands = {Command.ViewInAudible, Command.Show_MP3, Command.Play, Command.Download,
+            Command.Convert, Command.Refresh_Book_Info};
     private final Command[] appCommands = {Command.Connect, Command.Quick_Refresh, Command.Rescan_Library, Command.Download_All, Command.Convert_All,
-            Command.Browser};
+           Command.MenuSeparator,  Command.Browser}; // , Command.MenuSeparator, Command.Logout};
 
     private final Command[] aboutCommands = {Command.AppWebPage, Command.Check_For_Update, Command.About};
 
@@ -111,6 +112,11 @@ public class AppMenu implements ITranslatable, SelectionListener {
         MenuItem item = installSystemMenu(cmd);
         if (item != null)
             return item; // is a special Mac OS menu
+        if (cmd==Command.MenuSeparator)
+        {
+            return newSeparator(parent);
+        }
+
 
         item = new MenuItem(parent, style);
         item.setData(cmd);

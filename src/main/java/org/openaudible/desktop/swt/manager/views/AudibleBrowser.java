@@ -13,6 +13,7 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.*;
+import org.openaudible.audible.AudibleClient;
 import org.openaudible.desktop.swt.gui.SWTAsync;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class AudibleBrowser {
     boolean title = false;
     Composite parent;
     Text locationBar;
-    Browser browser;
+    private Browser browser;
     ToolBar toolbar;
     Canvas canvas;
     ToolItem itemBack, itemForward;
@@ -35,24 +36,30 @@ public class AudibleBrowser {
     ProgressBar progressBar;
     SWTError error = null;
     Collection<Cookie> cookies;
+    String customHeader[];
 
     public AudibleBrowser(Composite parent, String url) {
         this.parent = parent;
         try {
             browser = new Browser(parent, SWT.BORDER);
             browser.addTitleListener(event -> getShell().setText(event.title));
+            Object t = browser.getWebBrowser();
+
+            customHeader = new String[1];
+            customHeader[0] = "User-agent: " + AudibleClient.swtWindows;
+
+
         } catch (SWTError e) {
             error = e;
             /* Browser widget could not be instantiated */
             parent.setLayout(new FillLayout());
             Label label = new Label(parent, SWT.CENTER | SWT.WRAP);
             label.setText(getResourceString("BrowserNotCreated"));
-            // label.requestLayout();
             return;
         }
         initResources();
         if (url.length() > 0)
-            browser.setUrl(getResourceString(url));
+            setUrl(getResourceString(url));
 
         if (true)
             show(false, null, null, true, true, true, true);
@@ -60,6 +67,7 @@ public class AudibleBrowser {
             show(false, null, null, false, false, false, false);
 
     }
+
 
     /**
      * Gets a string from the resource bundle. We don't want to crash because of a missing String. Returns the key if not found.
@@ -108,10 +116,12 @@ public class AudibleBrowser {
     public SWTError getError() {
         return error;
     }
+/*
 
     public Browser getBrowser() {
         return browser;
     }
+*/
 
     public void setShellDecoration(Image icon, boolean title) {
         this.icon = icon;
@@ -161,7 +171,7 @@ public class AudibleBrowser {
                 else if (item == itemRefresh)
                     browser.refresh();
                 else if (item == itemGo)
-                    browser.setUrl(locationBar.getText());
+                    setUrl(locationBar.getText());
                 if (item == itemTest)
                     test();
             };
@@ -180,7 +190,7 @@ public class AudibleBrowser {
             data.right = new FormAttachment(100, -5);
             canvas.setLayoutData(data);
 
-            canvas.addListener(SWT.MouseDown, e -> browser.setUrl(getResourceString("Startup")));
+            canvas.addListener(SWT.MouseDown, e -> setUrl(getResourceString("Startup")));
 
         }
         if (addressBar) {
@@ -196,7 +206,7 @@ public class AudibleBrowser {
                 data.right = new FormAttachment(100, 0);
             }
             locationBar.setLayoutData(data);
-            locationBar.addListener(SWT.DefaultSelection, e -> browser.setUrl(locationBar.getText()));
+            locationBar.addListener(SWT.DefaultSelection, e -> setUrl(locationBar.getText()));
         }
         if (statusBar) {
             status = new Label(parent, SWT.NONE);
@@ -216,13 +226,13 @@ public class AudibleBrowser {
             browser.addStatusTextListener(event -> status.setText(event.text));
         }
 
-		/* Define the function to call from JavaScript */
+        /* Define the function to call from JavaScript */
         new BrowserFunction(browser, "cookieCallback") {
             @Override
             public Object function(Object[] objects) {
                 ArrayList<Cookie> list = new ArrayList<>();
                 String u = browser.getUrl();
-                if (u.contains("www.audible.com")) {
+                if (u.contains("audible.")) {
                     Object[] keyValuePairs = (Object[]) objects[0];
                     for (Object o : keyValuePairs) {
                         Object arr[] = (Object[]) o;
@@ -232,6 +242,16 @@ public class AudibleBrowser {
                     cookies = list;
                 } else
                     logger.info("Expected url to include audible, instead: " + u);
+
+                return null;
+            }
+        };
+
+        /* Define the function to call from JavaScript */
+        new BrowserFunction(browser, "pageInfoCallback") {
+            @Override
+            public Object function(Object[] objects) {
+                ArrayList<Cookie> list = new ArrayList<>();
 
                 return null;
             }
@@ -302,6 +322,10 @@ public class AudibleBrowser {
 
     }
 
+    public void setUrl(String u) {
+        browser.setUrl(u, null, customHeader);
+    }
+
     /**
      * Grabs input focus
      */
@@ -326,7 +350,12 @@ public class AudibleBrowser {
         SWTAsync.block(new SWTAsync("getCookies") {
                            @Override
                            public void task() {
-                               browser.execute("cookieCallback(document.cookie.split( ';' ).map( function( x ) { return x.trim().split( '=' ); } ));");
+                               String listCookies="document.cookie.split( ';' ).map( function( x ) { return x.trim().split( '=' ); } )";
+                               String pageInfo="";// document.cookie.split( ';' ).map( function( x ) { return x.trim().split( '=' ); } )";
+
+                               browser.execute("cookieCallback("+listCookies+");");
+                               browser.execute("pageInfoCallback("+pageInfo+");");
+
 
                            }
                        }
@@ -343,5 +372,14 @@ public class AudibleBrowser {
 
     private Shell getShell() {
         return browser.getShell();
+    }
+
+    public boolean isDisposed() {
+        return browser == null || browser.isDisposed();
+    }
+
+    public void close() {
+        if (!isDisposed()) browser.close();
+        browser = null;
     }
 }

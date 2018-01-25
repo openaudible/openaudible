@@ -171,7 +171,7 @@ public class Preferences extends Dialog {
 
     private void createAccountGroup(GridComposite c) {
 
-        Group group = c.newGroup("Audible Account", 2);
+        Group group = c.newGroup("Audible Account", 3);
         group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
 
         region = GridComposite.newCombo(group, "Region");
@@ -179,12 +179,20 @@ public class Preferences extends Dialog {
         {
             region.add(r.displayName());
         }
+        new Label(group, 0);
 
         email = GridComposite.newTextPair(group, "Audible Email");
+        new Label(group, 0);
         GridData gd = new GridData();
         gd.widthHint = 250;
         email.setLayoutData(gd);
         password = GridComposite.newPasswordPair(group, "Password");
+        gd = new GridData();
+        gd.widthHint = 250;
+        email.setLayoutData(gd);
+        new Label(group, SWT.NONE).setText("(optional)");
+        gd = new GridData();
+        gd.widthHint = 50;
 
 
         gd = new GridData();

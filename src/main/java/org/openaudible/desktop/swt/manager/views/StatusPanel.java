@@ -4,6 +4,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.openaudible.AudibleAccountPrefs;
 import org.openaudible.audible.ConnectionListener;
 import org.openaudible.audible.ConnectionNotifier;
 import org.openaudible.books.Book;
@@ -98,6 +99,11 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
     @Override
     public void connectionChanged(boolean connected) {
         _update();
+    }
+
+    @Override
+    public AudibleAccountPrefs getAccountPrefs(AudibleAccountPrefs in) {
+        return in;
     }
 
     public enum Status {

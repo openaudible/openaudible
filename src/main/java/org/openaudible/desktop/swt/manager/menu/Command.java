@@ -26,7 +26,8 @@ public enum Command {
     Convert_All,
     Browser,
     Check_For_Update,
-    Cookies, AppWebPage;
+    AppWebPage,
+    Logout, MenuSeparator;
 
 
     public char getKeyEquiv() {
@@ -84,8 +85,7 @@ public enum Command {
             case Browser:
                 cmd = 'B';
                 break;
-            case Cookies:
-                break;
+            case Logout:
             case Console:
                 break;
         }
@@ -144,8 +144,6 @@ public enum Command {
             case Convert_All:
                 break;
             case Browser:
-                break;
-            case Cookies:
                 break;
         }
         return file;

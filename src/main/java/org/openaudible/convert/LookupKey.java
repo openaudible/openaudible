@@ -107,6 +107,7 @@ public enum LookupKey {
 
         ArrayList<String> args = new ArrayList<>();
         args.add(getExecutable());
+        // I don't know wjh
         if (!Platform.isWindows())
         {
         	for (File f:tablesDir.listFiles())
