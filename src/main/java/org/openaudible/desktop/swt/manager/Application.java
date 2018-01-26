@@ -2,7 +2,10 @@ package org.openaudible.desktop.swt.manager;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.openaudible.Audible;
 import org.openaudible.books.BookNotifier;
 import org.openaudible.desktop.swt.gui.GUI;

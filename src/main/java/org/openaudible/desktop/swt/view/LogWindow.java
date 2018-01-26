@@ -13,8 +13,6 @@ import org.openaudible.desktop.swt.util.shop.PaintShop;
 import org.openaudible.util.Console;
 import org.openaudible.util.Platform;
 
-import java.io.PrintStream;
-
 
 public class LogWindow {
     public static LogWindow instance = null;
