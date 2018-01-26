@@ -10,29 +10,19 @@ import org.eclipse.swt.widgets.Shell;
 import org.openaudible.Directories;
 import org.openaudible.desktop.swt.gui.GUI;
 import org.openaudible.desktop.swt.util.shop.FontShop;
+import org.openaudible.util.Console;
 
 import java.io.File;
 import java.io.IOException;
 
 public class AppLoader implements Version {
     public final static Log logger = LogFactory.getLog(GUI.class);
-    /**
-     * Set to TRUE to use sleak
-     */
     private static final boolean useSleak = false;
-    public static boolean death = true;
-    /**
-     * Flag to set TRUE when the application was built
-     */
+
     static boolean guiBuilt = false;
-    static boolean useSplash = false;
-    static boolean showTerms = false;
     private static boolean didStartup;
     Display display;
     Shell invisibleShell;
-    boolean expired = false;
-    int daysRemain = 0;
-    private Shell shell;
 
     public AppLoader() {
         this(new String[0]);
@@ -42,6 +32,9 @@ public class AppLoader implements Version {
      * Load GUI and display a Splashscreen while loading
      */
     public AppLoader(String args[]) {
+
+        // application uses console for logging.
+        Console.instance.install();
 
         if (didStartup == false) {
             // System.out.println("LM: Startup...");

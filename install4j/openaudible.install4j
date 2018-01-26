@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="6.1.4" transformSequenceNumber="5">
   <directoryPresets config="../src/main/resources/images" />
-  <application name="OpenAudible" distributionSourceDir="" applicationId="7008-5171-7013-3819" mediaDir="installers" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="OpenAudible" publisher="" publisherWeb="https://openaudible.github.io/" version="0.9.2" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="9e91a053dcc2ef90" javaMinVersion="1.8" javaMaxVersion="" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
+  <application name="OpenAudible" distributionSourceDir="" applicationId="7008-5171-7013-3819" mediaDir="installers" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="OpenAudible" publisher="" publisherWeb="http://openaudible.org" version="0.9.2" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="9e91a053dcc2ef90" javaMinVersion="1.8" javaMaxVersion="" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -447,9 +447,11 @@
       <exclude>
         <entry location="org.eclipse.swt.win32.win32.x86_64-4.6.jar" fileType="regular" />
         <entry location="org.eclipse.swt.gtk.linux.x86_64-4.6.jar" fileType="regular" />
+        <entry location="bin/alglib1.so" fileType="regular" />
         <entry location="bin/win_rcrack.exe" fileType="regular" />
         <entry location="bin/win_ffmpeg" fileType="regular" />
         <entry location="bin/linux_rcrack" fileType="regular" />
+        <entry location="bin/alglib1.dll" fileType="regular" />
         <entry location="bin/linux_ffmpeg" fileType="regular" />
       </exclude>
       <variables />

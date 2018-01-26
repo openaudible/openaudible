@@ -358,17 +358,20 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         progressTask.setTask("Connecting...", "");
         final AudibleScraper s = audible.getScraper(false);
         if (s != null && !s.isLoggedIn()) {
-            LOG.info("Setting cookies 1");
+            if (browser!=null) {
+                LOG.info("Setting cookies 1");
 
-            SWTAsync.block(new SWTAsync("connect") {
-                @Override
-                public void task() {
-                    LOG.info("Done Setting cookies 2");
-                    updateCookies(s, false);
-                    LOG.info("Done Setting cookies 3");
-                }
-            });
-            LOG.info("Done Setting cookies 4");
+                SWTAsync.block(new SWTAsync("connect") {
+                    @Override
+                    public void task() {
+                        LOG.info("Done Setting cookies 2");
+                        updateCookies(s, false);
+                        LOG.info("Done Setting cookies 3");
+                    }
+                });
+                LOG.info("Done Setting cookies 4");
+            }
+
         }
 
         try {

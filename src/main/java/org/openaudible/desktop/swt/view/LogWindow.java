@@ -1,24 +1,26 @@
 package org.openaudible.desktop.swt.view;
 
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
+import org.openaudible.util.Console;
 import org.openaudible.util.Platform;
 
-import java.util.logging.Level;
+import java.io.PrintStream;
 
 
 public class LogWindow {
     public static LogWindow instance = null;
-    private static final String lineSeparator = System.getProperty("line.separator");
     Shell shell;
     ConsoleView textPanel;
+    private static final Log LOG = LogFactory.getLog(LogWindow.class);
 
     public static boolean isOpen() {
         return getOpenShell() != null;
@@ -49,17 +51,6 @@ public class LogWindow {
     }
 
 
-    private LogWindow() {
-    }
-
-
-    public static void log(int componentId, Level level, int color, String text) {
-        LogWindow w = instance;
-        if (w != null)
-            w.textPanel.log(componentId, level, color, text);
-    }
-
-
 
     public LogWindow(String title) {
         shell = new Shell(SWT.BORDER | SWT.TITLE | SWT.CLOSE | SWT.RESIZE);
@@ -79,18 +70,17 @@ public class LogWindow {
         textView.setLayoutData(data);
 
 
-        Listener closeListener = new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                close();
-            }
-        };
 
-        shell.addListener(SWT.Close, closeListener);
+        shell.addListener(SWT.Close, event -> close());
 
         shell.layout();
         shell.open();
+
+        // hook in with main console.
+        Console.instance.setListener(textPanel);
     }
+
+
 
     public void addListener(int id, Listener l) {
         shell.addListener(id, l);
@@ -99,16 +89,8 @@ public class LogWindow {
     private void close() {
         if (instance != null) {
             instance = null;
-            if (textPanel != null)
-                textPanel.delete();
+            Console.instance.setListener(null);
             shell.dispose();
         }
-    }
-
-    public static void quit() {
-        if (instance != null) {
-            instance.close();
-        }
-
     }
 }

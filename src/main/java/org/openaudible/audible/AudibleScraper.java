@@ -38,7 +38,7 @@ import java.util.*;
 // audible.com web page scraper
 // Not thread safe, run single instance at a time.
 public class AudibleScraper {
-    private static final Log LOG = LogFactory.getLog(Audible.class);
+    private static final Log LOG = LogFactory.getLog(AudibleScraper.class);
     private final AudibleClient webClient;
     public HtmlPage page;
     final AudibleAccountPrefs account;
@@ -138,6 +138,9 @@ public class AudibleScraper {
 
     public void setPage(HtmlPage page) {
         this.page = page;
+
+        progress.setSubTask(page.getTitleText());
+
         if (page != null && debugCust) {
             String xml = page.asXml();
             int i1 = xml.indexOf("cust_id");
@@ -423,8 +426,7 @@ public class AudibleScraper {
         if (getProgress() != null)
             getProgress().setTask("Submitting credentials...");
 
-        page = submit.click();
-
+        setPage(submit.click());
         boolean ok = checkLoggedIn();
 
         if (!ok)
@@ -506,7 +508,7 @@ public class AudibleScraper {
 
             HtmlAnchor signIn = getAnchor("/sign-in");
             if (signIn != null) {
-                page = signIn.click();
+                setPage(signIn.click());
                 HTMLUtil.debugNode(page, "sign-in");
 
                 Thread.sleep(2000);
@@ -552,8 +554,7 @@ public class AudibleScraper {
                 lib = n;
         }
         if (lib!=null) {
-            lib.click();
-
+            setPage(lib.click());
         } else {
             lib();
         }
@@ -567,10 +568,8 @@ public class AudibleScraper {
     public void lib() throws Exception {
         if (!checkLoggedIn())
             throw new Exception("Not logged in at start lib.");
-
         if (getProgress() != null)
             getProgress().setTask("Loading Library");
-
         clickLib();
         if (!checkLoggedIn()) {
             // getWebClient().waitForBackgroundJavaScript(10000);  // needed? prob. not.
@@ -586,7 +585,7 @@ public class AudibleScraper {
         String downloadUserId = getHidden("cust_id");
         if (downloadCustId == null || downloadUserId == null) {
             HTMLUtil.debugNode(page, "lib-no-cust");
-            throw new IOException("Missing downloadCustId:" + downloadCustId + " downloadUserId:" + downloadUserId);
+            throw new IOException("Unable to determine required library variables in library:");
         }
     }
 
