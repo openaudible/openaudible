@@ -94,7 +94,7 @@ public class BookTable extends EnumTable<Book, BookTableColumn> implements BookL
     AtomicInteger cache=new AtomicInteger();
 
     public void populate() {
-        if (cache.incrementAndGet()==0) {
+        if (cache.getAndIncrement()==0) {
             SWTAsync.run(new SWTAsync("populate_table") {
                 @Override
                 public void task() {

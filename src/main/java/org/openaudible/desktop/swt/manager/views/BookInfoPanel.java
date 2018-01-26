@@ -220,7 +220,7 @@ public class BookInfoPanel extends GridComposite implements BookListener {
     AtomicInteger cache= new AtomicInteger();
 
     private void refresh(final Book b) {
-        if (cache.incrementAndGet()==0) {
+        if (cache.getAndIncrement()==0) {
             SWTAsync.run(new SWTAsync("refresh") {
                 @Override
                 public void task() {

@@ -59,7 +59,7 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
     AtomicInteger cache=new AtomicInteger();
 
     private void _update() {
-        boolean update = cache.incrementAndGet() == 0;
+        boolean update = cache.getAndIncrement() == 0;
 
         if (!update) return;
 

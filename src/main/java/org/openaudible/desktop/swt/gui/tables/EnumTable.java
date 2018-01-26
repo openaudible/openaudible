@@ -289,7 +289,7 @@ public class EnumTable<E extends Object, F extends Enum> implements SelectionLis
     AtomicInteger cache=new AtomicInteger(0);
 
     public void populateData() {
-        if (cache.incrementAndGet()==0) {
+        if (cache.getAndIncrement()==0) {
             SWTAsync.run(new SWTAsync("populateData") {
                 @Override
                 public void task() {

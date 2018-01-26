@@ -29,7 +29,7 @@ public class SummaryPanel implements BookListener {
     AtomicInteger cache = new AtomicInteger();
     @Override
     public void booksSelected(List<Book> list) {
-        if (cache.incrementAndGet()>0) return;
+        if (cache.getAndIncrement()>0) return;
         SWTAsync.run(new SWTAsync("update") {
             @Override
             public void task() {
