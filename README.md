@@ -89,7 +89,7 @@ This is only required if logging in fails or if the browser cookies expire. <br 
 
 The application will use cookies to expedite logging in-- and bypassing some of the "are you a human" checks.
 
-Errors are logged to an "error.log" file, usually written out to the application directory.
+Errors are logged to the console window, under the File menu.
 
 ## Built With
 
