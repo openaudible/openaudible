@@ -136,7 +136,9 @@ public class AudibleScraper {
     }
 
     public void setPage(HtmlPage page) {
+        assert(page!=null);
         this.page = page;
+        LOG.info("pageLoaded:"+page.getUrl()+" "+page.getTitleText());
 
         // progress.setSubTask("page.getTitleText());
 
@@ -609,6 +611,7 @@ public class AudibleScraper {
     }
 
     public Page setURL(String u) throws FailingHttpStatusCodeException, IOException {
+        LOG.info("setURL:"+u);
 
         if (getProgress() != null)
             getProgress().setSubTask(u);

@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class EnumTable<E extends Object, F extends Enum> implements SelectionListener {
     public final static Log logger = LogFactory.getLog(EnumTable.class);
@@ -285,15 +286,20 @@ public class EnumTable<E extends Object, F extends Enum> implements SelectionLis
         assertTable();
     }
 
+    AtomicInteger cache=new AtomicInteger(0);
+
     public void populateData() {
-        SWTAsync.run(new SWTAsync("populateData") {
-            @Override
-            public void task() {
-                table.setSelection(new int[0]);
-                _populateDataGUI();
-                packColumns();
-            }
-        });
+        if (cache.incrementAndGet()==0) {
+            SWTAsync.run(new SWTAsync("populateData") {
+                @Override
+                public void task() {
+                    cache.set(0);
+                    table.setSelection(new int[0]);
+                    _populateDataGUI();
+                    packColumns();
+                }
+            });
+        }
 
     }
 

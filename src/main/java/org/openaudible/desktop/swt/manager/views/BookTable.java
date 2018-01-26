@@ -18,6 +18,7 @@ import org.openaudible.desktop.swt.manager.menu.AppMenu;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class BookTable extends EnumTable<Book, BookTableColumn> implements BookListener {
 
@@ -90,15 +91,18 @@ public class BookTable extends EnumTable<Book, BookTableColumn> implements BookL
         return hasNothing;
     }
 
+    AtomicInteger cache=new AtomicInteger();
 
     public void populate() {
-
-        SWTAsync.run(new SWTAsync("populate_table") {
-            @Override
-            public void task() {
-                setItems(AudibleGUI.instance.getDisplayedBooks());
-            }
-        });
+        if (cache.incrementAndGet()==0) {
+            SWTAsync.run(new SWTAsync("populate_table") {
+                @Override
+                public void task() {
+                    cache.set(0);
+                    setItems(AudibleGUI.instance.getDisplayedBooks());
+                }
+            });
+        }
     }
 
     public String getColumnName(BookTableColumn col) {

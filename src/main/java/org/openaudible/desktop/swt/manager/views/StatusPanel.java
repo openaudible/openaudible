@@ -16,6 +16,7 @@ import org.openaudible.desktop.swt.manager.AudibleGUI;
 import org.openaudible.desktop.swt.util.shop.FontShop;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class StatusPanel extends GridComposite implements BookListener, ConnectionListener {
     Label stats[];
@@ -55,10 +56,17 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
         _update();
     }
 
+    AtomicInteger cache=new AtomicInteger();
+
     private void _update() {
+        boolean update = cache.incrementAndGet() == 0;
+
+        if (!update) return;
+
         SWTAsync.run(new SWTAsync("update") {
             @Override
             public void task() {
+                cache.set(0);
 
                 for (Label s : stats) {
                     if (s == null) continue;
