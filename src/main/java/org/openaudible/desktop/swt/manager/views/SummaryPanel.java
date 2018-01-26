@@ -10,6 +10,7 @@ import org.openaudible.books.BookNotifier;
 import org.openaudible.desktop.swt.gui.SWTAsync;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SummaryPanel implements BookListener {
     StyledText summary;
@@ -25,12 +26,14 @@ public class SummaryPanel implements BookListener {
         summary.setLayoutData(gd);
         BookNotifier.getInstance().addListener(this);
     }
-
+    AtomicInteger cache = new AtomicInteger();
     @Override
     public void booksSelected(List<Book> list) {
+        if (cache.incrementAndGet()>0) return;
         SWTAsync.run(new SWTAsync("update") {
             @Override
             public void task() {
+                cache.set(0);
                 switch (list.size()) {
                     case 0:
                         update(null);

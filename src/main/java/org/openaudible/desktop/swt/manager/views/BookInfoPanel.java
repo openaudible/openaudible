@@ -22,6 +22,7 @@ import org.openaudible.desktop.swt.util.shop.PaintShop;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class BookInfoPanel extends GridComposite implements BookListener {
 
@@ -216,14 +217,18 @@ public class BookInfoPanel extends GridComposite implements BookListener {
     private void refresh() {
         refresh(curBook);
     }
+    AtomicInteger cache= new AtomicInteger();
 
     private void refresh(final Book b) {
-        SWTAsync.run(new SWTAsync("refresh") {
-            @Override
-            public void task() {
-                update(b);
-            }
-        });
+        if (cache.incrementAndGet()==0) {
+            SWTAsync.run(new SWTAsync("refresh") {
+                @Override
+                public void task() {
+                    cache.set(0);
+                    update(b);
+                }
+            });
+        }
     }
 
     @Override
