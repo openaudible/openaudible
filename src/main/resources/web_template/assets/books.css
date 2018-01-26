@@ -1,0 +1,50 @@
+#container {
+	width: 1300px;
+}
+
+/* customize */
+
+select.tidy_table {
+	float: right;
+	margin: 10px 0px 10px 0px;
+height:auto!important; 
+color:#666; padding: 1%; 
+font-size: 14px; 
+font-weight: normal;
+word-wrap: break-word; 
+text-align: left;
+	
+}
+
+table.tidy_table {
+
+	white-space:normal;
+}
+
+table.tidy_table th {
+	white-space: wrap;
+}
+
+table.tidy_table tr.check_on {
+	background-color: #F7F7F7;
+}
+
+table.tidy_table tr.check_off {
+	background-color: #FFFFFF;
+}
+
+table.tidy_table th {
+	background-color: #DDDDDD;
+}
+
+table.tidy_table th.sort_asc {
+	background: #EEEEEE url( assets/arrow_asc.gif ) no-repeat right center;
+}
+
+table.tidy_table th.sort_desc {
+	background: #EEEEEE url( assets/arrow_desc.gif ) no-repeat right center;
+}
+
+table.tidy_table td {
+	border-top: 1px solid #CCCCCC;
+}

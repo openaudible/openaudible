@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.openaudible</groupId>
+    <artifactId>openaudible</artifactId>
+    <packaging>jar</packaging>
+    <name>openaudible</name>
+    <version>0.9</version>  <!-- appVersion from org.openaudible.desktop.swt.manager.Version.java -->
+    <description>open source audible library and cross-platform manager application</description>
+    <url>https://github.com/openaudible/openaudible</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven-compiler-plugin-version>2.3.2</maven-compiler-plugin-version>
+        <openaudible.version>1.0.0</openaudible.version>
+
+        <main.class>org.openaudible.desktop.Application</main.class>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
+    </properties>
+
+
+    <profiles>
+        <!-- SWT (Eclipse Widgets) have a jar for each platform. Only link with one jar.
+            org.eclipse.swt.gtk.linux.x86-4.6.jar
+            org.eclipse.swt.gtk.linux.x86_64-4.6.jar
+            org.eclipse.swt.win32.win32.x86-4.6.jar
+            org.eclipse.swt.win32.win32.x86_64-4.6.jar
+            org.eclipse.swt.cocoa.macosx.x86_64-4.6.jar
+        -->
+        <profile>
+            <id>Mac</id>
+            <activation>
+                <os><family>mac</family></os>
+            </activation>
+            <properties>
+                <swt_library>org.eclipse.swt.cocoa.macosx.x86_64-4.6.jar</swt_library>
+            </properties>
+        </profile>
+        <profile>
+            <id>Win64</id>
+            <activation>
+                <os><family>windows</family></os>
+            </activation>
+            <properties>
+                <swt_library>org.eclipse.swt.win32.win32.x86_64-4.6.jar</swt_library>
+            </properties>
+
+        </profile>
+        <profile>
+            <id>Linux</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <name>Linux</name>
+                </os>
+
+            </activation>
+            <properties>
+                <swt_library>org.eclipse.swt.gtk.linux.x86_64-4.6.jar</swt_library>
+            </properties>
+        </profile>
+
+    </profiles>
+
+    <build>
+        <directory>target</directory>
+        <outputDirectory>target/classes</outputDirectory>
+        <finalName>${project.artifactId}</finalName>
+        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
+
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <archive>
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                        <manifestEntries>
+                            <Main-Class>${main.class}</Main-Class>
+                            <Application-Name>OpenAudible</Application-Name>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <appendAssemblyId>true</appendAssemblyId>
+                    <descriptors>
+                        <descriptor>src/main/resources/assembly/jar.xml</descriptor>
+                    </descriptors>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+
+                    <archive>
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                        <manifestEntries>
+                            <Main-Class>${main.class}</Main-Class>
+                            <Application-Name>OpenAudible</Application-Name>
+                            <Build-Date>${maven.build.timestamp}</Build-Date>
+                            <Built-By>OpenAudible Group</Built-By>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <repositories>
+        <!-- There's no official public maven eclipse repository yet. Leon Blakey -->
+        <!-- has created https://github.com/maven-eclipse/maven-eclipse.github.io. -->
+        <repository>
+            <id>maven-eclipse-repo</id>
+            <url>http://maven-eclipse.github.io/maven</url>
+        </repository>
+    </repositories>
+
+
+    <dependencies>
+        <!-- Core dependencies -->
+
+        <dependency>
+            <groupId>net.sourceforge.htmlunit</groupId>
+            <artifactId>htmlunit</artifactId>
+            <version>2.23</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.2.4</version>
+        </dependency>
+        <!-- desktop dependencies -->
+
+        <dependency>
+            <!-- SWT library is platform dependent. So we break a few eggs getting it to work with the right profile. -->
+
+            <groupId>org.eclipse.swt</groupId>
+            <artifactId>swt</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/swt/${swt_library}</systemPath>
+        </dependency>
+
+
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <!-- Internal -->
+        <!-- https://mvnrepository.com/artifact/org.eclipse/jface -->
+        <dependency>
+            <groupId>org.eclipse</groupId>
+            <artifactId>jface</artifactId>
+            <version>3.3.0-I20070606-0010</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>1.6</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.3</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>3.7</version>
+        </dependency>
+
+
+    </dependencies>
+</project>
