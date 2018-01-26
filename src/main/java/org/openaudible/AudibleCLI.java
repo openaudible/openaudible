@@ -17,11 +17,10 @@ import java.util.logging.Level;
 public class AudibleCLI {
     private static final Log LOG = LogFactory.getLog(AudibleCLI.class);
 
-    final Audible audible;
+    final Audible audible= new Audible();;
     volatile boolean quit = false;
 
     public AudibleCLI() {
-        audible = new AudibleAutomated();
     }
 
     private static void println(Object o) {

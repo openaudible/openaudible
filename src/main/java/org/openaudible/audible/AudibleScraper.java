@@ -14,7 +14,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.eclipse.jetty.util.IO;
-import org.openaudible.Audible;
 import org.openaudible.AudibleAccountPrefs;
 import org.openaudible.Directories;
 import org.openaudible.books.Book;
@@ -501,7 +500,7 @@ public class AudibleScraper {
             getWebClient().setJavascriptEnabled(true);
         try {
             setURL(homeURL());
-            HTMLUtil.debugNode(page, "homeURL");
+            // HTMLUtil.debugNode(page, "homeURL");
 
             if (checkLoggedIn())
                 return;
@@ -509,7 +508,7 @@ public class AudibleScraper {
             HtmlAnchor signIn = getAnchor("/sign-in");
             if (signIn != null) {
                 setPage(signIn.click());
-                HTMLUtil.debugNode(page, "sign-in");
+                // HTMLUtil.debugNode(page, "sign-in");
 
                 Thread.sleep(2000);
                 // getWebClient().waitForBackgroundJavaScript(5000);

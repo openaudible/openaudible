@@ -3,7 +3,6 @@ package org.openaudible.books;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openaudible.util.EventNotifier;
-import org.openaudible.util.EventTimer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,19 +58,12 @@ public class BookNotifier extends EventNotifier<BookListener> implements BookLis
 
     }
 
-    private void log() {
-        EventTimer evt = new EventTimer();
-        c1++;
-        time += evt.time();
-        if (c1 % 10 == 0) LOG.info("book notify:" + c1 + " " + time);
-    }
 
     @Override
     public void bookUpdated(Book book) {
         if (!enabled) return;
         for (BookListener l : getListeners())
             l.bookUpdated(book);
-        log();
     }
 
     public static Log getLOG() {
@@ -84,7 +76,6 @@ public class BookNotifier extends EventNotifier<BookListener> implements BookLis
 
         for (BookListener l : getListeners())
             l.booksUpdated();
-        log();
     }
 
 

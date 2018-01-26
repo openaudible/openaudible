@@ -14,6 +14,7 @@ import org.apache.http.util.EntityUtils;
 import org.openaudible.Directories;
 import org.openaudible.books.Book;
 import org.openaudible.books.BookElement;
+import org.openaudible.convert.AAXParser;
 import org.openaudible.util.CopyWithProgress;
 import org.openaudible.util.Util;
 import org.openaudible.util.queues.IQueueJob;
@@ -184,6 +185,8 @@ public class DownloadJob implements IQueueJob {
     @Override
     public void processJob() throws Exception {
         download();
+        // update book info, based on tags.
+        AAXParser.instance.update(b);
     }
 
     @Override

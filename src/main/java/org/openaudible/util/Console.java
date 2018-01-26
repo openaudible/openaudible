@@ -1,14 +1,14 @@
 package org.openaudible.util;
 
-import org.openaudible.desktop.swt.view.LogWindow;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.*;
 import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 public class Console extends ConsoleHandler
 {
@@ -25,6 +25,8 @@ public class Console extends ConsoleHandler
         assert(!installed);
         installed=true;
         Logger.getLogger("").addHandler(this);
+        // LogFactory.getFactory().setAttribute("");
+
         // captureStdMessages();
     }
 

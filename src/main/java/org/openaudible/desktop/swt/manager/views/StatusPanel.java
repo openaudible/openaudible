@@ -27,10 +27,8 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
 
         BookNotifier.getInstance().addListener(this);
         ConnectionNotifier.getInstance().addListener(this);
-
         Status elems[] = Status.values();
         stats = new Label[elems.length];
-
 
         for (int x = 0; x < elems.length; x++) {
             if (!elems[x].display())
@@ -41,7 +39,8 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
             l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
             l.setFont(FontShop.tableFontBold());
             l.setBackground(bgColor);
-
+            // TODO: Add more stats when user hovers over stats
+            // l.addListener(SWT.MouseHover);
             Label d = newLabel();
             GridData gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
             // gd.widthHint=120;
@@ -88,7 +87,6 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
     @Override
     public void bookUpdated(Book book) {
         _update();
-
     }
 
     @Override

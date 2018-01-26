@@ -7,7 +7,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.openaudible.Audible;
 import org.openaudible.AudibleAccountPrefs;
-import org.openaudible.AudibleAutomated;
 import org.openaudible.Directories;
 import org.openaudible.audible.AudibleLoginError;
 import org.openaudible.audible.AudibleScraper;
@@ -45,7 +44,7 @@ import java.util.List;
 public class AudibleGUI implements BookListener, ConnectionListener {
     private static final Log LOG = LogFactory.getLog(AudibleGUI.class);
     public static AudibleGUI instance;
-    AudibleAutomated audible;
+    final Audible audible = new Audible();
     boolean hasFFMPEG = false;
     BookNotifier bookNotifier = BookNotifier.getInstance();
     boolean loggedIn = false;
@@ -78,10 +77,6 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     public void init() throws IOException {
         assert (Audible.instance == null); // for now;
         Directories.assertInitialized();
-
-        if (Audible.instance == null) {
-            audible = new AudibleAutomated();
-        }
 
 
         try {
@@ -864,6 +859,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 
         @Override
         public void jobCompleted(ThreadedQueue<Book> queue, IQueueJob job, Book o) {
+            booksUpdated();
             bookNotifier.bookUpdated(o);
         }
 

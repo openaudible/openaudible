@@ -25,7 +25,10 @@ import org.openaudible.util.queues.IQueueListener;
 import org.openaudible.util.queues.ThreadedQueue;
 import org.xml.sax.SAXException;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.*;
 
 public class Audible implements IQueueListener<Book> {
@@ -243,8 +246,17 @@ public class Audible implements IQueueListener<Book> {
     public HashSet<File> getFileSet(Directories dir) {
         HashSet<File> set = new HashSet<>();
         File d = dir.getDir();
-        
-        Collections.addAll(set, d.listFiles());
+        for (File f:d.listFiles()) {
+            String name = f.getName();
+            if (name.startsWith("."))
+                continue;
+            if (dir==Directories.MP3 && !name.toLowerCase().endsWith(".mp3"))
+                continue;
+            if (dir==Directories.AAX && !name.toLowerCase().endsWith(".aax"))
+                continue;
+            set.add(f);
+        }
+
         return set;
     }
 
@@ -690,21 +702,38 @@ public class Audible implements IQueueListener<Book> {
     }
 
     @Override
-    public void jobStarted(ThreadedQueue<Book> queue, IQueueJob job, Book o) {
+    public void jobStarted(ThreadedQueue<Book> queue, IQueueJob job, Book b) {
+        LOG.info(queue.toString()+" started:"+b+" size:"+queue.size());
+        BookNotifier.getInstance().bookUpdated(b);
     }
 
     @Override
-    public void jobError(ThreadedQueue<Book> queue, IQueueJob job, Book o, Throwable th) {
+    public void jobError(ThreadedQueue<Book> queue, IQueueJob job, Book b, Throwable th) {
+        BookNotifier.getInstance().bookUpdated(b);
     }
 
     @Override
-    public void jobCompleted(ThreadedQueue<Book> queue, IQueueJob job, Book o) {
+    public void jobCompleted(ThreadedQueue<Book> queue, IQueueJob job, Book b) {
+        LOG.info(queue.toString()+" completed:"+b+" size:"+queue.size());
+        if (queue==downloadQueue) {
+            try {
+                AAXParser.instance.update(b);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            convertQueue.add(b);
+        }
+
+
         needFileCacheUpdate = 0;
+        checkFileCache();
         try {
             save();
         } catch (Throwable e) {
             LOG.error("error saving...", e);
         }
+        BookNotifier.getInstance().bookUpdated(b);
     }
 
 
@@ -722,13 +751,5 @@ public class Audible implements IQueueListener<Book> {
     {
         return getAccount().audibleRegion.getBaseURL();
     }
-    /*
-    public boolean hasLogin() {
-        if (account == null)
-            return false;
-
-        return !account.audiblePassword.isEmpty() && !account.audibleUser.isEmpty();
-    }
-*/
 
 }

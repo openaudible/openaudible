@@ -178,7 +178,6 @@ public class BookTable extends EnumTable<Book, BookTableColumn> implements BookL
             @Override
             public void task() {
                 redrawItem(book);
-
             }
         });
 
