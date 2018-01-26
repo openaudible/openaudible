@@ -173,17 +173,22 @@ public class Preferences extends Dialog {
 
         Group group = c.newGroup("Audible Account", 3);
         group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
+        GridData gd;
 
         region = GridComposite.newCombo(group, "Region");
         for (AudibleRegion r:AudibleRegion.values())
         {
             region.add(r.displayName());
         }
+        gd = new GridData();
+        gd.widthHint = 250;
+        region.setLayoutData(gd);
+
         new Label(group, 0);
 
         email = GridComposite.newTextPair(group, "Audible Email");
         new Label(group, 0);
-        GridData gd = new GridData();
+        gd = new GridData();
         gd.widthHint = 250;
         email.setLayoutData(gd);
         password = GridComposite.newPasswordPair(group, "Password");

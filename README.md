@@ -71,7 +71,7 @@ Notice on Mac, the -XstartOnFirstThread is required to run SWT apps.
 
 #### Linux Command Line
 ```
-java -cp "target\openaudible-jar-with-dependencies.jar;swt\org.eclipse.swt.gtk.linux.x86_64-4.6.jar" org.openaudible.desktop.Application
+java -cp "target/openaudible-jar-with-dependencies.jar:swt/org.eclipse.swt.gtk.linux.x86_64-4.6.jar" org.openaudible.desktop.Application
 ```
 
 #### Notes

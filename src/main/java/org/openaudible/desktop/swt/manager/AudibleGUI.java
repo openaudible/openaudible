@@ -265,8 +265,6 @@ public class AudibleGUI implements BookListener, ConnectionListener {
                     try {
                         scraper = connect(this);
                         if (scraper == null) return;
-
-
                         setTask("Checking library...", "");
                         scraper.lib();
                         setTask("Completed", "");
@@ -382,6 +380,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         } catch (Throwable th) {
             LOG.error("unable to connect", th);
         }
+
         String page = s.getPageURL();
         if (page == null)
             page = audible.getAudibleURL();

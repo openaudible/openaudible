@@ -138,7 +138,7 @@ public class AudibleScraper {
     public void setPage(HtmlPage page) {
         this.page = page;
 
-        progress.setSubTask(page.getTitleText());
+        // progress.setSubTask("page.getTitleText());
 
         if (page != null && debugCust) {
             String xml = page.asXml();
@@ -165,7 +165,11 @@ public class AudibleScraper {
     public void setLoggedIn(boolean loggedIn) {
         if (loggedIn != this.loggedIn) {
             this.loggedIn = loggedIn;
-            LOG.info("Setting logged in to " + loggedIn);
+            String title="null";
+            if (page!=null)
+                title = page.getTitleText();
+
+            LOG.info("Setting logged in to " + loggedIn+" page="+title);
             ConnectionNotifier.getInstance().connectionChanged(loggedIn);
 
             if (loggedIn) {

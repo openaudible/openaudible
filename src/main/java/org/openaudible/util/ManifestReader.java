@@ -26,8 +26,6 @@ public enum ManifestReader {
                 try {
                     Manifest manifest = new Manifest(resources.nextElement().openStream());
 
-                    LOG.info("manifest: " + manifest);
-
                     // check that this is your manifest and do what you need or get the next one
                     if (key == null) {
 
