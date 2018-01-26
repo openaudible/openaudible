@@ -95,6 +95,7 @@ Errors are logged to an "error.log" file, usually written out to the application
 
 * [Eclipse SWT](http://www.eclipse.org/swt/) - Standard Widget Toolkit
 * [HTML Unit](https://htmlunit.sourceforge.net/) - HTML web page scraping
+* [InAudible-NG](https://github.com/inAudible-NG/RainbowCrack-NG) - Key discovery
 
 ## Contributing
 
@@ -102,7 +103,7 @@ This is a work in progress. It needs testing and bug reporting for all platforms
 
 * Exporting to a podcast format is planned
 * Testing with regions is needed
-* Exporting to a format that supports the best mobile audio book players is the goal.
+* Exporting to a format that supports the best mobile and linux audio book players is the goal.
 * The UI needs cleaning up, especially for Linux.
 * Improved "first time setup" and connection needs major improvement
 * Support for multiple audible accounts would be nice
@@ -112,6 +113,8 @@ Please feel free to submit pull requests.
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/openaudible/openaudible/tags).
+
+Rebased on 1/26/2018 with version 0.9.2
 
 ## Authors
 
