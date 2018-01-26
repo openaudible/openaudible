@@ -572,7 +572,7 @@ public class AudibleScraper {
 
     public void lib() throws Exception {
         if (!checkLoggedIn())
-            throw new Exception("Not logged in at start lib.");
+            throw new Exception("Got logged out. Try logging in with Browser and try again..");
         if (getProgress() != null)
             getProgress().setTask("Loading Library");
         clickLib();
