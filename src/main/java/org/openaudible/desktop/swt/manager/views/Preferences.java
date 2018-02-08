@@ -195,7 +195,7 @@ public class Preferences extends Dialog {
         gd = new GridData();
         gd.widthHint = 250;
         email.setLayoutData(gd);
-        new Label(group, SWT.NONE).setText("(optional)");
+        // new Label(group, SWT.NONE).setText("(optional)");
         gd = new GridData();
         gd.widthHint = 50;
 

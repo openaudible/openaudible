@@ -33,9 +33,8 @@ public class PasswordDialog extends TitleAreaDialog implements KeyListener {
     private String userString = "";
     private Text password;
     private Text user;
-    private Button saveData;
     private String title;
-    boolean savePass = true;
+
 
 
     // private Text username;
@@ -58,16 +57,6 @@ public class PasswordDialog extends TitleAreaDialog implements KeyListener {
         this.dialogMessage = dialogMessage;
     }
 
-    /**
-     * @see org.eclipse.jface.dialogs.Dialog#close()
-     */
-    @Override
-    public boolean close() {
-
-        /** Dispose title image */
-        getTitleImageLabel().getImage().dispose();
-        return super.close();
-    }
 
     /**
      * Returns the string typed into this input dialog.
@@ -90,9 +79,6 @@ public class PasswordDialog extends TitleAreaDialog implements KeyListener {
         userString = u;
     }
 
-    public boolean getSaveValue() {
-        return savePass;
-    }
 
     /**
      * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
@@ -109,7 +95,6 @@ public class PasswordDialog extends TitleAreaDialog implements KeyListener {
             userString = passwordString = null;
         }
 
-        savePass = saveData.getSelection();
 
         super.buttonPressed(buttonId);
     }
@@ -138,29 +123,19 @@ public class PasswordDialog extends TitleAreaDialog implements KeyListener {
         ((GridLayout) parent.getLayout()).marginHeight = 10;
         ((GridLayout) parent.getLayout()).marginWidth = 10;
 
-        /** Button order on Mac is different */
-        if (Platform.isMac()) {
+         /** Create Buttons */
+        createButton(parent, IDialogConstants.OK_ID, GUI.i18n.getTranslation("BUTTON_OK"), true)
+                .setFont(FontShop.dialogFont());
+        createButton(parent, IDialogConstants.CANCEL_ID, GUI.i18n.getTranslation("BUTTON_CANCEL"),
+                false).setFont(FontShop.dialogFont());
 
-            /** Create Buttons */
-            createButton(parent, IDialogConstants.CANCEL_ID, GUI.i18n.getTranslation("BUTTON_CANCEL"),
-                    false).setFont(FontShop.dialogFont());
-            createButton(parent, IDialogConstants.OK_ID, GUI.i18n.getTranslation("BUTTON_OK"), true)
-                    .setFont(FontShop.dialogFont());
-        } else {
-
-            /** Create Buttons */
-            createButton(parent, IDialogConstants.OK_ID, GUI.i18n.getTranslation("BUTTON_OK"), true)
-                    .setFont(FontShop.dialogFont());
-            createButton(parent, IDialogConstants.CANCEL_ID, GUI.i18n.getTranslation("BUTTON_CANCEL"),
-                    false).setFont(FontShop.dialogFont());
-        }
     }
 
     /**
      */
     @Override
     protected Control createDialogArea(Composite parent) {
-
+        // GridComposite composite = new GridComposite(parent, SWT.NONE,  )
         /** Composite to hold all components */
         Composite composite = new Composite((Composite) super.createDialogArea(parent), SWT.NONE);
         composite.setLayout(new GridLayout(2, false));
@@ -172,9 +147,13 @@ public class PasswordDialog extends TitleAreaDialog implements KeyListener {
         /** Title Message */
         setMessage(dialogMessage, IMessageProvider.INFORMATION);
 
-        /** Spacer */
         new Label(composite, SWT.NONE);
 
+        Label msg = new Label(composite, SWT.NONE);
+        msg.setText(dialogMessage);
+        new Label(composite, SWT.NONE);
+
+        new Label(composite, SWT.NONE);
 
 
         /** Password Label */
@@ -212,12 +191,6 @@ public class PasswordDialog extends TitleAreaDialog implements KeyListener {
         /** Spacer */
         new Label(composite, SWT.NONE);
 
-        /** Check to save username and password */
-        saveData = new Button(composite, SWT.CHECK);
-        saveData.setFont(FontShop.dialogFont());
-        saveData.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-        saveData.setText(GUI.i18n.getTranslation("LABEL_REMEMBER_AUTH"));
-        saveData.setSelection(savePass);
 
         /** Holder for the separator to the OK and Cancel buttons */
         Composite sepHolder = new Composite(parent, SWT.NONE);
@@ -231,15 +204,10 @@ public class PasswordDialog extends TitleAreaDialog implements KeyListener {
         Label separator = new Label(sepHolder, SWT.SEPARATOR | SWT.HORIZONTAL);
         separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        /** Set Mnemonics to Buttons */
-        WidgetShop.initMnemonics(new Button[] { saveData });
 
         return composite;
     }
 
-    public boolean savePass() {
-        return saveData.getSelection();
-    }
 
     /**
      * @see org.eclipse.jface.dialogs.Dialog#initializeBounds()
@@ -303,8 +271,8 @@ public class PasswordDialog extends TitleAreaDialog implements KeyListener {
 
 
     public static PasswordDialog getPasswordForSite(Shell shell, String user, String pass) {
-        PasswordDialog gp = new PasswordDialog(shell, "Password required",
-                "Please enter a user/password for this site",
+        PasswordDialog gp = new PasswordDialog(shell, GUI.i18n.getTranslation("PASSWORD_TITLE"),
+                GUI.i18n.getTranslation("PASSWORD_MESSAGE"),
                user, pass);
 
 
@@ -313,8 +281,7 @@ public class PasswordDialog extends TitleAreaDialog implements KeyListener {
         {
             return gp;
         }
-            return null;
-
+        return null;
     }
 
 
