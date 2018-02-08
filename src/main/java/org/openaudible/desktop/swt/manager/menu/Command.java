@@ -24,6 +24,7 @@ public enum Command {
     Convert,
     Download_All,
     Convert_All,
+    Help,
     Browser,
     Check_For_Update,
     AppWebPage,

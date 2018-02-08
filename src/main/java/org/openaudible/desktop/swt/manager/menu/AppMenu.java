@@ -33,7 +33,7 @@ public class AppMenu implements ITranslatable, SelectionListener {
     private final Command[] appCommands = {Command.Connect, Command.Quick_Refresh, Command.Rescan_Library, Command.Download_All, Command.Convert_All,
            Command.MenuSeparator,  Command.Browser}; // , Command.MenuSeparator, Command.Logout};
 
-    private final Command[] aboutCommands = {Command.AppWebPage, Command.Check_For_Update, Command.About};
+    private final Command[] aboutCommands = {Command.Help, Command.AppWebPage, Command.Check_For_Update, Command.About};
 
     private final ArrayList<MenuItem> menuItems = new ArrayList<>();
     private Menu actionMenu;

@@ -13,9 +13,13 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.*;
+import org.openaudible.Directories;
 import org.openaudible.audible.AudibleClient;
+import org.openaudible.desktop.swt.gui.MessageBoxFactory;
 import org.openaudible.desktop.swt.gui.SWTAsync;
 
+import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -155,8 +159,6 @@ public class AudibleBrowser {
             final ToolItem itemGo = new ToolItem(toolbar, SWT.PUSH);
             itemGo.setText(getResourceString("Go"));
 
-            final ToolItem itemTest = new ToolItem(toolbar, SWT.PUSH);
-            itemTest.setText(getResourceString("Test"));
 
             itemBack.setEnabled(browser.isBackEnabled());
             itemForward.setEnabled(browser.isForwardEnabled());
@@ -172,15 +174,12 @@ public class AudibleBrowser {
                     browser.refresh();
                 else if (item == itemGo)
                     setUrl(locationBar.getText());
-                if (item == itemTest)
-                    test();
             };
             itemBack.addListener(SWT.Selection, listener);
             itemForward.addListener(SWT.Selection, listener);
             itemStop.addListener(SWT.Selection, listener);
             itemRefresh.addListener(SWT.Selection, listener);
             itemGo.addListener(SWT.Selection, listener);
-            itemTest.addListener(SWT.Selection, listener);
 
             canvas = new Canvas(parent, SWT.NO_BACKGROUND);
             data = new FormData();
@@ -376,6 +375,18 @@ public class AudibleBrowser {
 
     public boolean isDisposed() {
         return browser == null || browser.isDisposed();
+    }
+
+    public static void showHelp(Display display) {
+        File dir = Directories.getHelpDirectory();
+        File index = new File(dir, "index.html");
+        if (index.exists()) {
+            URI uri = index.toURI();
+            String u = uri.toString();
+            newBrowserWindow(display, u);
+        } else {
+            MessageBoxFactory.showError(null, "Unable to open help. Expected at:" + index.getAbsolutePath());
+        }
     }
 
     public void close() {

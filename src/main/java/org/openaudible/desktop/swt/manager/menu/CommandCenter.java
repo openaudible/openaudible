@@ -16,6 +16,7 @@ import org.openaudible.desktop.swt.manager.Application;
 import org.openaudible.desktop.swt.manager.AudibleGUI;
 import org.openaudible.desktop.swt.manager.Version;
 import org.openaudible.desktop.swt.manager.VersionCheck;
+import org.openaudible.desktop.swt.manager.views.AudibleBrowser;
 import org.openaudible.desktop.swt.manager.views.Preferences;
 import org.openaudible.desktop.swt.util.shop.WidgetShop;
 import org.openaudible.desktop.swt.view.AboutDialog;
@@ -186,6 +187,10 @@ public class CommandCenter {
             case Preferences:
                 Preferences.show(null);
                 break;
+            case Help:
+                AudibleBrowser.showHelp(GUI.display);
+                break;
+
             case Quit:
                 e.actionExit();
                 break;
@@ -323,6 +328,7 @@ public class CommandCenter {
             case ParseAAX:
                 return AudibleGUI.instance.selectedAAXCount() > 0;
             case Check_For_Update:
+            case Help:
                 return true;
             default:
                 logger.info("no case for getEnabled: " + c);
