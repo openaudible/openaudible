@@ -226,11 +226,8 @@ public class PasswordDialog extends TitleAreaDialog implements KeyListener {
 
         getShell().setSize(bestSize.x, bestSize.y);
         LayoutShop.positionShell(getShell());
-        Button ok = getOKButton();
+        Button ok = getButton(0);
 
-        shell.setDefaultButton(ok);
-
-        Control def = null;
         if (userString.length() == 0)
             user.forceFocus();
         else if (passwordString.length() == 0)

@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.util.IO;
 import org.openaudible.Audible;
 import org.openaudible.BookToFilenameStrategy;
+import org.openaudible.Directories;
 import org.openaudible.books.Book;
 import org.openaudible.books.BookElement;
 import org.openaudible.progress.IProgressTask;
@@ -172,52 +173,12 @@ public class WebPage {
             writer.write(";");
         }
 
-        // add basic html pages..
-        addIndex();
+        // add basic html pages from webapp directory: src/main/webapp which is at the root dir in installed app.
+        File templateDir = Directories.getWebTemplateDirectory();
+        assert(templateDir.exists());
+        FileUtils.copyDirectory(templateDir, webDir);
     }
 
-    // this is a hack because I don't know an easy way to write a resource directory to disk.
-    // see ResourceList.java to see if that would work.
-    private void addIndex() throws IOException {
-        String assets[] = {
-                "jquery.min.js",
-                "no-cover.png",
-                "audible.png",
-                "arrow_desc.gif",
-                "arrow_asc.gif",
-                "tidy-table.min.css",
-                "books.css",
-                "download.jpg",
-                "tidy-table.min.js"};
-        File assetsDir = new File(webDir, "assets");
-        if (!assetsDir.exists()) {
-            boolean ok = assetsDir.mkdir();
-            if (!ok) throw new IOException("err");
-        }
-
-        File f = new File(webDir, indexName);
-        copyWebResource(indexName, f);
-
-        for (String a : assets) {
-            f = new File(assetsDir, a);
-            copyWebResource("assets/" + a, f);
-
-        }
-
-    }
-
-    private void copyWebResource(String s, File f) throws IOException {
-        InputStream is = null;
-        try {
-            is = this.getClass().getResourceAsStream("/web_template/" + s);
-            assert (is != null);   //
-            if (is != null)
-                FileUtils.copyToFile(is, f);
-        } finally {
-            if (is != null)
-                is.close();
-        }
-    }
 
     private String getFileName(Book b) {
         String s = BookToFilenameStrategy.instance.getReadableFileName(b);

@@ -87,22 +87,26 @@ public enum Directories {
             fromJSON(j);
 
         }
-
     }
 
-    public static File getHelpDirectory() {
-
-        File dir = new File(getDir(Directories.APP), "help");
+    public static File getAppFile(String path)
+    {
+        File dir = new File(getDir(Directories.APP), path);
         if (!dir.exists()) {
-            File dir2 = new File(getDir(Directories.APP), "src" + File.separator + "main" + File.separator + "help");
+            File dir2 = new File(getDir(Directories.APP), "src" + File.separator + "main" + File.separator + path);
             if (dir2.exists())
                 return dir2;
-            System.out.println(dir2.getAbsolutePath());
-
         }
-
-        // assert(dir.exists());
         return dir;
+    }
+
+
+    public static File getHelpDirectory() {
+        return getAppFile("help");
+    }
+
+    public static File getWebTemplateDirectory() {
+        return getAppFile("webapp");
     }
 
     public static JsonObject toJSON() {

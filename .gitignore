@@ -16,8 +16,9 @@ __MACOSX/
 unused/
 
 # windows
-cachesThumbs.db
+caches
 Desktop.ini
+Thumbs.db
 
 # java
 *.class
