@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openaudible.Audible;
 import org.openaudible.books.Book;
 import org.openaudible.util.queues.IQueueJob;
+import org.openaudible.util.queues.JobProgress;
 import org.openaudible.util.queues.ThreadedQueue;
 
 import java.io.File;
@@ -22,6 +23,7 @@ public class DownloadQueue extends ThreadedQueue<Book> {
     public IQueueJob createJob(Book b) {
         File destFile = Audible.instance.getAAXFileDest(b);
         DownloadJob aaxDownloader = new DownloadJob(b, destFile);
+        aaxDownloader.setProgress(new JobProgress<Book>(this, aaxDownloader, b));
         return aaxDownloader;
     }
 

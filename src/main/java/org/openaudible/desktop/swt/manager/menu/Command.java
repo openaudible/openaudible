@@ -15,6 +15,7 @@ public enum Command {
     Console,
     Export_Web_Page,
     Export_Book_List,
+    Import_AAX_Files,
     Refresh_Book_Info,
     Connect,
     Quick_Refresh,

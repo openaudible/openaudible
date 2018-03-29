@@ -13,6 +13,7 @@ import org.openaudible.AudibleAccountPrefs;
 import org.openaudible.AudibleRegion;
 import org.openaudible.Directories;
 import org.openaudible.desktop.swt.gui.MessageBoxFactory;
+import org.openaudible.desktop.swt.manager.AudibleGUI;
 
 import java.io.IOException;
 
@@ -24,6 +25,7 @@ public class Preferences extends Dialog {
     final String paths[] = new String[Directories.values().length];
     final Text dirText[] = new Text[dirs.length];
     Combo region;
+    Button autoConvert;
 
     private Text email, password;
     private boolean pathsChanged = false;
@@ -51,7 +53,7 @@ public class Preferences extends Dialog {
             if (result==0)
             {
                 try {
-                    Audible.instance.save();
+                    AudibleGUI.instance.save();
                 } catch (IOException e) {
                     MessageBoxFactory.showError(null, "Error saving preferences");
                     e.printStackTrace();
@@ -71,6 +73,9 @@ public class Preferences extends Dialog {
             Directories d = (Directories) t.getData();
             t.setText(d.getPath());
         }
+
+        autoConvert.setSelection(AudibleGUI.instance.prefs.autoConvert);
+
 
     }
 
@@ -92,6 +97,9 @@ public class Preferences extends Dialog {
             prefs.audiblePassword = p;
             prefs.audibleRegion = r;
         }
+
+        AudibleGUI.instance.prefs.autoConvert = autoConvert.getSelection();
+
 
         if (pathsChanged) {
             for (Directories d : dirs) {
@@ -153,6 +161,15 @@ public class Preferences extends Dialog {
         }
     }
 
+    private void createAutomationGroup(GridComposite c) {
+        Group group = c.newGroup("Automation", 1);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+        group.setLayoutData(gd);
+        autoConvert = GridComposite.newCheck(group, "Automatically convert to MP3");
+        gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+        autoConvert.setLayoutData(gd);
+    }
+
     /**
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
@@ -162,6 +179,7 @@ public class Preferences extends Dialog {
         c.setWidthHint(c, 500);
         createAccountGroup(c);
         createDirectoryGroup(c);
+        createAutomationGroup(c);
 
         this.getShell().setText("Preferences");
         populate();

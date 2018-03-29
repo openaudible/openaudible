@@ -5,9 +5,10 @@ package org.openaudible.progress;
 public interface IProgressTask {
     void setTask(final String task, final String subtask);
 
-    void setTask(final String task);
+    default void setTask(final String task) { setTask(task,null); }
 
-    void setSubTask(final String subtask);
+    default void setSubTask(final String subtask) { setTask(null, subtask); }
 
-    boolean wasCanceled();
+    default boolean wasCanceled() { return false; }
 }
+

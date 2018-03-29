@@ -15,8 +15,7 @@ import java.util.List;
 public class BookNotifier extends EventNotifier<BookListener> implements BookListener {
     private static final Log LOG = LogFactory.getLog(BookNotifier.class);
     private static BookNotifier instance = new BookNotifier();      // singleton.
-    int c1; // some debugging.
-    long time;
+
     private ArrayList<Book> selected = new ArrayList<>();
     volatile boolean enabled = true;
 
@@ -31,10 +30,6 @@ public class BookNotifier extends EventNotifier<BookListener> implements BookLis
 
         return Collections.unmodifiableList(selected);
 
-    }
-
-    public synchronized void setSelected(ArrayList<Book> selected) {
-        this.selected = selected;
     }
 
     @Override
@@ -52,10 +47,8 @@ public class BookNotifier extends EventNotifier<BookListener> implements BookLis
     @Override
     public void bookAdded(Book book) {
         if (!enabled) return;
-
         for (BookListener l : getListeners())
             l.bookAdded(book);
-
     }
 
 
@@ -76,6 +69,15 @@ public class BookNotifier extends EventNotifier<BookListener> implements BookLis
 
         for (BookListener l : getListeners())
             l.booksUpdated();
+    }
+
+    @Override
+    public void bookProgress(final Book book, final String task) {
+        if (enabled) {
+            for (BookListener l : getListeners())
+                l.bookProgress(book,task);
+        }
+
     }
 
 

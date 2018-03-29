@@ -75,18 +75,10 @@ public class BookButtonBar implements BookListener, SelectionListener {
         CommandCenter.instance.execute(c);
     }
 
-    @Override
-    public void bookAdded(Book book) {
-
-    }
-
-    @Override
-    public void bookUpdated(Book book) {
-
-    }
 
     @Override
     public void booksUpdated() {
         refresh();
     }
+
 }

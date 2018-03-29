@@ -1,4 +1,4 @@
-package org.openaudible.desktop.swt.view;
+package org.openaudible.desktop.swt.manager.views;
 
 
 import org.apache.commons.logging.Log;

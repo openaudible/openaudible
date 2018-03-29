@@ -8,6 +8,11 @@ import com.google.gson.reflect.TypeToken;
 import com.opencsv.CSVWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jetty.util.IO;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.TagException;
 import org.openaudible.audible.AudibleScraper;
 import org.openaudible.books.Book;
 import org.openaudible.books.BookElement;
@@ -18,6 +23,7 @@ import org.openaudible.convert.ConvertQueue;
 import org.openaudible.convert.LookupKey;
 import org.openaudible.download.DownloadQueue;
 import org.openaudible.progress.IProgressTask;
+import org.openaudible.util.CopyWithProgress;
 import org.openaudible.util.EventTimer;
 import org.openaudible.util.HTMLUtil;
 import org.openaudible.util.queues.IQueueJob;
@@ -39,7 +45,7 @@ public class Audible implements IQueueListener<Book> {
     // private String activationBytes = "";
     volatile boolean quit = false;
     boolean convertToMP3 = false;
-    String prefsFileName = "account.json";
+    String accountPrefsFileName = "account.json";
     String cookiesFileName = "cookies.json";
     String bookFileName = "books.json";
     final String keysFileName = "keys.json";
@@ -170,7 +176,7 @@ public class Audible implements IQueueListener<Book> {
     public void load() throws IOException {
         try {
             Gson gson = new GsonBuilder().create();
-            File prefsFile = Directories.META.getDir(prefsFileName);
+            File prefsFile = Directories.META.getDir(accountPrefsFileName);
 
             if (prefsFile.exists()) {
                 String content = HTMLUtil.readFile(prefsFile);
@@ -213,7 +219,7 @@ public class Audible implements IQueueListener<Book> {
 
     public synchronized void save() throws IOException {
         Gson gson = new GsonBuilder().create();
-        HTMLUtil.writeFile(Directories.META.getDir(prefsFileName), gson.toJson(account));
+        HTMLUtil.writeFile(Directories.META.getDir(accountPrefsFileName), gson.toJson(account));
         HTMLUtil.writeFile(Directories.META.getDir(bookFileName), gson.toJson(getBooks()));
         if (audibleScraper != null) {
             audibleScraper.saveCookies();
@@ -736,6 +742,10 @@ public class Audible implements IQueueListener<Book> {
         BookNotifier.getInstance().bookUpdated(b);
     }
 
+    @Override
+    public void jobProgress(ThreadedQueue<Book> queue, IQueueJob job, Book o, String task, String subtask) {
+
+    }
 
     public AudibleAccountPrefs getAccount() {
         return account;
@@ -752,4 +762,33 @@ public class Audible implements IQueueListener<Book> {
         return getAccount().audibleRegion.getBaseURL();
     }
 
+    // used for drag and drop into the app to convert any aax file.
+    public Book importAAX(final File aaxFile, final IProgressTask task) throws InterruptedException, IOException, CannotReadException, ReadOnlyFileException, InvalidAudioFrameException, TagException {
+
+        task.setTask("Parsing "+aaxFile.getName());
+        final Book book = AAXParser.instance.parseAAX(aaxFile, null, AAXParser.CoverImageAction.useBiggerImage);
+        if (!hasBook(book))
+        {
+            task.setTask("Importing "+book);
+            // Copy it to the default directory.
+            File dest = getAAXFileDest(book);
+            if (dest.exists())
+                throw new IOException("Book already exists:"+dest.getAbsolutePath());
+            if (task!=null)
+                CopyWithProgress.copyWithProgress(task, aaxFile, dest);
+            else
+                    IO.copy(aaxFile, dest);
+            updateFileCache();
+            boolean test = hasAAX(book);
+            assert(test);
+
+            boolean ok = takeBook(book);
+            if (ok)
+                convertQueue.add(book);
+        }
+
+        return book;
+    }
+
 }
+

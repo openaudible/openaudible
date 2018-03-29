@@ -1,10 +1,14 @@
 package org.openaudible.desktop.swt.manager;
 
 import com.gargoylesoftware.htmlunit.util.Cookie;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.openaudible.Audible;
 import org.openaudible.AudibleAccountPrefs;
 import org.openaudible.Directories;
@@ -27,6 +31,7 @@ import org.openaudible.desktop.swt.manager.views.AudibleBrowser;
 import org.openaudible.desktop.swt.manager.views.PasswordDialog;
 import org.openaudible.desktop.swt.manager.views.StatusPanel;
 import org.openaudible.feeds.pagebuilder.WebPage;
+import org.openaudible.util.HTMLUtil;
 import org.openaudible.util.Platform;
 import org.openaudible.util.queues.IQueueJob;
 import org.openaudible.util.queues.IQueueListener;
@@ -51,6 +56,9 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     int downloadCount, convertCount;
     String textFilter = "";
     AudibleBrowser browser = null;
+
+    public Prefs prefs = new Prefs();
+    final String appPrefsFileName = "settings.json";
 
     public AudibleGUI() {
         assert (instance == null);
@@ -80,6 +88,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 
 
         try {
+
             audible.init();
             audible.initConverter();
 
@@ -704,6 +713,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         convertCount = c;
     }
 
+
     // if search text is filled, return books that match.
     // otherwise, return all books (default)
     public List<Book> getDisplayedBooks() {
@@ -833,35 +843,74 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         return false;
     }
 
+    // returns task in progress, or tasks that can be done for a book.
+    // book may be null.
+    public String getTaskString(final Book b) {
+        String out = "";
+        if (b!=null)
+        {
+            if (hasMP3(b))
+                return "Converted to MP3";
+            if (hasAAX(b))
+            {
+                if (audible.convertQueue.isQueued(b)) return "In convert queue";
+                if (audible.convertQueue.inJob(b)) return "Converting...";
+                return "Ready to convert to MP3";
+            }
+
+                if (audible.downloadQueue.isQueued(b)) return "In download queue";
+                if (audible.downloadQueue.inJob(b)) return "Downloading...";
+                if (ConnectionNotifier.getInstance().isConnected())
+                    return "Ready to download";
+                return "Not downloaded";
+        }
+        return out;
+    }
 
     class BookQueueListener implements IQueueListener<Book> {
 
         @Override
-        public void itemEnqueued(ThreadedQueue<Book> queue, Book o) {
+        public void itemEnqueued(final ThreadedQueue<Book> queue, final Book o) {
             bookNotifier.booksUpdated();
         }
 
         @Override
-        public void itemDequeued(ThreadedQueue<Book> queue, Book o) {
+        public void itemDequeued(final ThreadedQueue<Book> queue, final Book o) {
             bookNotifier.booksUpdated();
         }
 
         @Override
-        public void jobStarted(ThreadedQueue<Book> queue, IQueueJob job, Book o) {
+        public void jobStarted(final ThreadedQueue<Book> queue, final IQueueJob job, final Book o) {
             bookNotifier.bookUpdated(o);
         }
 
         @Override
-        public void jobError(ThreadedQueue<Book> queue, IQueueJob job, Book o, Throwable th) {
+        public void jobError(final ThreadedQueue<Book> queue, final IQueueJob job, final Book o, final Throwable th) {
             bookNotifier.bookUpdated(o);
         }
 
         @Override
-        public void jobCompleted(ThreadedQueue<Book> queue, IQueueJob job, Book o) {
+        public void jobCompleted(final ThreadedQueue<Book> queue, final IQueueJob job, final Book o) {
             booksUpdated();
             bookNotifier.bookUpdated(o);
         }
 
+        @Override
+        public void jobProgress(final ThreadedQueue<Book> queue, final IQueueJob job, final Book book, final String task, final String subtask) {
+            String msg = "";
+
+            if (queue == audible.downloadQueue)
+                msg = "Downloading ";
+            else
+                msg ="Converting ";
+
+            assert(msg.length()>0);
+
+            if (subtask!=null) {
+                msg += subtask;
+            }
+            bookNotifier.bookProgress(book, msg);
+        }
     }
 
 
@@ -886,6 +935,206 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 
             }
         }
+    }
+    public void load() throws IOException {
+        Audible.instance.load();
+
+        try {
+            Gson gson = new GsonBuilder().create();
+            File prefsFile = Directories.META.getDir(appPrefsFileName);
+
+            if (prefsFile.exists()) {
+                String content = HTMLUtil.readFile(prefsFile);
+                prefs = gson.fromJson(content, Prefs.class);
+
+
+            }
+        } catch (Throwable th) {
+            LOG.info("Error loading prefs", th);
+            prefs = new Prefs();
+        }
+
+    }
+
+    public void save() throws IOException {
+        Audible.instance.save();
+        Gson gson = new GsonBuilder().create();
+        HTMLUtil.writeFile(Directories.META.getDir(appPrefsFileName), gson.toJson(prefs));
+    }
+
+    public void applicationStarted() {
+
+
+        ProgressTask task = new ProgressTask("Loading") {
+            int books = 0;
+
+            public void setTask(String t, String s) {
+                super.setTask(t, s);
+                if (false && audible.getBookCount() != books) {
+                    books = audible.getBookCount();
+                    if (books % 3 == 0)
+                        BookNotifier.getInstance().booksUpdated();
+
+                }
+            }
+
+
+            public void run() {
+                try {
+                    audible.setProgress(this);
+                    this.setTask("Loading");
+                    load();
+
+                    this.setTask("Finding Audible Files");
+                    audible.findOrphanedFiles(this);
+                    this.setTask("Updating");
+                    BookNotifier.getInstance().booksUpdated();
+
+                    audible.updateFileCache();
+                    // audibleGUI.updateFileCache();
+
+                    BookNotifier.getInstance().booksUpdated();
+                    backgroundVersionCheck();
+
+
+                } catch (Exception e) {
+                    LOG.error("Error starting", e);
+
+                    MessageBoxFactory.showError(null, e);// , "loading library");
+                } finally {
+                    audible.setProgress(null);
+                }
+
+            }
+        };
+        ProgressDialog.doProgressTask(task);
+    }
+
+    // SWT Shell accessor.
+    private Shell getShell()
+    {
+        return GUI.shell;
+    }
+
+    private void backgroundVersionCheck() {
+        new Thread(() -> {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // only alert if new version is available.
+            VersionCheck.instance.checkForUpdate(getShell(), false);
+
+        }).start();
+    }
+
+
+    public void importAAXFiles() {
+        try {
+            String ext = "*.aax";
+            String name = "Audible Files";
+            org.eclipse.swt.widgets.FileDialog dialog = new org.eclipse.swt.widgets.FileDialog(getShell(), SWT.OPEN | SWT.MULTI);
+            dialog.setFilterNames(new String[]{name});
+            dialog.setFilterExtensions(new String[]{ext});
+
+            String path = dialog.open();
+            String files[] = dialog.getFileNames();
+            System.out.println(path);
+
+            if (files!= null && files.length>0)
+            {
+                File test = new File(path);
+                File dir = test.getParentFile();
+
+                ArrayList <File>aaxFiles= new ArrayList();
+                for (String s:files)
+                {
+                    File f = new File(dir, s);
+                    assert(f.exists());
+                    aaxFiles.add(f);
+                }
+
+                importBooks(aaxFiles);
+
+            }
+
+        } catch (Exception e) {
+            MessageBoxFactory.showError(getShell(), e.getMessage());
+        }
+    }
+
+    public void importBooks(final List<File> aaxFiles) {
+        if (SWTAsync.inDisplayThread())
+        {
+            // hack. Need to release current GUI thread and start progress in new thread.
+            new Thread(() -> importBooks(aaxFiles)).start();
+            return;
+        }
+
+        SWTAsync.assertNot();
+
+        ProgressTask task = new ProgressTask("Importing...") {
+            public void run() {
+
+                try {
+                    for (File f:aaxFiles)
+                    {
+                        setTask("Importing", f.getName());
+                        Audible.instance.importAAX(f, this);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    LOG.error(e);
+                    if (!wasCanceled())
+                        MessageBoxFactory.showError(null, "Error importing book" + e.getMessage());
+                }
+            }
+        };
+        ProgressDialog.doProgressTask(task);
+    }
+
+    public void exportBookList() {
+        try {
+            String ext = "*.csv";
+            String name = "CSV (Excel) File";
+            org.eclipse.swt.widgets.FileDialog dialog = new org.eclipse.swt.widgets.FileDialog(getShell(), SWT.SAVE);
+            dialog.setFilterNames(new String[]{name});
+            dialog.setFilterExtensions(new String[]{ext});
+            dialog.setFileName("books.csv");
+            String path = dialog.open();
+            if (path != null) {
+                File f = new File(path);
+                audible.export(f);
+                if (f.exists())
+                    LOG.info("exported books to: "+f.getAbsolutePath());
+            }
+
+        } catch (Exception e) {
+            MessageBoxFactory.showError(getShell(), e.getMessage());
+        }
+    }
+
+    public void exportBookJSON() {
+        try {
+            String ext = "*.json";
+            String name = "JSON File";
+            org.eclipse.swt.widgets.FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
+            dialog.setFilterNames(new String[]{name});
+            dialog.setFilterExtensions(new String[]{ext});
+            dialog.setFileName("books.json");
+            String path = dialog.open();
+            if (path != null) {
+                File f = new File(path);
+                audible.export(f);
+                if (f.exists())
+                    LOG.info("exported books to: "+f.getAbsolutePath());
+            }
+
+        } catch (Exception e) {
+            MessageBoxFactory.showError(getShell(), e.getMessage());
+        }
+
     }
 
 }

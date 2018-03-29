@@ -170,8 +170,11 @@ public class AppMenu implements ITranslatable, SelectionListener {
         fileMenu = newMenu("File");
         newMItem(fileMenu, Command.Console);
         newSeparator(fileMenu);
+        newMItem(fileMenu, Command.Import_AAX_Files);
+        newSeparator(fileMenu);
         newMItem(fileMenu, Command.Export_Web_Page);
         newMItem(fileMenu, Command.Export_Book_List);
+
         if (!isMac) {
             newSeparator(fileMenu);
         }

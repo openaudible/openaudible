@@ -19,8 +19,8 @@ import org.openaudible.desktop.swt.manager.VersionCheck;
 import org.openaudible.desktop.swt.manager.views.AudibleBrowser;
 import org.openaudible.desktop.swt.manager.views.Preferences;
 import org.openaudible.desktop.swt.util.shop.WidgetShop;
-import org.openaudible.desktop.swt.view.AboutDialog;
-import org.openaudible.desktop.swt.view.LogWindow;
+import org.openaudible.desktop.swt.manager.views.AboutDialog;
+import org.openaudible.desktop.swt.manager.views.LogWindow;
 
 /**
  * The CommandCenter is responsible to react on user-action. User action may for example occur when any item from the main menu is selected. The execute command is the main switch for running commands
@@ -222,7 +222,10 @@ public class CommandCenter {
                 AudibleGUI.instance.play();
                 break;
             case Export_Book_List:
-                Application.instance.exportBookList();
+                AudibleGUI.instance.exportBookList();
+                break;
+            case Import_AAX_Files:
+                AudibleGUI.instance.importAAXFiles();
                 break;
             case Check_For_Update:
                 VersionCheck.instance.checkForUpdate(shell, true);
@@ -313,6 +316,7 @@ public class CommandCenter {
             case About:
             case Browser:
             case AppWebPage:
+            case Import_AAX_Files:
                 return true;
             case Copy:
             case Cut:
@@ -330,6 +334,8 @@ public class CommandCenter {
             case Check_For_Update:
             case Help:
                 return true;
+            case MenuSeparator:
+                break;
             default:
                 logger.info("no case for getEnabled: " + c);
                 break;

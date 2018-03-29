@@ -1,5 +1,7 @@
 package org.openaudible.desktop.swt.manager;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -7,6 +9,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.openaudible.Audible;
+import org.openaudible.AudibleAccountPrefs;
+import org.openaudible.AudibleRegion;
+import org.openaudible.Directories;
 import org.openaudible.books.BookNotifier;
 import org.openaudible.desktop.swt.gui.GUI;
 import org.openaudible.desktop.swt.gui.MessageBoxFactory;
@@ -17,8 +22,10 @@ import org.openaudible.desktop.swt.manager.menu.AppMenu;
 import org.openaudible.desktop.swt.manager.menu.CommandCenter;
 import org.openaudible.desktop.swt.manager.views.MainWindow;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
+import org.openaudible.util.HTMLUtil;
 
 import java.io.File;
+import java.io.IOException;
 
 
 public class Application extends GUI {
@@ -31,7 +38,6 @@ public class Application extends GUI {
         assert (instance == null);
         instance = this;
     }
-
 
     public void log(Object t) {
         logger.info(t);
@@ -77,72 +83,15 @@ public class Application extends GUI {
         createLayout();
         shell.pack();
         shell.setBounds(20, 25, 790, 790);
-
-
     }
 
     public void applicationStarted() {
         super.applicationStarted();
+        audibleGUI.applicationStarted();
 
-        final Audible audible = Audible.instance;
-
-        ProgressTask task = new ProgressTask("Loading") {
-            int books = 0;
-
-            public void setTask(String t, String s) {
-                super.setTask(t, s);
-                if (false && audible.getBookCount() != books) {
-                    books = audible.getBookCount();
-                    if (books % 3 == 0)
-                        BookNotifier.getInstance().booksUpdated();
-
-                }
-            }
-
-
-            public void run() {
-                try {
-                    audible.setProgress(this);
-                    this.setTask("Loading");
-                    audible.load();
-
-                    this.setTask("Finding Audible Files");
-                    audible.findOrphanedFiles(this);
-                    this.setTask("Updating");
-                    BookNotifier.getInstance().booksUpdated();
-
-                    audible.updateFileCache();
-                    // audibleGUI.updateFileCache();
-
-                    BookNotifier.getInstance().booksUpdated();
-                    backgroundVersionCheck();
-
-
-                } catch (Exception e) {
-                    logger.error("Error starting", e);
-
-                    MessageBoxFactory.showError(null, e);// , "loading library");
-                } finally {
-                    audible.setProgress(null);
-                }
-
-            }
-        };
-        ProgressDialog.doProgressTask(task);
     }
 
-    private void backgroundVersionCheck() {
-        new Thread(() -> {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            // only alert if new version is available.
-            VersionCheck.instance.checkForUpdate(shell, false);
 
-        }).start();
-    }
 
     protected void shutDown() {
         quit();
@@ -189,50 +138,6 @@ public class Application extends GUI {
     public void createEventManager() {
         /* Create the event manager */
         commandCenter = new CommandCenter(display, shell, this);
-    }
-
-
-    public void exportBookList() {
-        try {
-            String ext = "*.csv";
-            String name = "CSV (Excel) File";
-            FileDialog dialog = new FileDialog(shell, SWT.SAVE);
-            dialog.setFilterNames(new String[]{name});
-            dialog.setFilterExtensions(new String[]{ext});
-            dialog.setFileName("books.csv");
-            String path = dialog.open();
-            if (path != null) {
-                File f = new File(path);
-                audibleGUI.audible.export(f);
-                if (f.exists())
-                    logger.info("exported books to: "+f.getAbsolutePath());
-            }
-
-        } catch (Exception e) {
-            MessageBoxFactory.showError(shell, e.getMessage());
-        }
-
-    }
-    public void exportBookJSON() {
-        try {
-            String ext = "*.json";
-            String name = "JSON File";
-            FileDialog dialog = new FileDialog(shell, SWT.SAVE);
-            dialog.setFilterNames(new String[]{name});
-            dialog.setFilterExtensions(new String[]{ext});
-            dialog.setFileName("books.json");
-            String path = dialog.open();
-            if (path != null) {
-                File f = new File(path);
-                audibleGUI.audible.export(f);
-                if (f.exists())
-                    logger.info("exported books to: "+f.getAbsolutePath());
-            }
-
-        } catch (Exception e) {
-            MessageBoxFactory.showError(shell, e.getMessage());
-        }
-
     }
 
 

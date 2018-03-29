@@ -86,3 +86,4 @@ cabal-dev
 # python
 *.pyc
 *.pyo
+cscope.files

@@ -3,9 +3,7 @@ package org.openaudible.util.queues;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
+import java.util.*;
 
 public class ThreadedQueue<E> implements IQueueListener<E> {
     private static final Log LOG = LogFactory.getLog(ThreadedQueue.class);
@@ -17,8 +15,11 @@ public class ThreadedQueue<E> implements IQueueListener<E> {
     final LinkedList<E> queue = new LinkedList<>();
     final LinkedList<JobThread> threads = new LinkedList<>();
     final LinkedList<IQueueJob> jobs = new LinkedList<>();
+    final HashMap<E, IQueueJob> jobMap = new HashMap<>();
+
     final Object waitObject = new Object();
     final ArrayList<IQueueListener<E>> listeners = new ArrayList<>();
+
 
     public ThreadedQueue() {
         this(5);
@@ -134,6 +135,18 @@ public class ThreadedQueue<E> implements IQueueListener<E> {
         }
     }
 
+
+
+    @Override
+    public void jobProgress(ThreadedQueue<E> queue, IQueueJob job, E o, String task, String subtask) {
+        for (IQueueListener<E> i : getListeners()) {
+            i.jobProgress(this, job, o, task, subtask);
+        }
+
+    }
+
+
+
     public void itemEnqueued(ThreadedQueue<E> queue, E item) {
         for (IQueueListener<E> i : getListeners()) {
             i.itemEnqueued(queue, item);
@@ -155,6 +168,7 @@ public class ThreadedQueue<E> implements IQueueListener<E> {
     public void jobStarted(ThreadedQueue<E> queue, IQueueJob job, E item) {
         synchronized (jobs) {
             jobs.add(job);
+            jobMap.put(item,job);
         }
         for (IQueueListener<E> i : getListeners()) {
             i.jobStarted(queue, job, item);
@@ -165,12 +179,21 @@ public class ThreadedQueue<E> implements IQueueListener<E> {
         synchronized (jobs) {
             boolean wasRemoved = jobs.remove(job);
             assert (wasRemoved);
+
+            // this assumes one job per object at a time.
+            IQueueJob x = jobMap.remove(item);
+            assert(x==job);
         }
 
         for (IQueueListener<E> i : getListeners()) {
             i.jobCompleted(queue, job, item);
         }
     }
+
+    public boolean inJob(E e) {
+        return jobMap.containsKey(e);
+    }
+
 
     @Override
     public void jobError(ThreadedQueue<E> queue, IQueueJob job, E item, Throwable th) {
@@ -191,6 +214,14 @@ public class ThreadedQueue<E> implements IQueueListener<E> {
     public int jobsInProgress() {
         return jobs.size();
     }
+
+    public boolean isQueued(E e) {
+        synchronized (queue) {
+            return (queue.contains(e));
+        }
+
+    }
+
 
     class JobThread extends Thread {
         IQueueJob currentJob = null;

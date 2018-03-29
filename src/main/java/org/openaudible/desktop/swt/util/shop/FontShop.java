@@ -44,20 +44,6 @@ public class FontShop {
             curFonts = this;
 
     }
-/*
-
-    */
-/*
-      This utility class constructor is hidden
-     *//*
-
-    private FontShop() {
-        // Protect default constructor
-        regFonts = new Font[kNumFonts];
-        boldFonts = new Font[kNumFonts];
-
-    }
-*/
 
     /**
      * Check the given Font for being NULL or disposed. Return false in that case.

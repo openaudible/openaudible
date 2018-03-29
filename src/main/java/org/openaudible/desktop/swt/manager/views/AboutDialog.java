@@ -1,4 +1,4 @@
-package org.openaudible.desktop.swt.view;
+package org.openaudible.desktop.swt.manager.views;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -8,7 +8,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
 import org.openaudible.desktop.swt.gui.GUI;
 import org.openaudible.desktop.swt.manager.Version;
-import org.openaudible.desktop.swt.manager.views.GridComposite;
 import org.openaudible.desktop.swt.util.shop.FontShop;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
 import org.openaudible.util.ManifestReader;

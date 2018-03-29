@@ -56,7 +56,7 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
         _update();
     }
 
-    AtomicInteger cache=new AtomicInteger();
+    AtomicInteger cache=new AtomicInteger();    // caches gui drawing.
 
     private void _update() {
         boolean update = cache.getAndIncrement() == 0;
@@ -75,7 +75,6 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
                     String value = AudibleGUI.instance.getStatus(e);
                     s.setText(value);
                 }
-
             }
         });
 
@@ -101,6 +100,7 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
     public void booksUpdated() {
         _update();
     }
+
 
     @Override
     public void connectionChanged(boolean connected) {

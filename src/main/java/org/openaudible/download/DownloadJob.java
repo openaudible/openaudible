@@ -15,9 +15,11 @@ import org.openaudible.Directories;
 import org.openaudible.books.Book;
 import org.openaudible.books.BookElement;
 import org.openaudible.convert.AAXParser;
+import org.openaudible.progress.IProgressTask;
 import org.openaudible.util.CopyWithProgress;
 import org.openaudible.util.Util;
 import org.openaudible.util.queues.IQueueJob;
+import org.openaudible.util.queues.JobProgress;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,6 +38,7 @@ public class DownloadJob implements IQueueJob {
     final Book b;
     final File destFile;
     volatile boolean quit = false;
+    IProgressTask task;
 
     public DownloadJob(Book b, File destFile) {
         this.b = b;
@@ -116,7 +119,7 @@ public class DownloadJob implements IQueueJob {
 
             fos = new FileOutputStream(tmp);
 
-            CopyWithProgress.copyWithProgress(getByteReporter(), 15000, entity.getContent(), fos);
+            CopyWithProgress.copyWithProgress(getByteReporter(), 500, entity.getContent(), fos);
 
             /// IO.copy(entity.getContent(), fos);
 
@@ -164,10 +167,16 @@ public class DownloadJob implements IQueueJob {
             public void bytesCopied(long total) throws IOException {
                 double seconds = (System.currentTimeMillis() - startTime) / 1000.0;
                 double bps = total / seconds;
-                //bps = ((long)(bps*1000))/1000.0;
                 String rate = Util.instance.byteCountToString((long) bps) + "/sec";
+                String t = "Downloading "+b;
+                String s = Util.instance.byteCountToString(total) +" at "+rate;
 
-                LOG.info("Downloading " + Util.instance.byteCountToString(total) + " bytes " + b + " @ " + rate);
+                if (task!=null)
+                {
+                    task.setTask(t,s);
+                }
+
+                // LOG.info(task+" "+ s);
                 if (quit) {
                     throw new IOException("quit");
                 }
@@ -199,4 +208,7 @@ public class DownloadJob implements IQueueJob {
         return "Download " + b;
     }
 
+    public void setProgress(IProgressTask task) {
+        this.task = task;
+    }
 }

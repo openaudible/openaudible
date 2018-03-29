@@ -55,18 +55,4 @@ public class SummaryPanel implements BookListener {
         summary.setText(book != null ? book.getSummary() : "");
     }
 
-    @Override
-    public void bookAdded(Book book) {
-
-    }
-
-    @Override
-    public void bookUpdated(Book book) {
-
-    }
-
-    @Override
-    public void booksUpdated() {
-
-    }
 }

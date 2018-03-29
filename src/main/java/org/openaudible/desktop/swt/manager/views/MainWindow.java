@@ -25,6 +25,8 @@ public class MainWindow extends GridComposite {
         int weights[] = {60, 40};
         main.setWeights(weights);
 
+        FileDropTarget.attach(main);
+
     }
 
     void createTop(Composite parent) {

@@ -1,14 +1,16 @@
 package org.openaudible.util.queues;
 
 public interface IQueueListener<E> {
-    void itemEnqueued(ThreadedQueue<E> queue, E o);
+    void itemEnqueued(final ThreadedQueue<E> queue, final E o);
 
-    void itemDequeued(ThreadedQueue<E> queue, E o);
+    void itemDequeued(final ThreadedQueue<E> queue, final E o);
 
-    void jobStarted(ThreadedQueue<E> queue, IQueueJob job, E o);
+    void jobStarted(final ThreadedQueue<E> queue, final IQueueJob job, final E o);
 
-    void jobError(ThreadedQueue<E> queue, IQueueJob job, E o, Throwable th);
+    void jobError(final ThreadedQueue<E> queue, final IQueueJob job, final E o, final Throwable th);
 
-    void jobCompleted(ThreadedQueue<E> queue, IQueueJob job, E o);
+    void jobCompleted(final ThreadedQueue<E> queue, final IQueueJob job, final E o);
+
+    void jobProgress(final ThreadedQueue<E> queue, final IQueueJob job, final E o, final String task, final String subtask);
 
 }

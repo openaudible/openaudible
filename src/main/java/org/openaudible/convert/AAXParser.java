@@ -120,7 +120,15 @@ public enum AAXParser {
 
         ffmpeg(b, aaxFile);
 
+        if (imageDest==null && Audible.instance!=null)
+        {
+            // hack.
+            imageDest = Audible.instance.getImageFileDest(b);
+
+        }
+
         if (imageDest != null) {
+
 
             Mp4TagCoverField tt = (Mp4TagCoverField) tag.getFirstField("covr");
             if (tt != null) {

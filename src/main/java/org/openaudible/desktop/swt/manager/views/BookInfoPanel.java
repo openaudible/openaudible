@@ -16,8 +16,12 @@ import org.openaudible.books.BookListener;
 import org.openaudible.books.BookNotifier;
 import org.openaudible.desktop.swt.gui.SWTAsync;
 import org.openaudible.desktop.swt.i8n.Translate;
+import org.openaudible.desktop.swt.manager.AudibleGUI;
 import org.openaudible.desktop.swt.util.shop.FontShop;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
+import org.openaudible.util.queues.IQueueJob;
+import org.openaudible.util.queues.IQueueListener;
+import org.openaudible.util.queues.ThreadedQueue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,6 +48,8 @@ public class BookInfoPanel extends GridComposite implements BookListener {
     };
     //static final BookElement elems[] = { BookElement.fullTitle, BookElement.author, BookElement.release_date, BookElement.publisher, BookElement.asin, BookElement.product_id };
     Label stats[] = new Label[BookElement.values().length];
+    Label task;     // progress task info, or what actions can be done.
+
     int imageSize = 200;
     Book curBook = null;
     Label imageLabel;
@@ -57,8 +63,6 @@ public class BookInfoPanel extends GridComposite implements BookListener {
         GridComposite statsView = createStatsView(this);
         createImageLabel(this);
         BookNotifier.getInstance().addListener(this);
-
-
     }
 
     public static String getName(BookElement n) {
@@ -106,8 +110,6 @@ public class BookInfoPanel extends GridComposite implements BookListener {
         }
 
         for (BookElement s : elems) {
-
-
             String labelName = getName(s);
             Label l = c.newLabel();
             l.setText(Translate.getInstance().labelName(labelName) + ": ");
@@ -122,12 +124,40 @@ public class BookInfoPanel extends GridComposite implements BookListener {
             d.setData(s);
             stats[s.ordinal()] = d;
         }
+
+        if (true) {
+            // Task Status:
+            Label l = c.newLabel();
+            l.setText(Translate.getInstance().labelName("Task") + ": ");
+            l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+            l.setFont(FontShop.tableFontBold());
+            l.setBackground(bgColor);
+
+            Label d = c.newLabel();
+            d.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            d.setFont(FontShop.tableFont());
+            d.setBackground(bgColor);
+            //d.setData(s);
+            task = d;
+        }
+
+
         return c;
+    }
+    private void updateTask(Book b) {
+        String t = "";
+        if (curBook!=null)
+        {
+
+
+        }
+
+        task.setText(t);
+
     }
 
     private void update(Book b) {
         curBook = b;
-
 
         setThumbnailImage(b);
 
@@ -140,6 +170,10 @@ public class BookInfoPanel extends GridComposite implements BookListener {
             }
             s.setText(value);
         }
+
+        String taskMsg = AudibleGUI.instance.getTaskString(curBook);
+        task.setText(taskMsg);
+
 
         if (b != null) {
             if (LOG.isTraceEnabled())
@@ -236,6 +270,7 @@ public class BookInfoPanel extends GridComposite implements BookListener {
         SWTAsync.run(new SWTAsync("update") {
             @Override
             public void task() {
+
                 switch (list.size()) {
                     case 0:
                         update(null);
@@ -268,5 +303,20 @@ public class BookInfoPanel extends GridComposite implements BookListener {
     public void booksUpdated() {
         refresh();
     }
+
+    @Override
+    public void bookProgress(final Book book, final String msg) {
+        if (book.equals(curBook))
+        {
+            SWTAsync.run(new SWTAsync("bookProgress") {
+                @Override
+                public void task() {
+                    task.setText(msg);
+                }
+            });
+
+        }
+    }
+
 
 }
