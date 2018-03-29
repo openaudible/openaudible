@@ -414,12 +414,14 @@ public class AudibleGUI implements BookListener, ConnectionListener {
                 msg = "You have " + conv.size() + " book(s) to convert to MP3\n";
             msg += "Would you like to start these job(s) now?";
 
-            boolean ok = MessageBoxFactory.showGeneralYesNo(null, "Start jobs?", msg);
+            LOG.info(msg+" autoConvert="+prefs.autoConvert);
+
+            boolean ok = prefs.autoConvert;
+            if (!ok) ok = MessageBoxFactory.showGeneralYesNo(null, "Start jobs?", msg);
             if (ok) {
                 audible.convertQueue.addAll(conv);
                 audible.downloadQueue.addAll(dl);
             }
-
         }
     }
 
