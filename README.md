@@ -1,19 +1,21 @@
 # [OpenAudible](http://openaudible.org)
-A desktop application for downloading and managing your [audible.com](https://audible.com) content.
+A desktop application for downloading and managing your Audible audiobooks.
 
 ## Latest Release
 
-A binary installer for Windows, Mac and Linux is to be available, generated with install4j.
+Installers for Windows, Mac and Linux are available.
 [Latest Releaes](https://github.com/openaudible/openaudible/releases/latest)
+More information is available at the project home page [OpenAudible](http://openaudible.org).
 
 ## Features
-* Import audible books from your account
-* Convert to mp3 with all tags
-* Display all your books in searchable
-* Export web page/javascript file with all your books
+- Import audible books from your account
+- Convert to mp3 with all tags
+- Import (or Drag and drop) aax files directly into the app
+- Display all your books in searchable
+- Export web page/javascript file with all your books
 
 ## Screenshot
-![Windows Screenshot](http://openaudible.org/images/open_audible_win.png)
+![Windows Screenshot](http://openaudible.org/images/open_audible_win.png) </br>
 Windows User Interface
 
 ## Building
@@ -47,6 +49,9 @@ mvn package
 ## Running/Debugging
 
 Your IDE should link the platform specific SWT library via the maven profile.
+SWT is the eclipse widget library, used by Eclipse IDE and other apps. It has a
+jar file for each platform (mac, win64, and linux.) A win32 build is not included, but easy to add (does anyone use win 32??).
+
 
 #### IntelliJ
 Select menu Run: Debug...  <br />
@@ -93,22 +98,24 @@ Errors are logged to the console window, under the File menu.
 
 ## Built With
 
-* [Eclipse SWT](http://www.eclipse.org/swt/) - Standard Widget Toolkit
-* [HTML Unit](https://htmlunit.sourceforge.net/) - HTML web page scraping
-* [InAudible-NG](https://github.com/inAudible-NG/RainbowCrack-NG) - Key discovery
+- [Eclipse SWT](http://www.eclipse.org/swt/) - Standard Widget Toolkit
+- [HTML Unit](https://htmlunit.sourceforge.net/) - HTML web page scraping
+- [InAudible-NG](https://github.com/inAudible-NG/RainbowCrack-NG) - Key discovery
 
 ## Contributing
 
 This is a work in progress. It needs testing and bug reporting for all platforms.
 
-* Exporting to a podcast format is planned
-* Testing with regions is needed
-* Exporting to a format that supports the best mobile and linux audio book players is the goal.
-* The UI needs cleaning up, especially for Linux.
-* Improved "first time setup" and connection needs major improvement
-* Support for multiple audible accounts would be nice
+- Exporting to a podcast format is planned
+- Testing with regions is needed
+- Exporting to a format that supports the best mobile and linux audio book players is the goal.
+- The UI needs testing and cleaning up, especially for Linux.
+- Improved "first time setup" and connection needs major improvement
+- Support for multiple audible accounts would be nice
+- Donation of an [Open Source code signing certificate](https://www.certum.eu/certum/cert,offer_en_open_source_cs.xml) would be nice.
 
-Please feel free to submit pull requests.
+
+Please feel free to submit issues and pull requests.
 
 ## Versioning
 
@@ -123,3 +130,4 @@ See the list of [contributors](https://github.com/openaudible/openaudible/contri
 ## License
 
 This project is licensed under the Apache 2.0 License - see the [LICENSE.md](LICENSE.md) file for details, but may uses code licensed by other licenses.
+Please use responsibly on content you are legally authorized to access.

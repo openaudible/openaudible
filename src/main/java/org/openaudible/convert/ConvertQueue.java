@@ -30,6 +30,11 @@ public class ConvertQueue extends ThreadedQueue<Book> {
         return super.canAdd(e) && !Audible.instance.getMP3FileDest(e).exists();
     }
 
+    @Override
+    public String toString()
+    {
+        return "ConvertQueue";
+    }
 
 }
 

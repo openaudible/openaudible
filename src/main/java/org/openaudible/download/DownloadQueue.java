@@ -31,6 +31,12 @@ public class DownloadQueue extends ThreadedQueue<Book> {
         return super.canAdd(e) && !Audible.instance.getAAXFileDest(e).exists();
     }
 
+    @Override
+    public String toString()
+    {
+        return "DownloadQueue";
+    }
+
 }
 
 	
