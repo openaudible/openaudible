@@ -1,10 +1,10 @@
-# [OpenAudible](http://openaudible.org)
-A desktop application for downloading and managing your Audible audiobooks.
+# OpenAudible
+An open source desktop application for downloading and managing your Audible audiobooks.
 
 ## Latest Release
 
-Installers for Windows, Mac and Linux are available.
-[Latest Releaes](https://github.com/openaudible/openaudible/releases/latest)
+[Download](https://github.com/openaudible/openaudible/releases/latest) installers for Windows, Mac and Linux.
+
 More information is available at the project home page [OpenAudible](http://openaudible.org).
 
 ## Features
@@ -15,7 +15,7 @@ More information is available at the project home page [OpenAudible](http://open
 - Export web page/javascript file with all your books
 
 ## Screenshot
-![Windows Screenshot](http://openaudible.org/images/open_audible_win.png) </br>
+![Windows Screenshot](http://openaudible.org/images/open_audible_win.png) <br>
 Windows User Interface
 
 ## Building
@@ -50,7 +50,7 @@ mvn package
 
 Your IDE should link the platform specific SWT library via the maven profile.
 SWT is the eclipse widget library, used by Eclipse IDE and other apps. It has a
-jar file for each platform (mac, win64, and linux.) A win32 build is not included, but easy to add (does anyone use win 32??).
+jar file for each platform mac, win64, and linux.
 
 
 #### IntelliJ
@@ -96,6 +96,8 @@ The application will use cookies to expedite logging in-- and bypassing some of 
 
 Errors are logged to the console window, under the File menu.
 
+Some effort was made to separate the SWT GUI from the core code, which can be used in other projects or using another front end. Maybe someone wants to port the app to Swing or Electron.
+
 ## Built With
 
 - [Eclipse SWT](http://www.eclipse.org/swt/) - Standard Widget Toolkit
@@ -130,4 +132,5 @@ See the list of [contributors](https://github.com/openaudible/openaudible/contri
 ## License
 
 This project is licensed under the Apache 2.0 License - see the [LICENSE.md](LICENSE.md) file for details, but may uses code licensed by other licenses.
+
 Please use responsibly on content you are legally authorized to access.
