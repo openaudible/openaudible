@@ -2,7 +2,6 @@ package org.openaudible.convert;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.jetty.util.IO;
 import org.openaudible.Audible;
 import org.openaudible.Directories;
 import org.openaudible.books.Book;
@@ -12,10 +11,10 @@ import org.openaudible.util.LineListener;
 import org.openaudible.util.queues.IQueueJob;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class ConvertJob implements IQueueJob, LineListener {
     private static final Log LOG = LogFactory.getLog(ConvertJob.class);
@@ -28,6 +27,8 @@ public class ConvertJob implements IQueueJob, LineListener {
     long interval = 1000;
     private Process proc = null;
     private IProgressTask progress;
+    final String duration;
+    final static int mp3Qscale=6;       // audio quality value 0 to 9. See https://trac.ffmpeg.org/wiki/Encode/MP3
 
     public ConvertJob(Book b) {
         book = b;
@@ -35,6 +36,7 @@ public class ConvertJob implements IQueueJob, LineListener {
         mp3 = Audible.instance.getMP3FileDest(b);
         image = Audible.instance.getImageFileDest(b);
         temp = new File(Directories.getTmpDir(), book.id() + "_temp.mp3");
+        duration = book.getDuration();
 
         if (mp3.exists())
             mp3.delete();
@@ -51,23 +53,38 @@ public class ConvertJob implements IQueueJob, LineListener {
         return FFMPEG.getExecutable();
     }
 
+
+    // take status from ffmpeg, example:
+    // frame=    1 fps=0.0 q=0.0 size=       2kB time=06:17:11.44 bitrate=   0.0kbits/s
     @Override
     public void takeLine(String s) throws Exception {
-        if (s.contains("time=")) {
+        String find = "time=";
+        int ch = s.indexOf(find);
+        if (ch!=-1) {
             nextMeta = false;
             long now = System.currentTimeMillis();
             if (now > next) {
                 next = now + interval;
                 // interval*=2;
                 // System.err.println(s);
+                String time = s.substring(ch+find.length());
+                int end = time.indexOf(".");
+                if (end==-1) end = time.indexOf(" ");
+
+                if (end==-1) end = time.length();
+                time = time.substring(0, end);
+
+
+
+                String status=time;
+                if (duration.length()>0)
+                    status += " of "+ duration;
 
                 if (progress != null) {
-                    progress.setTask(null, s);
+                    progress.setTask(null, status.trim());
                 }
             }
 
-        } else {
-            System.err.println(s);
         }
 
         String endMeta[] = {"Stream mapping:", "Press [q]"};
@@ -85,7 +102,7 @@ public class ConvertJob implements IQueueJob, LineListener {
     }
 
 
-
+    // convert to mp3.
     public void createMP3() throws IOException, InterruptedException {
         ArrayList<String> args = new ArrayList<>();
         args.add(getExecutable());
@@ -99,17 +116,17 @@ public class ConvertJob implements IQueueJob, LineListener {
         args.add("0");
 
         args.add("-codec:a");
-        args.add("libmp3lame");
+        args.add("libmp3lame");     // see: https://trac.ffmpeg.org/wiki/Encode/MP3
+        args.add("-qscale:a");      // https://trac.ffmpeg.org/wiki/Encode/MP3
 
-        args.add("-qscale:a");
-        args.add("6");
+        if (mp3Qscale<0 || mp3Qscale>9)
+            throw new IOException("Invalid qscale:"+mp3Qscale);
 
-        args.add("-f");
-        args.add("mp3");
+        args.add(""+mp3Qscale);
 
-        args.add("-");
+        args.add(temp.getAbsolutePath());
 
-        System.err.println("creating mp3: " + book + " " + temp.getAbsolutePath());
+        LOG.info("creating mp3: " + book + " " + temp.getAbsolutePath());
         String cli = "";
         for (String s : args) {
             if (s.contains(" "))
@@ -119,29 +136,36 @@ public class ConvertJob implements IQueueJob, LineListener {
             cli += " ";
         }
 
-        System.err.println(cli);
+        LOG.info(cli);
 
         ProcessBuilder pb = new ProcessBuilder(args);
-        InputStreamReporter err = null;
-
-        InputStream is = null;
-        FileOutputStream fos = null;
+        InputStreamReporter err;
+        InputStream errStream=null;
 
         boolean success = false;
 
         try {
 
-            fos = new FileOutputStream(temp);
             proc = pb.start();
-            is = proc.getInputStream();
 
-            err = new InputStreamReporter("err: ", proc.getErrorStream(), this);
+            errStream = proc.getErrorStream();
+            err = new InputStreamReporter("err: ", errStream, this);
             err.start();
-            IO.copy(is, fos);
-
-            success = true;
 
             err.finish();
+            while (!proc.waitFor(1, TimeUnit.SECONDS)) {
+                if (quit)
+                    throw new IOException("conversion quit"); }
+
+
+
+            int exitValue = proc.exitValue();
+            
+            LOG.info("createMP3:"+exitValue);
+            if (exitValue!=0)
+                throw new IOException("Conversion got non-zero response:"+exitValue);
+
+            success = true;
 
             if (!temp.exists() || temp.length() < 1024) {
                 String msg = err.getLastLine();
@@ -156,14 +180,12 @@ public class ConvertJob implements IQueueJob, LineListener {
 
         } finally {
 
-            if (is != null)
-                is.close();
-            if (fos != null)
-                fos.close();
-
+            errStream.close();
             if (!success) {
+                proc.destroy();
                 temp.delete();
             }
+
         }
     }
 
@@ -213,7 +235,14 @@ public class ConvertJob implements IQueueJob, LineListener {
             ok = true;
             if (progress != null)
                 progress.setTask(null, "Complete");
-        } finally {
+        }
+        catch(Exception e){
+            if (progress!=null) {
+                progress.setSubTask(e.getMessage());
+            }
+            throw e;
+        }
+        finally {
             if (!ok) {
                 if (temp.exists())
                     temp.delete();
