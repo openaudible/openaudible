@@ -106,18 +106,21 @@ Some effort was made to separate the SWT GUI from the core code, which can be us
 
 ## Contributing
 
-This is a work in progress. It needs testing and bug reporting for all platforms.
+While stable, OpenAudible is always looking for improvements, testing and bug reporting for all platforms. Community support of all kinds is essential and greatly appreciated. 
 
-- Exporting to a podcast format is planned
-- Testing with regions is needed
-- Exporting to a format that supports the best mobile and linux audio book players is the goal.
-- The UI needs testing and cleaning up, especially for Linux.
-- Improved "first time setup" and connection needs major improvement
-- Support for multiple audible accounts would be nice
 - Donation of an [Open Source code signing certificate](https://www.certum.eu/certum/cert,offer_en_open_source_cs.xml) would be nice.
+- Exporting to a podcast format is being considered
+- Testing and feedback with regions is needed
+- Exporting to a format that supports the best mobile and linux audio book players is the goal.
+- Are chapters working well in your favorite audio book player?
+- UI improvement ideas welcome, especially for Linux.
+- The in-app [help documentation](https://github.com/openaudible/openaudible/tree/master/src/main/help) is not great and ugly.  
+- Support for multiple audible accounts would be nice
 
 
 Please feel free to submit issues and pull requests.
+
+
 
 ## Versioning
 
