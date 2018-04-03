@@ -15,7 +15,7 @@ public class Console extends ConsoleHandler
     public interface ILogRecordPublisher
     {
         void publish(LogRecord l);
-    };
+    }
 
     public final static Console instance = new Console();
     boolean installed = false;

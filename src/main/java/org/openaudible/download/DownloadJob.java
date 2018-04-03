@@ -19,7 +19,6 @@ import org.openaudible.progress.IProgressTask;
 import org.openaudible.util.CopyWithProgress;
 import org.openaudible.util.Util;
 import org.openaudible.util.queues.IQueueJob;
-import org.openaudible.util.queues.JobProgress;
 
 import java.io.File;
 import java.io.FileOutputStream;

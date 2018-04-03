@@ -49,7 +49,7 @@ public class ConvertJob implements IQueueJob, LineListener {
         return "convert " + book;
     }
 
-    private String getExecutable() throws IOException {
+    private String getExecutable() {
         return FFMPEG.getExecutable();
     }
 
@@ -57,7 +57,7 @@ public class ConvertJob implements IQueueJob, LineListener {
     // take status from ffmpeg, example:
     // frame=    1 fps=0.0 q=0.0 size=       2kB time=06:17:11.44 bitrate=   0.0kbits/s
     @Override
-    public void takeLine(String s) throws Exception {
+    public void takeLine(String s) {
         String find = "time=";
         int ch = s.indexOf(find);
         if (ch!=-1) {

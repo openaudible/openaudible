@@ -70,7 +70,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     public boolean checkFFMPEG() {
 
         try {
-            Thread.sleep(8000);
+            // Thread.sleep(4000);
             String vers = FFMPEG.getVersion();
             LOG.info("using " + vers);
             hasFFMPEG = true;
@@ -100,7 +100,6 @@ public class AudibleGUI implements BookListener, ConnectionListener {
             // converting aax to mp3.
             audible.convertQueue.addListener(queueListener);
 
-            new Thread(() -> checkFFMPEG()).start();
 
 
             ConnectionNotifier.instance.addListener(this);
@@ -305,7 +304,9 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     }
 
     public void convertMP3(Collection<Book> list) {
+        bookNotifier.setEnabled(false);
         audible.convertQueue.addAll(list);
+        bookNotifier.setEnabled(true);
         bookNotifier.booksUpdated();
     }
 
@@ -479,12 +480,10 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     public boolean canViewInAudible() {
         Book b = onlyOneSelected();
         if (b != null) {
-            if (!b.getInfoLink().isEmpty())
-                return true;
+            return !b.getInfoLink().isEmpty();
             // might have to search...
             // Can search for Product_ID and get one result..
 
-            return false;
         }
         return false;
     }
@@ -496,8 +495,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 
         Book b = onlyOneSelected();
         if (b != null) {
-            if (audible.hasMP3(b))
-                return true;
+            return audible.hasMP3(b);
         }
 
 
@@ -699,6 +697,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 
     @Override
     public void booksUpdated() {
+        // TODO: Ensure this isn't called too frequently.
         audible.updateFileCache();
         int d = 0;
         int c = 0;
@@ -948,9 +947,9 @@ public class AudibleGUI implements BookListener, ConnectionListener {
             if (prefsFile.exists()) {
                 String content = HTMLUtil.readFile(prefsFile);
                 prefs = gson.fromJson(content, Prefs.class);
-
-
             }
+
+
         } catch (Throwable th) {
             LOG.info("Error loading prefs", th);
             prefs = new Prefs();
@@ -997,6 +996,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 
                     BookNotifier.getInstance().booksUpdated();
                     backgroundVersionCheck();
+                    new Thread(() -> checkFFMPEG()).start();
 
 
                 } catch (Exception e) {

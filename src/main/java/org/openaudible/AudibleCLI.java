@@ -17,7 +17,7 @@ import java.util.logging.Level;
 public class AudibleCLI {
     private static final Log LOG = LogFactory.getLog(AudibleCLI.class);
 
-    final Audible audible= new Audible();;
+    final Audible audible= new Audible();
     volatile boolean quit = false;
 
     public AudibleCLI() {
@@ -247,7 +247,7 @@ public class AudibleCLI {
         println("Done " + f);
     }
 
-    private void test(List<Book> bookList) throws Exception {
+    private void test(List<Book> bookList) {
 
         for (Book b : bookList) {
 

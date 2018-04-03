@@ -98,7 +98,7 @@ public class Audible implements IQueueListener<Book> {
 
     }
 
-    public void initConverter() throws IOException {
+    public void initConverter() {
         convertQueue = new ConvertQueue();
         convertToMP3 = true;
         convertQueue.addListener(this);
@@ -659,7 +659,7 @@ public class Audible implements IQueueListener<Book> {
         return out;
     }
 
-    public void setExternalCookies(AudibleScraper s, Collection<Cookie> cookies) throws Exception {
+    public void setExternalCookies(AudibleScraper s, Collection<Cookie> cookies) {
         CookieManager cm = s.getWebClient().getCookieManager();
 
 //        try {

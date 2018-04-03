@@ -4,18 +4,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Control;
-import org.openaudible.Audible;
-import org.openaudible.audible.AudibleScraper;
-import org.openaudible.convert.AAXParser;
-import org.openaudible.desktop.swt.gui.MessageBoxFactory;
-import org.openaudible.desktop.swt.gui.SWTAsync;
-import org.openaudible.desktop.swt.gui.progress.ProgressDialog;
-import org.openaudible.desktop.swt.gui.progress.ProgressTask;
 import org.openaudible.desktop.swt.manager.AudibleGUI;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class FileDropTarget extends DropTargetAdapter

@@ -5,7 +5,7 @@ An open source desktop application for downloading and managing your Audible aud
 
 [Download](https://github.com/openaudible/openaudible/releases/latest) installers for Windows, Mac and Linux.
 
-More information is available at the project home page [OpenAudible](http://openaudible.org).
+More information is available at the project home page [openaudible.org](http://openaudible.org).
 
 ## Features
 - Import audible books from your account
@@ -81,7 +81,7 @@ java -cp "target/openaudible-jar-with-dependencies.jar:swt/org.eclipse.swt.gtk.l
 
 #### Notes
 
-Running with -ea to alert you of assertion failures is recommended for debugging. We use a lot of "asserts" to help identify problems.
+Running with -ea to alert you of assertion failures is recommended for debugging. We use "asserts" to help identify problems.
 
 Enter that into the VM Arguments on your debugger/run dialog if using an IDE.
 
@@ -102,7 +102,7 @@ Some effort was made to separate the SWT GUI from the core code, which can be us
 
 - [Eclipse SWT](http://www.eclipse.org/swt/) - Standard Widget Toolkit
 - [HTML Unit](https://htmlunit.sourceforge.net/) - HTML web page scraping
-- [InAudible-NG](https://github.com/inAudible-NG/RainbowCrack-NG) - Key discovery
+- [InAudible-NG](https://github.com/inAudible-NG/) - Decode
 
 ## Contributing
 

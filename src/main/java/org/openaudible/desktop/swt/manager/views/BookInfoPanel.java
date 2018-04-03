@@ -19,9 +19,6 @@ import org.openaudible.desktop.swt.i8n.Translate;
 import org.openaudible.desktop.swt.manager.AudibleGUI;
 import org.openaudible.desktop.swt.util.shop.FontShop;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
-import org.openaudible.util.queues.IQueueJob;
-import org.openaudible.util.queues.IQueueListener;
-import org.openaudible.util.queues.ThreadedQueue;
 
 import java.io.File;
 import java.io.FileInputStream;

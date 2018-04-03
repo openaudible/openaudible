@@ -37,7 +37,7 @@ public class ProgressTask extends Thread implements IProgressTask {
         progress.getProgressMonitor().beginTask(name, totalWork);
     }
 
-    public void worked(int i) throws InterruptedException {
+    public void worked(int i) {
         progress.getProgressMonitor().worked(i);
     }
 

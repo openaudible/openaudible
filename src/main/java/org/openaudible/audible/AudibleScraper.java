@@ -236,7 +236,7 @@ public class AudibleScraper {
 
 
 
-    ArrayList<Book> parseLibraryFragment(DomDocumentFragment fragment) throws IOException {
+    ArrayList<Book> parseLibraryFragment(DomDocumentFragment fragment) {
         ArrayList<Book> list = new ArrayList<>();
         ArrayList<String> colNames = new ArrayList<>();
 
@@ -538,7 +538,7 @@ public class AudibleScraper {
         }
     }
 
-    public void signOut() throws FailingHttpStatusCodeException, IOException, InterruptedException {
+    public void signOut() throws FailingHttpStatusCodeException, IOException {
         if (getProgress() != null)
             getProgress().setTask("Signing out");
         setURL("/signout");
@@ -905,7 +905,7 @@ public class AudibleScraper {
         return null;
     }
 
-    private boolean parseBookPage(HtmlPage page, Book b) throws Exception {
+    private boolean parseBookPage(HtmlPage page, Book b) {
         DomNode h = page;
         if (getProgress() != null)
             getProgress().setTask("Parsing book", b.toString());

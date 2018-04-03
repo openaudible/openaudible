@@ -3,7 +3,10 @@ package org.openaudible.util.queues;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 public class ThreadedQueue<E> implements IQueueListener<E> {
     private static final Log LOG = LogFactory.getLog(ThreadedQueue.class);

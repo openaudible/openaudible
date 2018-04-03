@@ -2,11 +2,11 @@ package org.openaudible.desktop.swt.manager;
 
 public interface Version {
 
-    final String appName = "OpenAudible";
-    final String appVersion = "0.9.4";
-    final boolean appDebug = false;
-    final String appLink = "http://openaudible.org";
-    final String versionLink = "http://openaudible.org/swt_version.json";
-    final String client = "org.openaudible.desktop.swt";
+    String appName = "OpenAudible";
+    String appVersion = "1.0";
+    boolean appDebug = false;
+    String appLink = "http://openaudible.org";
+    String versionLink = "http://openaudible.org/swt_version.json";
+    String client = "org.openaudible.desktop.swt";
 }
 

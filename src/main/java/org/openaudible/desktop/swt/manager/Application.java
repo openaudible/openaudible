@@ -1,31 +1,15 @@
 package org.openaudible.desktop.swt.manager;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.FileDialog;
-import org.openaudible.Audible;
-import org.openaudible.AudibleAccountPrefs;
-import org.openaudible.AudibleRegion;
-import org.openaudible.Directories;
-import org.openaudible.books.BookNotifier;
 import org.openaudible.desktop.swt.gui.GUI;
-import org.openaudible.desktop.swt.gui.MessageBoxFactory;
 import org.openaudible.desktop.swt.gui.SWTAsync;
-import org.openaudible.desktop.swt.gui.progress.ProgressDialog;
-import org.openaudible.desktop.swt.gui.progress.ProgressTask;
 import org.openaudible.desktop.swt.manager.menu.AppMenu;
 import org.openaudible.desktop.swt.manager.menu.CommandCenter;
 import org.openaudible.desktop.swt.manager.views.MainWindow;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
-import org.openaudible.util.HTMLUtil;
-
-import java.io.File;
-import java.io.IOException;
 
 
 public class Application extends GUI {

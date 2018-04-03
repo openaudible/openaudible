@@ -5,7 +5,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openaudible.Audible;
 import org.openaudible.books.Book;
-import org.openaudible.progress.IProgressTask;
 import org.openaudible.util.queues.IQueueJob;
 import org.openaudible.util.queues.JobProgress;
 import org.openaudible.util.queues.ThreadedQueue;

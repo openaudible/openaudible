@@ -16,11 +16,11 @@ import org.openaudible.desktop.swt.manager.Application;
 import org.openaudible.desktop.swt.manager.AudibleGUI;
 import org.openaudible.desktop.swt.manager.Version;
 import org.openaudible.desktop.swt.manager.VersionCheck;
+import org.openaudible.desktop.swt.manager.views.AboutDialog;
 import org.openaudible.desktop.swt.manager.views.AudibleBrowser;
+import org.openaudible.desktop.swt.manager.views.LogWindow;
 import org.openaudible.desktop.swt.manager.views.Preferences;
 import org.openaudible.desktop.swt.util.shop.WidgetShop;
-import org.openaudible.desktop.swt.manager.views.AboutDialog;
-import org.openaudible.desktop.swt.manager.views.LogWindow;
 
 /**
  * The CommandCenter is responsible to react on user-action. User action may for example occur when any item from the main menu is selected. The execute command is the main switch for running commands

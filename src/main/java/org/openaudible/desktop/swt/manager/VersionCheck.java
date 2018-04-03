@@ -15,6 +15,8 @@ public enum VersionCheck {
     instance;
     private static final Log LOG = LogFactory.getLog(VersionCheck.class);
 
+
+
     // if verbose return state regardless.
     // if !verbose, only alert when new version is available.
     public void checkForUpdate(Shell shell, boolean verbose) {
@@ -25,6 +27,13 @@ public enum VersionCheck {
         int diff = obj.get("diff").getAsInt();
         if (diff < 0) {
             MessageBoxFactory.showGeneral(shell, SWT.ICON_INFORMATION, title, msg);
+            if (obj.has("site"))
+            {
+                String url = obj.get("site").getAsString();
+                AudibleGUI.instance.browse(url);
+            }
+
+            // TODO: Add buttons: go to web site (openaudible.org) or download update (go to mac,win, or linux download url)
         } else
         {
             if (verbose)
@@ -84,7 +93,7 @@ public enum VersionCheck {
         JsonObject obj =null;
         try {
             obj = getVersion();
-            LOG.info(obj.toString());
+
             if (!obj.has("version"))
                 throw new IOException("missing version field\n" + obj);
             String releaseVersion = obj.get("version").getAsString();
@@ -96,6 +105,7 @@ public enum VersionCheck {
             if (diff<0) {
                 title = "Update Available";
                 msg = "An update is available!\nYour version: " + Version.appVersion + "\nRelease Version:" + releaseVersion;
+
             }else if (diff>0) {
                 title = "Using Pre-release";
                 msg = "You appear to be using a pre-release version\nYour version: " + Version.appVersion + "\nLatest Version:" + releaseVersion;

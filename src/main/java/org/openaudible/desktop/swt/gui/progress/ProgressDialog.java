@@ -371,7 +371,7 @@ public class ProgressDialog extends ProgressMonitorDialog {
     }
 
     class LongRunningOperation implements IRunnableWithProgress {
-        public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+        public void run(IProgressMonitor monitor) throws InterruptedException {
             // DebugLog.println("Running task");
             monitor.beginTask("Running task ", IProgressMonitor.UNKNOWN);
             if (simpleThread != null) {
