@@ -11,7 +11,7 @@ More information is available at the project home page [openaudible.org](http://
 - Import audible books from your account
 - Convert to mp3 with all tags
 - Import (or Drag and drop) aax files directly into the app
-- Display all your books in searchable
+- Display all your books in searchable UI
 - Export web page/javascript file with all your books
 
 ## Screenshot
