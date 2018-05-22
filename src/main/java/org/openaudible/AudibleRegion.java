@@ -26,7 +26,7 @@ public enum AudibleRegion {
             case IT:
                 return "audible.it";
             case JP:
-                return "audible.jp";
+                return "audible.co.jp";
             case CA:
                 return "audible.ca";
             default:
