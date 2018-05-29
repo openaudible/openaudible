@@ -518,19 +518,18 @@ public class AudibleScraper {
                 EventTimer evt = new EventTimer();
                 String u = next.getAttribute("data-url");
                 if (u != null) {
-                    u = URLDecoder.decode(u);
                     if (!u.endsWith("&")) u += "&";
                     u += "page=" + pageNum;
                     setURL(u, "Reading Library page " + pageNum + "... Found " + results.size() + " books");
                 } else {
                     page = next.click();   // go to next page.
-                    LOG.info(next.getClass() + " " + evt.reportString("next-click") + next.asXml());
+                    // LOG.info(next.getClass() + " " + evt.reportString("next-click") + next.asXml());
                 }
 
             }
 
             String cur = page.getUrl().toString();
-            LOG.info("curr=" + cur + "\nprev=" + prev);
+            // LOG.info("curr=" + cur + "\nprev=" + prev);
             assert (!prev.equals(cur));
             prev = cur;
 

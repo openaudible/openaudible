@@ -8,7 +8,7 @@
     <artifactId>openaudible</artifactId>
     <packaging>jar</packaging>
     <name>openaudible</name>
-    <version>0.9</version>  <!-- appVersion from org.openaudible.desktop.swt.manager.Version.java -->
+    <version>1.1</version>  <!-- appVersion from org.openaudible.desktop.swt.manager.Version.java -->
     <description>open source audible library and cross-platform manager application</description>
     <url>https://github.com/openaudible/openaudible</url>
 
