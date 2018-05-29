@@ -124,7 +124,7 @@ public enum LibraryParser {
         if (r.getCells().size() != BookColumns.size()) {
             LOG.error("wrong number of columns found: " + r.getCells().size() + " != " + BookColumns.size());
             LOG.error(xml);
-            HTMLUtil.debugNode(r, "bad_col.xml");
+            if (debug)  HTMLUtil.debugNode(r, "bad_col.xml");
             return null;
         }
 
@@ -201,7 +201,7 @@ public enum LibraryParser {
                 if (text.contains("by parts"))
                 {
                     LOG.error("error with title: "+text);
-                    HTMLUtil.debugNode(cell, col.name()+".xml");
+                    if (debug) HTMLUtil.debugNode(cell, col.name()+".xml");
                     // bug check.
                 }
 

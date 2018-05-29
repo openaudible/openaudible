@@ -71,14 +71,8 @@ public class Book implements Comparable<Book>, Serializable {
     public boolean equals(Book that) {
         if (that==null) return false;
         if (this==that) return true;
-
         boolean e1 = this.getProduct_id().equals(that.getProduct_id());
-        // boolean e2 = this.getAsin().equals(that.getAsin());
-
-        // assert (e1 == e2);
-
         return e1;
-
     }
 
     public boolean isOK() {

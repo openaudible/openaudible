@@ -142,16 +142,6 @@ public class BookInfoPanel extends GridComposite implements BookListener {
         return c;
     }
 
-    private void updateTask(Book b) {
-        String t = "";
-        if (curBook != null) {
-
-
-        }
-
-        task.setText(t);
-
-    }
 
     private void update(Book b) {
         curBook = b;
@@ -311,7 +301,6 @@ public class BookInfoPanel extends GridComposite implements BookListener {
                     task.setText(msg);
                 }
             });
-
         }
     }
 
