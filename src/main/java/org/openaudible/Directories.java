@@ -9,6 +9,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 
+
 /**
  * Created  6/26/2017.
  */
@@ -64,9 +65,7 @@ public enum Directories {
             if (dir.isDirectory()) continue;
             boolean ok = dir.mkdir();
             if (!ok) throw new IOException("Unable to create directory: " + dir.getAbsolutePath());
-
         }
-
     }
 
     public static void save() throws IOException {
@@ -78,19 +77,15 @@ public enum Directories {
     public static void load() throws IOException {
         File f = META.getDir(dirPrefsName);
         if (f.length() > 0) {
-
             JsonParser parser = new JsonParser();
             String json = FileUtils.readFileToString(f, "utf8");
-
             JsonElement jsonElement = parser.parse(json);   // new FileReader(f));
             JsonObject j = jsonElement.getAsJsonObject();
             fromJSON(j);
-
         }
     }
 
-    public static File getAppFile(String path)
-    {
+    public static File getAppFile(String path) {
         File dir = new File(getDir(Directories.APP), path);
         if (!dir.exists()) {
             File dir2 = new File(getDir(Directories.APP), "src" + File.separator + "main" + File.separator + path);
@@ -121,18 +116,33 @@ public enum Directories {
     public static void fromJSON(JsonObject j) {
         for (Directories d : Directories.values()) {
             JsonElement e = j.get(d.name());
-            if (e != null)
-                setPath(d, e.getAsString());
+            if (e != null) {
+                String path = e.getAsString();
+                if (isValid(path))
+                    setPath(d, e.getAsString());
+            }
+
         }
     }
 
-    public static boolean setPath(Directories d, String path) {
+    public static boolean isValid(String path) {
         assert (paths != null);
+        if (path != null && path.length() > 0) {
+            File f = new File(path);
+            assert (f.exists());
+            return f.isDirectory() && f.exists();
+        }
+        return false;
+    }
 
-        File f = new File(path);
-        assert (f.exists());
-        paths[d.ordinal()] = path;
-        return f.exists();
+    public static boolean setPath(Directories d, String path) {
+        assert (isValid(path));
+        boolean valid = isValid(path);
+        assert (valid);
+        if (valid) {
+            paths[d.ordinal()] = path;
+        }
+        return valid;
     }
 
     public static String getPath(Directories d) {

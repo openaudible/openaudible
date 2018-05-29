@@ -12,10 +12,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.openaudible.Audible;
 import org.openaudible.AudibleAccountPrefs;
 import org.openaudible.Directories;
-import org.openaudible.audible.AudibleLoginError;
-import org.openaudible.audible.AudibleScraper;
-import org.openaudible.audible.ConnectionListener;
-import org.openaudible.audible.ConnectionNotifier;
+import org.openaudible.audible.*;
 import org.openaudible.books.Book;
 import org.openaudible.books.BookElement;
 import org.openaudible.books.BookListener;
@@ -33,6 +30,7 @@ import org.openaudible.desktop.swt.manager.views.StatusPanel;
 import org.openaudible.feeds.pagebuilder.WebPage;
 import org.openaudible.util.HTMLUtil;
 import org.openaudible.util.Platform;
+import org.openaudible.util.TimeToSeconds;
 import org.openaudible.util.queues.IQueueJob;
 import org.openaudible.util.queues.IQueueListener;
 import org.openaudible.util.queues.ThreadedQueue;
@@ -59,6 +57,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 
     public Prefs prefs = new Prefs();
     final String appPrefsFileName = "settings.json";
+    private long totalDuration;
 
     public AudibleGUI() {
         assert (instance == null);
@@ -99,7 +98,6 @@ public class AudibleGUI implements BookListener, ConnectionListener {
             audible.downloadQueue.addListener(queueListener);
             // converting aax to mp3.
             audible.convertQueue.addListener(queueListener);
-
 
 
             ConnectionNotifier.instance.addListener(this);
@@ -320,7 +318,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 
     public void refreshLibrary(final boolean quickRescan) {
 
-        final ProgressTask task = new ProgressTask("Refresh Library") {
+        final ProgressTask task = new ProgressTask("Audible Library Update...") {
             public void run() {
                 try {
 
@@ -335,10 +333,10 @@ public class AudibleGUI implements BookListener, ConnectionListener {
                     loggedIn = true;
                 } catch (AudibleLoginError e) {
 
-                    MessageBoxFactory.showGeneral(null, 0, "Log in via web browser...", "Unable to connect right now.\n\nTry logging on to Audible from this web page and try again.");
+                    MessageBoxFactory.showGeneral(null, 0, "Log in via web browser...", "Unable to connect right now.\n\nTry logging on to Audible from this web page and try again.\n\nIf this keeps ");
 
-                } catch (Exception e) {
-                    LOG.info("Error connecting", e);
+                } catch (Throwable e) {
+                    LOG.info("Error refreshing library", e);
                     if (!wasCanceled())
                         showError(e, "refreshing library");
                 } finally {
@@ -361,7 +359,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         progressTask.setTask("Connecting...", "");
         final AudibleScraper s = audible.getScraper(false);
         if (s != null && !s.isLoggedIn()) {
-            if (browser!=null) {
+            if (browser != null) {
                 LOG.info("Setting cookies 1");
 
                 SWTAsync.block(new SWTAsync("connect") {
@@ -380,9 +378,6 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         try {
 
             s.home();
-            if (ConnectionNotifier.getInstance().isConnected()) {
-                s.clickLib();
-            }
 
             if (ConnectionNotifier.getInstance().isConnected())
                 return s;
@@ -415,7 +410,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
                 msg = "You have " + conv.size() + " book(s) to convert to MP3\n";
             msg += "Would you like to start these job(s) now?";
 
-            LOG.info(msg+" autoConvert="+prefs.autoConvert);
+            LOG.info(msg + " autoConvert=" + prefs.autoConvert);
 
             boolean ok = prefs.autoConvert;
             if (!ok) ok = MessageBoxFactory.showGeneralYesNo(null, "Start jobs?", msg);
@@ -473,8 +468,6 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     // has login credentials.
     public boolean hasLogin() {
         return true;
-
-        // return audible.hasLogin();
     }
 
     public boolean canViewInAudible() {
@@ -490,15 +483,12 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 
     public boolean canViewInSystem() {
 
-        if (GUI.isLinux()) return false;        // TODO: Fix for Linux
-
-
+        if (GUI.isLinux())
+            return false;        // TODO: Fix for Linux. How to display a file in "desktop"
         Book b = onlyOneSelected();
         if (b != null) {
             return audible.hasMP3(b);
         }
-
-
         return false;
     }
 
@@ -510,13 +500,18 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         String out = "";
 
         switch (e) {
+            case Hours:
+                float hours = AudibleGUI.instance.getTotalDuration() / 3600.0f;
+                if (hours < 100)
+                    return "" + Math.round(hours * 10) / 10.0;
+                else return "" + Math.round(hours);
+
             case AAX_Files:
                 return "" + audible.aaxCount();
             case Books:
                 return "" + audible.getBookCount();
             case MP3_Files:
                 return "" + audible.mp3Count();
-            // case Connection: return ConnectionNotifier.getInstance().getStateString();
             case To_Download:
                 return "" + getDownloadCount();
             case To_Convert:
@@ -695,12 +690,15 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     public void bookUpdated(Book book) {
     }
 
+
     @Override
     public void booksUpdated() {
         // TODO: Ensure this isn't called too frequently.
         audible.updateFileCache();
         int d = 0;
         int c = 0;
+        long seconds = 0;
+
         for (Book b : audible.getBooks()) {
             boolean m = audible.hasMP3(b);
             if (!audible.hasAAX(b)) {
@@ -709,9 +707,12 @@ public class AudibleGUI implements BookListener, ConnectionListener {
                 if (!m) c++;
             }
 
+            seconds += TimeToSeconds.parseTimeStringToSeconds(b.getDuration());
+
         }
         downloadCount = d;
         convertCount = c;
+        totalDuration = seconds;
     }
 
 
@@ -848,24 +849,51 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     // book may be null.
     public String getTaskString(final Book b) {
         String out = "";
-        if (b!=null)
-        {
+        if (b != null) {
             if (hasMP3(b))
                 return "Converted to MP3";
-            if (hasAAX(b))
-            {
-                if (audible.convertQueue.isQueued(b)) return "In convert queue";
-                if (audible.convertQueue.inJob(b)) return "Converting...";
+            if (hasAAX(b)) {
+                if (audible.convertQueue.isQueued(b))
+                    return "In convert queue";
+                if (audible.convertQueue.inJob(b))
+                    return "Converting...";
+                if (!audible.convertQueue.canAdd(b))
+                    return "Unable to convert";     // ?
                 return "Ready to convert to MP3";
             }
 
-                if (audible.downloadQueue.isQueued(b)) return "In download queue";
-                if (audible.downloadQueue.inJob(b)) return "Downloading...";
-                if (ConnectionNotifier.getInstance().isConnected())
-                    return "Ready to download";
-                return "Not downloaded";
+            if (audible.downloadQueue.isQueued(b))
+                return "In download queue";
+            if (audible.downloadQueue.inJob(b))
+                return "Downloading...";
+
+            if (!audible.downloadQueue.canAdd(b))
+                return "Unable to download";
+
+            if (ConnectionNotifier.getInstance().isConnected())
+                return "Ready to download";
+            return "Not downloaded";
         }
         return out;
+    }
+
+    // total book time, in seconds.
+    public long getTotalDuration() {
+        return totalDuration;
+    }
+
+    public void test1() {
+        if (KindleScraper.instance == null) {
+            new KindleScraper(audible.getAccount());
+
+        }
+
+        try {
+            KindleScraper.instance.test();
+
+        } catch (Throwable th) {
+            LOG.debug("Error", th);
+        }
     }
 
     class BookQueueListener implements IQueueListener<Book> {
@@ -903,11 +931,11 @@ public class AudibleGUI implements BookListener, ConnectionListener {
             if (queue == audible.downloadQueue)
                 msg = "Downloading ";
             else
-                msg ="Converting ";
+                msg = "Converting ";
 
-            assert(msg.length()>0);
+            assert (msg.length() > 0);
 
-            if (subtask!=null) {
+            if (subtask != null) {
                 msg += subtask;
             }
             bookNotifier.bookProgress(book, msg);
@@ -937,6 +965,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
             }
         }
     }
+
     public void load() throws IOException {
         Audible.instance.load();
 
@@ -1013,8 +1042,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     }
 
     // SWT Shell accessor.
-    private Shell getShell()
-    {
+    private Shell getShell() {
         return GUI.shell;
     }
 
@@ -1044,16 +1072,14 @@ public class AudibleGUI implements BookListener, ConnectionListener {
             String files[] = dialog.getFileNames();
             System.out.println(path);
 
-            if (files!= null && files.length>0)
-            {
+            if (files != null && files.length > 0) {
                 File test = new File(path);
                 File dir = test.getParentFile();
 
-                ArrayList <File>aaxFiles= new ArrayList();
-                for (String s:files)
-                {
+                ArrayList<File> aaxFiles = new ArrayList();
+                for (String s : files) {
                     File f = new File(dir, s);
-                    assert(f.exists());
+                    assert (f.exists());
                     aaxFiles.add(f);
                 }
 
@@ -1067,8 +1093,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     }
 
     public void importBooks(final List<File> aaxFiles) {
-        if (SWTAsync.inDisplayThread())
-        {
+        if (SWTAsync.inDisplayThread()) {
             // hack. Need to release current GUI thread and start progress in new thread.
             new Thread(() -> importBooks(aaxFiles)).start();
             return;
@@ -1080,8 +1105,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
             public void run() {
 
                 try {
-                    for (File f:aaxFiles)
-                    {
+                    for (File f : aaxFiles) {
                         setTask("Importing", f.getName());
                         Audible.instance.importAAX(f, this);
                     }
@@ -1109,7 +1133,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
                 File f = new File(path);
                 audible.export(f);
                 if (f.exists())
-                    LOG.info("exported books to: "+f.getAbsolutePath());
+                    LOG.info("exported books to: " + f.getAbsolutePath());
             }
 
         } catch (Exception e) {
@@ -1130,7 +1154,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
                 File f = new File(path);
                 audible.export(f);
                 if (f.exists())
-                    LOG.info("exported books to: "+f.getAbsolutePath());
+                    LOG.info("exported books to: " + f.getAbsolutePath());
             }
 
         } catch (Exception e) {

@@ -11,11 +11,11 @@ import org.openaudible.util.queues.ThreadedQueue;
 
 public class ConvertQueue extends ThreadedQueue<Book> {
 
-    // Queue to convert audio books, one thread at a time.
+    // Queue to convert audio books to mp3
     private static final Log LOG = LogFactory.getLog(ConvertQueue.class);
 
     public ConvertQueue() {
-        super(2);
+        super(3);
     }
 
     @Override
@@ -30,8 +30,7 @@ public class ConvertQueue extends ThreadedQueue<Book> {
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "ConvertQueue";
     }
 

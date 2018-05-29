@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openaudible.Audible;
 import org.openaudible.books.Book;
+import org.openaudible.books.BookElement;
 import org.openaudible.util.queues.IQueueJob;
 import org.openaudible.util.queues.JobProgress;
 import org.openaudible.util.queues.ThreadedQueue;
@@ -27,16 +28,19 @@ public class DownloadQueue extends ThreadedQueue<Book> {
         return aaxDownloader;
     }
 
-    public boolean canAdd(Book e) {
-        return super.canAdd(e) && !Audible.instance.getAAXFileDest(e).exists();
+    public boolean canAdd(Book b) {
+        assert(b.has(BookElement.user_id));
+        assert(b.has(BookElement.product_id));
+        if (!super.canAdd(b)) return false;
+        if (!b.has(BookElement.user_id)) return false;
+        if (!b.has(BookElement.product_id)) return false;
+        if (Audible.instance.hasAAX(b)) return false;
+        return true;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "DownloadQueue";
     }
 
 }
-
-	

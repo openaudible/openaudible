@@ -99,4 +99,46 @@ public enum Util {
         return "" + k + "K";
     }
 
+    public static String replaceAll(String haystack, String find, String replacement) {
+        while (haystack.contains(find))
+            haystack = haystack.replaceAll(find, replacement);
+        return haystack;
+    }
+
+
+    public static String escape(String s) throws Exception {
+        char bad[] = {'\n', '/', '#'};
+        for (char c : bad) {
+            if (s.indexOf(c) != -1)
+                throw new Exception("TODO: Fix");
+        }
+        return s;
+    }
+
+    public static String cleanString(String out) {
+        out = replaceAll(out, "\r", "\n");
+        out = replaceAll(out, "  ", " ");
+        out = replaceAll(out, "\t\t", "\t");
+        out = replaceAll(out, " \n", "\n");
+        out = replaceAll(out, "\t\n", "\n");
+        out = replaceAll(out, "\n\n", "\n");
+        return out.trim();
+    }
+
+    public static int substringCount(String needle, String haystack) {
+        int lastIndex = 0;
+        int count = 0;
+
+        while (lastIndex != -1) {
+
+            lastIndex = haystack.indexOf(needle, lastIndex);
+
+            if (lastIndex != -1) {
+                count++;
+                lastIndex += needle.length();
+            }
+        }
+        return count;
+    }
+
 }

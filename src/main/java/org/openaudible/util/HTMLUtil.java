@@ -78,8 +78,8 @@ public class HTMLUtil {
         Files.write(Paths.get(f.getAbsolutePath()), str.getBytes());
     }
 
-    public static String findHidden(HtmlPage page, String n) {
-        List<HtmlElement> test = page.getDocumentElement().getElementsByAttribute("input", "name", n);
+    public static String findHidden(HtmlElement elem, String n) {
+        List<HtmlElement> test = elem.getElementsByAttribute("input", "name", n);
         if (!test.isEmpty()) {
             HtmlInput i = (HtmlInput) test.get(0);
             String v = i.getValueAttribute();
@@ -95,8 +95,10 @@ public class HTMLUtil {
 
         try {
             xml = p.asXml();
+            if (!what.contains("."))
+                what += ".html";
 
-            File x = new File(Directories.getTmpDir(), what + ".html");
+            File x = new File(Directories.getTmpDir(), what);
             HTMLUtil.writeFile(x, xml);
 
             //			File h = new File(what + ".html");

@@ -9,11 +9,11 @@ public abstract class MultiColumnData extends SingleColumnData {
     @Override
     public abstract String getTextValue(SuperTable table, int col);
 
-	/*
+    /*
      * { switch (col) { case 0: return data.toString(); default: return ""; }
-	 * 
-	 * }
-	 */
+     *
+     * }
+     */
 
     public abstract int getSortCol();
 

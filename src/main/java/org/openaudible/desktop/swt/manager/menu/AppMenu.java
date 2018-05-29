@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.*;
 import org.openaudible.desktop.swt.i8n.ITranslatable;
 import org.openaudible.desktop.swt.i8n.Translate;
 import org.openaudible.desktop.swt.manager.Application;
+import org.openaudible.desktop.swt.manager.Version;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
 
 import java.util.ArrayList;
@@ -28,10 +29,11 @@ public class AppMenu implements ITranslatable, SelectionListener {
     private Menu editMenu;
     private Menu controlMenu;
     private Menu aboutMenu;
+
     private final Command[] actionCommands = {Command.ViewInAudible, Command.Show_MP3, Command.Play, Command.Download,
             Command.Convert, Command.Refresh_Book_Info};
-    private final Command[] appCommands = {Command.Connect, Command.Quick_Refresh, Command.Rescan_Library, Command.Download_All, Command.Convert_All,
-           Command.MenuSeparator,  Command.Browser}; // , Command.MenuSeparator, Command.Logout};
+    private final Command[] controlCommands = {Command.Connect, Command.Quick_Refresh, Command.Rescan_Library, Command.Download_All, Command.Convert_All,
+            Command.MenuSeparator, Command.Browser}; // , Command.MenuSeparator, Command.Logout};
 
     private final Command[] aboutCommands = {Command.Help, Command.AppWebPage, Command.Check_For_Update, Command.About};
 
@@ -112,8 +114,7 @@ public class AppMenu implements ITranslatable, SelectionListener {
         MenuItem item = installSystemMenu(cmd);
         if (item != null)
             return item; // is a special Mac OS menu
-        if (cmd==Command.MenuSeparator)
-        {
+        if (cmd == Command.MenuSeparator) {
             return newSeparator(parent);
         }
 
@@ -190,9 +191,12 @@ public class AppMenu implements ITranslatable, SelectionListener {
         newMItem(editMenu, Command.Preferences);
 
         controlMenu = newMenu("Controls");
-        for (Command c : appCommands) {
+        for (Command c : controlCommands) {
             newMItem(controlMenu, c);
         }
+        if (Version.appDebug)
+            newMItem(controlMenu, Command.Test1);
+
 
         actionMenu = newMenu("Actions");
         for (Command c : actionCommands) {
@@ -259,7 +263,7 @@ public class AppMenu implements ITranslatable, SelectionListener {
     // public void initMnemonics() {
     private void initMnemonics(MenuItem items[]) {
 
-		/* Store chars that have been used as mnemonic */
+        /* Store chars that have been used as mnemonic */
         Vector chars = new Vector();
         /* For each MenuItem */
         for (MenuItem item : items) {
@@ -268,19 +272,19 @@ public class AppMenu implements ITranslatable, SelectionListener {
             name = name.replaceAll("&", "");
             /* For each char in the name */
             for (int b = 0; b < name.length(); b++) {
-				/* Check if char is available and no whitespace */
+                /* Check if char is available and no whitespace */
                 if (name.substring(b, b + 1) != null && !name.substring(b, b + 1).equals(" ")) {
-					/* Check if char has been used as mnemonic before */
+                    /* Check if char has been used as mnemonic before */
                     if (!chars.contains(name.substring(b, b + 1).toLowerCase())) {
-						/* Set mnemonic */
+                        /* Set mnemonic */
                         item.setText(name.substring(0, b) + "&" + name.substring(b, name.length()));
-						/* Add char as used mnemonic */
+                        /* Add char as used mnemonic */
                         chars.add(name.substring(b, b + 1).toLowerCase());
                         break;
                     }
                 }
             }
-			/* Also check MenuItems ob possible Sub-Menus */
+            /* Also check MenuItems ob possible Sub-Menus */
             if (item.getMenu() != null)
                 initMnemonics(item.getMenu().getItems());
         }

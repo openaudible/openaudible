@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.openaudible.desktop.swt.gui.MessageBoxFactory;
+import org.openaudible.desktop.swt.manager.menu.CommandCenter;
 import org.openaudible.util.HTTPGet;
 import org.openaudible.util.Platform;
 
@@ -14,7 +15,6 @@ import java.io.IOException;
 public enum VersionCheck {
     instance;
     private static final Log LOG = LogFactory.getLog(VersionCheck.class);
-
 
 
     // if verbose return state regardless.
@@ -27,17 +27,14 @@ public enum VersionCheck {
         int diff = obj.get("diff").getAsInt();
         if (diff < 0) {
             MessageBoxFactory.showGeneral(shell, SWT.ICON_INFORMATION, title, msg);
-            if (obj.has("site"))
-            {
+            if (obj.has("site")) {
                 String url = obj.get("site").getAsString();
                 AudibleGUI.instance.browse(url);
             }
 
             // TODO: Add buttons: go to web site (openaudible.org) or download update (go to mac,win, or linux download url)
-        } else
-        {
-            if (verbose)
-            {
+        } else {
+            if (verbose) {
                 MessageBoxFactory.showGeneral(shell, SWT.ICON_INFORMATION, title, msg);
             }
         }
@@ -58,17 +55,16 @@ public enum VersionCheck {
 
     /**
      * Compares two version strings.
-     *
+     * <p>
      * Use this instead of String.compareTo() for a non-lexicographical
      * comparison that works for version strings. e.g. "1.10".compareTo("1.6").
-     *
-     * @note It does not work if "1.10" is supposed to be equal to "1.10.0".
      *
      * @param str1 a string of ordinal numbers separated by decimal points.
      * @param str2 a string of ordinal numbers separated by decimal points.
      * @return The result is a negative integer if str1 is _numerically_ less than str2.
-     *         The result is a positive integer if str1 is _numerically_ greater than str2.
-     *         The result is zero if the strings are _numerically_ equal.
+     * The result is a positive integer if str1 is _numerically_ greater than str2.
+     * The result is zero if the strings are _numerically_ equal.
+     * @note It does not work if "1.10" is supposed to be equal to "1.10.0".
      */
     public static int versionCompare(String str1, String str2) {
         String[] vals1 = str1.split("\\.");
@@ -88,9 +84,8 @@ public enum VersionCheck {
         return Integer.signum(vals1.length - vals2.length);
     }
 
-    // return "" if current version.
     public JsonObject versionCheck() {
-        JsonObject obj =null;
+        JsonObject obj = null;
         try {
             obj = getVersion();
 
@@ -99,29 +94,44 @@ public enum VersionCheck {
             String releaseVersion = obj.get("version").getAsString();
 
             int diff = versionCompare(Version.appVersion, releaseVersion);
-            obj.addProperty("diff", ""+diff);
+            obj.addProperty("diff", "" + diff);
             String msg, title;
 
-            if (diff<0) {
+            if (diff < 0) {
                 title = "Update Available";
                 msg = "An update is available!\nYour version: " + Version.appVersion + "\nRelease Version:" + releaseVersion;
+                if (obj.has("required") && obj.get("required").getAsBoolean())
+                {
+                    msg += "\nThis upgrade is required. Old versions no longer supported.";
+                    CommandCenter.instance.expiredApp = true;
+                }
 
-            }else if (diff>0) {
+            } else if (diff > 0) {
                 title = "Using Pre-release";
                 msg = "You appear to be using a pre-release version\nYour version: " + Version.appVersion + "\nLatest Version:" + releaseVersion;
-            }
-            else
-            {
+            } else {
                 title = "No update at this time";
-                msg = "Using the latest release version";
+                msg = "Using the latest release version.";
+                // allow a news field
+            }
+
+            if (obj.has("news"))
+            {
+                msg +="\n"+obj.get("news").getAsString();
+            }
+
+            if (obj.has("kill"))
+            {
+                msg +="\n"+obj.get("kill").getAsString();
+                CommandCenter.instance.expiredApp = true;
             }
 
             obj.addProperty("msg", msg);
             obj.addProperty("title", title);
 
         } catch (IOException e) {
-            if (obj==null)
-                obj  = new JsonObject();
+            if (obj == null)
+                obj = new JsonObject();
             obj.addProperty("msg", "Error checking for latest version.\nError message: " + e.getMessage());
             obj.addProperty("title", "Version check failed");
         }

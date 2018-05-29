@@ -45,14 +45,11 @@ public class DownloadJob implements IQueueJob {
         assert (!destFile.exists());
     }
 
+
     public void download() throws IOException {
         String cust_id = b.get(BookElement.cust_id);
         String user_id = b.get(BookElement.user_id);
 
-        if (cust_id.length() == 0)
-            throw new IOException("cust_id required");
-        if (user_id.length() == 0)
-            throw new IOException("user_id required");
 
         String awtype = "AAX";
 
@@ -60,11 +57,21 @@ public class DownloadJob implements IQueueJob {
         if (codec.isEmpty())
             codec = "LC_64_22050_stereo";
 
+
+        /*
+           http://cds.audible.com/download?
+                user_id=xxx[about 60 chars] &
+                product_id=BK_RAND_003188&
+                codec=LC_32_22050_Mono&
+                awtype=AAX&
+                cust_id= [ same as user-id currently? ]
+        */
+
         String url = "http://cds.audible.com/download";
-        url += "?user_id=" + user_id;
-        url += "&product_id=" + b.getProduct_id();
-        url += "&codec=" + codec;
-        url += "&awtype=" + awtype;
+        url += "?user_id=" + user_id;                   // crypt
+        url += "&product_id=" + b.getProduct_id();      // BK_ABCD_123456
+        url += "&codec=" + codec;       // LC_32_22050_Mono
+        url += "&awtype=" + awtype;     // AAX
         url += "&cust_id=" + cust_id;
 
         LOG.info("Download book: " + b + " url=" + url);
@@ -167,12 +174,11 @@ public class DownloadJob implements IQueueJob {
                 double seconds = (System.currentTimeMillis() - startTime) / 1000.0;
                 double bps = total / seconds;
                 String rate = Util.instance.byteCountToString((long) bps) + "/sec";
-                String t = "Downloading "+b;
-                String s = Util.instance.byteCountToString(total) +" at "+rate;
+                String t = "Downloading " + b;
+                String s = Util.instance.byteCountToString(total) + " at " + rate;
 
-                if (task!=null)
-                {
-                    task.setTask(t,s);
+                if (task != null) {
+                    task.setTask(t, s);
                 }
 
                 // LOG.info(task+" "+ s);

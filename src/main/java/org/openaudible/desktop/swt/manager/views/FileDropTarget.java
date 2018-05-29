@@ -10,16 +10,14 @@ import java.io.File;
 import java.util.ArrayList;
 
 
-public class FileDropTarget extends DropTargetAdapter
-{
+public class FileDropTarget extends DropTargetAdapter {
     public final FileTransfer fileTransfer = FileTransfer.getInstance();
-    public Transfer[] types = new Transfer[] {fileTransfer};
+    public Transfer[] types = new Transfer[]{fileTransfer};
     static FileDropTarget instance = new FileDropTarget();
     private static final Log LOG = LogFactory.getLog(FileDropTarget.class);
 
-    public static void attach(Control control)
-    {
-        DropTarget target = new DropTarget(control, DND.DROP_COPY );
+    public static void attach(Control control) {
+        DropTarget target = new DropTarget(control, DND.DROP_COPY);
         target.setTransfer(new Transfer[]{instance.fileTransfer});
         target.addDropListener(instance);
     }
@@ -27,8 +25,8 @@ public class FileDropTarget extends DropTargetAdapter
 
     @Override
     public void drop(DropTargetEvent event) {
-        System.out.println("drop:" + event+" data="+event.data);
-        ArrayList <File> aaxFiles = new ArrayList<File>();
+        System.out.println("drop:" + event + " data=" + event.data);
+        ArrayList<File> aaxFiles = new ArrayList<File>();
 
         if (fileTransfer.isSupportedType(event.currentDataType)) {
 
@@ -36,33 +34,29 @@ public class FileDropTarget extends DropTargetAdapter
 
             //list out selected file
             String[] files = (String[]) event.data;
-            for (String name:files) {
+            for (String name : files) {
 
                 String[] split = name.split("\\.");
                 String ext = split[split.length - 1];
                 File file = new File(name);
-                if (file.getName().toLowerCase().endsWith(".aax"))
-                {
+                if (file.getName().toLowerCase().endsWith(".aax")) {
                     aaxFiles.add(file);
 
                 }
 
-                System.out.println("file:"+name+" exists="+file.exists());
+                System.out.println("file:" + name + " exists=" + file.exists());
 
             }//end for loop        event.detail = DND.DROP_COPY;
         }
 
-        if (aaxFiles.size()>0)
-        {
+        if (aaxFiles.size() > 0) {
             AudibleGUI.instance.importBooks(aaxFiles);
         }
     }
 
 
-
-
     @Override
-    public void dragEnter(DropTargetEvent event){
+    public void dragEnter(DropTargetEvent event) {
         event.detail = DND.DROP_COPY;
     }
 }

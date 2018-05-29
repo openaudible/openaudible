@@ -17,7 +17,7 @@ import java.util.logging.Level;
 public class AudibleCLI {
     private static final Log LOG = LogFactory.getLog(AudibleCLI.class);
 
-    final Audible audible= new Audible();
+    final Audible audible = new Audible();
     volatile boolean quit = false;
 
     public AudibleCLI() {
@@ -130,12 +130,6 @@ public class AudibleCLI {
                     println(b.inspect("\n  "));
                 }
 
-                break;
-            case redeem:
-                if (args.length() == 0) throw new Exception("Enter one or more gift codes.");
-                for (int x = 1; x < r.length; x++) {
-                    audible.redeemGiftCode(r[x].trim());
-                }
                 break;
 
             case updateInfo:
@@ -269,7 +263,7 @@ public class AudibleCLI {
     }
 
     enum AudibleCmd {
-        help, update, info, convert, export, save, load, find, has, asText, asXML, home, quit, library, names, signout, title, list, redeem, forms, web, access, toDownload, setURL, gettest2, test1, test2, act, retag, parseAAX, toConvert, download, updateInfo, cookies, queues
+        help, update, info, convert, export, save, load, find, has, asText, asXML, home, quit, library, names, signout, title, list, forms, web, access, toDownload, setURL, gettest2, test1, test2, act, retag, parseAAX, toConvert, download, updateInfo, cookies, queues
     }
 
 }

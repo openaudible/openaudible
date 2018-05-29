@@ -76,7 +76,6 @@ public class Application extends GUI {
     }
 
 
-
     protected void shutDown() {
         quit();
         super.shutDown();

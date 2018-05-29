@@ -286,10 +286,10 @@ public class EnumTable<E extends Object, F extends Enum> implements SelectionLis
         assertTable();
     }
 
-    AtomicInteger cache=new AtomicInteger(0);
+    AtomicInteger cache = new AtomicInteger(0);
 
     public void populateData() {
-        if (cache.getAndIncrement()==0) {
+        if (cache.getAndIncrement() == 0) {
             SWTAsync.run(new SWTAsync("populateData") {
                 @Override
                 public void task() {

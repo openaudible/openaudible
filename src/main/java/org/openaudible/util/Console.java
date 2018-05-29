@@ -10,42 +10,36 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-public class Console extends ConsoleHandler
-{
-    public interface ILogRecordPublisher
-    {
+public class Console extends ConsoleHandler {
+    public interface ILogRecordPublisher {
         void publish(LogRecord l);
     }
 
     public final static Console instance = new Console();
     boolean installed = false;
 
-    public void install()
-    {
-        assert(!installed);
-        installed=true;
+    public void install() {
+        assert (!installed);
+        installed = true;
         Logger.getLogger("").addHandler(this);
         // LogFactory.getFactory().setAttribute("");
 
         // captureStdMessages();
     }
 
-    public void uninstall()
-    {
-        assert(installed);
+    public void uninstall() {
+        assert (installed);
 
-        installed=false;
+        installed = false;
         Logger.getLogger("").removeHandler(this);
     }
 
-    public Console()
-    {
+    public Console() {
         System.currentTimeMillis();
     }
 
-    public void setListener(ILogRecordPublisher l)
-    {
-        listener=l;
+    public void setListener(ILogRecordPublisher l) {
+        listener = l;
     }
 
     ILogRecordPublisher listener;
@@ -54,14 +48,11 @@ public class Console extends ConsoleHandler
     final LinkedList<LogRecord> history = new LinkedList<>();
 
 
-    public final List<LogRecord> getHistory()
-    {
-        synchronized(history)
-        {
+    public final List<LogRecord> getHistory() {
+        synchronized (history) {
             return Collections.unmodifiableList(history);
         }
     }
-
 
 
     /**
@@ -70,21 +61,20 @@ public class Console extends ConsoleHandler
      * The logging request was made initially to a <tt>Logger</tt> object,
      * which initialized the <tt>LogRecord</tt> and forwarded it here.
      * <p>
-     * @param  record  description of the log event. A null record is
-     *                 silently ignored and is not published
+     *
+     * @param record description of the log event. A null record is
+     *               silently ignored and is not published
      */
     @Override
     public void publish(LogRecord record) {
         super.publish(record);
 
-        synchronized(history)
-        {
+        synchronized (history) {
             history.add(record);
-            if (history.size()>maxHistory)
+            if (history.size() > maxHistory)
                 history.removeFirst();
         }
-        if (listener!=null)
-        {
+        if (listener != null) {
             listener.publish(record);
         }
     }
@@ -100,17 +90,15 @@ public class Console extends ConsoleHandler
     }
 
 
-    class ConsoleOutputStream extends ByteArrayOutputStream
-    {
-        ConsoleOutputStream(int c)
-        {
+    class ConsoleOutputStream extends ByteArrayOutputStream {
+        ConsoleOutputStream(int c) {
             color = c;
         }
 
         final int color;
+
         @Override
-        public void flush()
-        {
+        public void flush() {
             String message = toString().trim();
             if (message.length() == 0) return;
             takeLine(message);
@@ -125,14 +113,11 @@ public class Console extends ConsoleHandler
         private void takeLine(String line) {
             Level level = Level.INFO;   // (color==0) ? Level.INFO:Level.WARNING;
             LogRecord r = new LogRecord(level, line);
-            if (listener!=null)
+            if (listener != null)
                 listener.publish(r);
         }
 
     }
-
-
-
 
 
 }

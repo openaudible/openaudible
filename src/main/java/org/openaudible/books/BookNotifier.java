@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * Created  6/27/2017.
  * Used as singleton to notify all book listeners about a book event
+ * Events are defined in interface BookListener
  */
 public class BookNotifier extends EventNotifier<BookListener> implements BookListener {
     private static final Log LOG = LogFactory.getLog(BookNotifier.class);
@@ -75,7 +76,7 @@ public class BookNotifier extends EventNotifier<BookListener> implements BookLis
     public void bookProgress(final Book book, final String task) {
         if (enabled) {
             for (BookListener l : getListeners())
-                l.bookProgress(book,task);
+                l.bookProgress(book, task);
         }
 
     }

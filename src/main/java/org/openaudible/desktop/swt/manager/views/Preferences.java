@@ -50,8 +50,7 @@ public class Preferences extends Dialog {
         try {
             Preferences p = instance = new Preferences(s);
             int result = instance.open();
-            if (result==0)
-            {
+            if (result == 0) {
                 try {
                     AudibleGUI.instance.save();
                 } catch (IOException e) {
@@ -130,7 +129,7 @@ public class Preferences extends Dialog {
         final Text text = GridComposite.newTextPair(group, d.displayName());
         text.setData(d);
         text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL));
-
+        text.setEditable(false);
         Button b = c.newButton(group, "Set");
         b.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -194,8 +193,7 @@ public class Preferences extends Dialog {
         GridData gd;
 
         region = GridComposite.newCombo(group, "Region");
-        for (AudibleRegion r:AudibleRegion.values())
-        {
+        for (AudibleRegion r : AudibleRegion.values()) {
             region.add(r.displayName());
         }
         gd = new GridData();

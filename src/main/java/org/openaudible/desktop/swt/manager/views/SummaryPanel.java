@@ -26,10 +26,12 @@ public class SummaryPanel implements BookListener {
         summary.setLayoutData(gd);
         BookNotifier.getInstance().addListener(this);
     }
+
     AtomicInteger cache = new AtomicInteger();
+
     @Override
     public void booksSelected(List<Book> list) {
-        if (cache.getAndIncrement()>0) return;
+        if (cache.getAndIncrement() > 0) return;
         SWTAsync.run(new SWTAsync("update") {
             @Override
             public void task() {

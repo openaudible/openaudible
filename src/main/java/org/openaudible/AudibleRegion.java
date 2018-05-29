@@ -8,7 +8,7 @@ public enum AudibleRegion {
     // audible.de, audible.fr, audible.com.au, audible.it, audible.jp, audible.ca
 
     public String getBaseURL() {
-        return "https://"+this.getBaseDomain();
+        return "https://" + this.getBaseDomain();
     }
 
     public String getBaseDomain() {
@@ -47,6 +47,6 @@ public enum AudibleRegion {
     }
 
     public String displayName() {
-        return getBaseDomain()+" ("+this.name().toUpperCase()+")";
+        return getBaseDomain() + " (" + this.name().toUpperCase() + ")";
     }
 }

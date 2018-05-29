@@ -160,13 +160,11 @@ public class WebPage {
 
         String json = gson.toJson(list);
 
-        try ( FileWriter writer = new FileWriter(new File(webDir, "books.json")))
-        {
+        try (FileWriter writer = new FileWriter(new File(webDir, "books.json"))) {
             writer.write(json);
         }
 
-        try (FileWriter writer = new FileWriter(new File(webDir, "books.js")))
-        {
+        try (FileWriter writer = new FileWriter(new File(webDir, "books.js"))) {
             writer.write("window.myBooks=");
             writer.write(json);
             writer.write(";");
@@ -174,7 +172,7 @@ public class WebPage {
 
         // add basic html pages from webapp directory: src/main/webapp which is at the root dir in installed app.
         File templateDir = Directories.getWebTemplateDirectory();
-        assert(templateDir.exists());
+        assert (templateDir.exists());
         FileUtils.copyDirectory(templateDir, webDir);
     }
 

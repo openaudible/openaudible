@@ -141,10 +141,10 @@ public class BookInfoPanel extends GridComposite implements BookListener {
 
         return c;
     }
+
     private void updateTask(Book b) {
         String t = "";
-        if (curBook!=null)
-        {
+        if (curBook != null) {
 
 
         }
@@ -248,10 +248,11 @@ public class BookInfoPanel extends GridComposite implements BookListener {
     private void refresh() {
         refresh(curBook);
     }
-    AtomicInteger cache= new AtomicInteger();
+
+    AtomicInteger cache = new AtomicInteger();
 
     private void refresh(final Book b) {
-        if (cache.getAndIncrement()==0) {
+        if (cache.getAndIncrement() == 0) {
             SWTAsync.run(new SWTAsync("refresh") {
                 @Override
                 public void task() {
@@ -303,8 +304,7 @@ public class BookInfoPanel extends GridComposite implements BookListener {
 
     @Override
     public void bookProgress(final Book book, final String msg) {
-        if (book.equals(curBook))
-        {
+        if (book.equals(curBook)) {
             SWTAsync.run(new SWTAsync("bookProgress") {
                 @Override
                 public void task() {

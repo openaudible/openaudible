@@ -14,7 +14,8 @@ public enum BookMerge {
 
         if (book.getProduct_id().equals(book2.getProduct_id())) {
             for (BookElement e : BookElement.values()) {
-                if (mergeItem(book, book2, e)) list.add(e);
+                if (mergeItem(book, book2, e))
+                    list.add(e);
 
             }
         } else {

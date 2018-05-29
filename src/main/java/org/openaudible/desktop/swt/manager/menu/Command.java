@@ -29,7 +29,9 @@ public enum Command {
     Browser,
     Check_For_Update,
     AppWebPage,
-    Logout, MenuSeparator;
+    Logout,
+    Test1,
+    MenuSeparator;
 
 
     public char getKeyEquiv() {

@@ -56,7 +56,7 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
         _update();
     }
 
-    AtomicInteger cache=new AtomicInteger();    // caches gui drawing.
+    AtomicInteger cache = new AtomicInteger();    // caches gui drawing.
 
     private void _update() {
         boolean update = cache.getAndIncrement() == 0;
@@ -113,11 +113,11 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
     }
 
     public enum Status {
-        Connected, Books, AAX_Files, MP3_Files, To_Download, To_Convert, Downloading, Converting;  //Connection,
+        Connected, Books, Hours, AAX_Files, MP3_Files, To_Download, To_Convert, Downloading, Converting;  //Connection,
 
         public String displayName() {
             return name().replace('_', ' ');
-        }
+        }     // TODO: Translations
 
         public boolean display() {
             switch (this) {
@@ -127,6 +127,7 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
                 case Converting:
                 case MP3_Files:
                 case Connected:
+                case Hours:
                     return true;
 
                 case AAX_Files:

@@ -120,8 +120,7 @@ public enum AAXParser {
 
         ffmpeg(b, aaxFile);
 
-        if (imageDest==null && Audible.instance!=null)
-        {
+        if (imageDest == null && Audible.instance != null) {
             // hack.
             imageDest = Audible.instance.getImageFileDest(b);
 

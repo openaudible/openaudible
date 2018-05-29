@@ -24,12 +24,10 @@ import org.openaudible.convert.LookupKey;
 import org.openaudible.download.DownloadQueue;
 import org.openaudible.progress.IProgressTask;
 import org.openaudible.util.CopyWithProgress;
-import org.openaudible.util.EventTimer;
 import org.openaudible.util.HTMLUtil;
 import org.openaudible.util.queues.IQueueJob;
 import org.openaudible.util.queues.IQueueListener;
 import org.openaudible.util.queues.ThreadedQueue;
-import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -163,14 +161,7 @@ public class Audible implements IQueueListener<Book> {
     }
 
     public String checkBook(Book b) {
-        // BookElement required[] = { BookElement.product_id, BookElement.user_id, BookElement.cust_id };
-        BookElement required[] = {BookElement.product_id, BookElement.fullTitle};
-        for (BookElement e : required) {
-            if (!b.has(e))
-                return "required:" + e + " missing from " + b;
-        }
-        return "";
-
+        return b.checkBook();
     }
 
     public void load() throws IOException {
@@ -181,8 +172,8 @@ public class Audible implements IQueueListener<Book> {
             if (prefsFile.exists()) {
                 String content = HTMLUtil.readFile(prefsFile);
                 account = gson.fromJson(content, AudibleAccountPrefs.class);
-                if (account.audibleRegion==null)
-                    account.audibleRegion=AudibleRegion.US;
+                if (account.audibleRegion == null)
+                    account.audibleRegion = AudibleRegion.US;
 
             }
         } catch (Throwable th) {
@@ -212,7 +203,6 @@ public class Audible implements IQueueListener<Book> {
         }
         updateFileCache();
         LookupKey.instance.load(Directories.BASE.getDir(keysFileName));
-
 
 
     }
@@ -252,13 +242,13 @@ public class Audible implements IQueueListener<Book> {
     public HashSet<File> getFileSet(Directories dir) {
         HashSet<File> set = new HashSet<>();
         File d = dir.getDir();
-        for (File f:d.listFiles()) {
+        for (File f : d.listFiles()) {
             String name = f.getName();
             if (name.startsWith("."))
                 continue;
-            if (dir==Directories.MP3 && !name.toLowerCase().endsWith(".mp3"))
+            if (dir == Directories.MP3 && !name.toLowerCase().endsWith(".mp3"))
                 continue;
-            if (dir==Directories.AAX && !name.toLowerCase().endsWith(".aax"))
+            if (dir == Directories.AAX && !name.toLowerCase().endsWith(".aax"))
                 continue;
             set.add(f);
         }
@@ -323,12 +313,9 @@ public class Audible implements IQueueListener<Book> {
     }
 
     public void updateFileCache() {
-        EventTimer evt = new EventTimer();
         mp3Files = getFileSet(Directories.MP3);
         aaxFiles = getFileSet(Directories.AAX);
         needFileCacheUpdate = System.currentTimeMillis();
-
-        // LOG.info(evt.reportString("updateFileCache mp3:" + mp3Files.size() + " aax:" + aaxFiles.size()));
     }
 
     public int mp3Count() {
@@ -373,8 +360,6 @@ public class Audible implements IQueueListener<Book> {
                 LOG.info("book purchase date:" + updatedBook.getPurchaseDate());
 
             }
-
-
             return BookMerge.instance.merge(book, updatedBook);
         }
         return new HashSet<>();
@@ -484,7 +469,7 @@ public class Audible implements IQueueListener<Book> {
         writer.writeNext(line);
 
 
-        for (Book b:bookList) {
+        for (Book b : bookList) {
             for (BookElement e : items) {
                 String v = b.get(e);
                 line[e.ordinal()] = v;
@@ -496,17 +481,15 @@ public class Audible implements IQueueListener<Book> {
     }
 
     public void export(File f) throws IOException {
-        try (FileWriter out = new FileWriter(f))
-        {
+        try (FileWriter out = new FileWriter(f)) {
             export(out, getBooks());
         }
     }
 
-    public void exportJSON(List<Book>list, File f) throws IOException {
+    public void exportJSON(List<Book> list, File f) throws IOException {
         Gson gson = new Gson();
         String json = gson.toJson(list);
-        try (FileWriter writer = new FileWriter(f))
-        {
+        try (FileWriter writer = new FileWriter(f)) {
             writer.write(json);
         }
     }
@@ -549,6 +532,7 @@ public class Audible implements IQueueListener<Book> {
         }
     }
 
+    // refreshes book with latest from audible.com
     public void updateInfo() throws Exception {
         AudibleScraper s = getScraper();
         ArrayList<Book> list = new ArrayList<>();
@@ -639,9 +623,6 @@ public class Audible implements IQueueListener<Book> {
 
     }
 
-    public void redeemGiftCode(String s) throws IOException, SAXException {
-        audibleScraper.redeemGiftCode(s);
-    }
 
     String inspectCookies(Collection<Cookie> col) {
         String out = "";
@@ -709,7 +690,7 @@ public class Audible implements IQueueListener<Book> {
 
     @Override
     public void jobStarted(ThreadedQueue<Book> queue, IQueueJob job, Book b) {
-        LOG.info(queue.toString()+" started:"+b+" size:"+queue.size());
+        LOG.info(queue.toString() + " started:" + b + " size:" + queue.size());
         BookNotifier.getInstance().bookUpdated(b);
     }
 
@@ -720,8 +701,8 @@ public class Audible implements IQueueListener<Book> {
 
     @Override
     public void jobCompleted(ThreadedQueue<Book> queue, IQueueJob job, Book b) {
-        LOG.info(queue.toString()+" completed:"+b+" size:"+queue.size());
-        if (queue==downloadQueue) {
+        LOG.info(queue.toString() + " completed:" + b + " size:" + queue.size());
+        if (queue == downloadQueue) {
             try {
                 AAXParser.instance.update(b);
             } catch (Exception e) {
@@ -753,34 +734,33 @@ public class Audible implements IQueueListener<Book> {
 
     public void logout() {
 
-        if (audibleScraper!=null)
+        if (audibleScraper != null)
             audibleScraper.logout();
 
     }
-    public String getAudibleURL()
-    {
+
+    public String getAudibleURL() {
         return getAccount().audibleRegion.getBaseURL();
     }
 
     // used for drag and drop into the app to convert any aax file.
     public Book importAAX(final File aaxFile, final IProgressTask task) throws InterruptedException, IOException, CannotReadException, ReadOnlyFileException, InvalidAudioFrameException, TagException {
 
-        task.setTask("Parsing "+aaxFile.getName());
+        task.setTask("Parsing " + aaxFile.getName());
         final Book book = AAXParser.instance.parseAAX(aaxFile, null, AAXParser.CoverImageAction.useBiggerImage);
-        if (!hasBook(book))
-        {
-            task.setTask("Importing "+book);
+        if (!hasBook(book)) {
+            task.setTask("Importing " + book);
             // Copy it to the default directory.
             File dest = getAAXFileDest(book);
             if (dest.exists())
-                throw new IOException("Book already exists:"+dest.getAbsolutePath());
-            if (task!=null)
+                throw new IOException("Book already exists:" + dest.getAbsolutePath());
+            if (task != null)
                 CopyWithProgress.copyWithProgress(task, aaxFile, dest);
             else
-                    IO.copy(aaxFile, dest);
+                IO.copy(aaxFile, dest);
             updateFileCache();
             boolean test = hasAAX(book);
-            assert(test);
+            assert (test);
 
             boolean ok = takeBook(book);
             if (ok)

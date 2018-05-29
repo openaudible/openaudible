@@ -29,6 +29,7 @@ import org.openaudible.desktop.swt.util.shop.WidgetShop;
 public class CommandCenter {
     public final static Log logger = LogFactory.getLog(CommandCenter.class);
     public static CommandCenter instance;
+    public boolean expiredApp =false;
     boolean confirmQuit = true;
     boolean confirmSave = true;
     private Clipboard cb;
@@ -254,6 +255,9 @@ public class CommandCenter {
             case Convert_All:
                 AudibleGUI.instance.convertAll();
                 break;
+            case Test1:
+                AudibleGUI.instance.test1();
+                break;
             case Console:
                 LogWindow.show();
                 break;
@@ -284,6 +288,8 @@ public class CommandCenter {
     }
 
     public boolean getEnabled(Command c) {
+        if (expiredApp)
+            return c==Command.Quit || c==Command.Check_For_Update || c==Command.About;
         switch (c) {
             case Convert:
                 return AudibleGUI.instance.canConvert();
@@ -317,6 +323,7 @@ public class CommandCenter {
             case Browser:
             case AppWebPage:
             case Import_AAX_Files:
+            case Test1:
                 return true;
             case Copy:
             case Cut:

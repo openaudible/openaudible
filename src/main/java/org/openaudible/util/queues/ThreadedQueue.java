@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public class ThreadedQueue<E> implements IQueueListener<E> {
+public abstract class ThreadedQueue<E> implements IQueueListener<E> {
     private static final Log LOG = LogFactory.getLog(ThreadedQueue.class);
 
     final int concurrentJobs;       // number of jobs that can be run at once
@@ -47,12 +47,11 @@ public class ThreadedQueue<E> implements IQueueListener<E> {
         return queue.size();
     }
 
-    // return null if not can't or shouldn't create.
-    public IQueueJob createJob(E e) {
-        assert (false); // This should be overridden
-        return null;
-    }
+    // return null if not can't or shouldn't create. Otherwise create a job.
+    public abstract IQueueJob createJob(E e);
 
+    // Can add a job?
+    // For default behavior, the same job can't already be running or in queue.
     public boolean canAdd(E e) {
         if (quit)
             return false;
@@ -139,7 +138,6 @@ public class ThreadedQueue<E> implements IQueueListener<E> {
     }
 
 
-
     @Override
     public void jobProgress(ThreadedQueue<E> queue, IQueueJob job, E o, String task, String subtask) {
         for (IQueueListener<E> i : getListeners()) {
@@ -147,7 +145,6 @@ public class ThreadedQueue<E> implements IQueueListener<E> {
         }
 
     }
-
 
 
     public void itemEnqueued(ThreadedQueue<E> queue, E item) {
@@ -171,7 +168,7 @@ public class ThreadedQueue<E> implements IQueueListener<E> {
     public void jobStarted(ThreadedQueue<E> queue, IQueueJob job, E item) {
         synchronized (jobs) {
             jobs.add(job);
-            jobMap.put(item,job);
+            jobMap.put(item, job);
         }
         for (IQueueListener<E> i : getListeners()) {
             i.jobStarted(queue, job, item);
@@ -185,7 +182,7 @@ public class ThreadedQueue<E> implements IQueueListener<E> {
 
             // this assumes one job per object at a time.
             IQueueJob x = jobMap.remove(item);
-            assert(x==job);
+            assert (x == job);
         }
 
         for (IQueueListener<E> i : getListeners()) {

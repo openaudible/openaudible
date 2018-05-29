@@ -1,5 +1,6 @@
 package org.openaudible.books;
 
+
 import java.io.Serializable;
 import java.util.HashMap;
 
@@ -67,6 +68,34 @@ public class Book implements Comparable<Book>, Serializable {
         return (getShortTitle().length() > 0) ? getShortTitle() : getFullTitle();
     }
 
+    public boolean equals(Book that) {
+        if (that==null) return false;
+        if (this==that) return true;
+
+        boolean e1 = this.getProduct_id().equals(that.getProduct_id());
+        // boolean e2 = this.getAsin().equals(that.getAsin());
+
+        // assert (e1 == e2);
+
+        return e1;
+
+    }
+
+    public boolean isOK() {
+        return checkBook().isEmpty();
+    }
+
+    // product_id is our primary key.
+    public String checkBook() {
+        // BookElement required[] = { BookElement.product_id, BookElement.user_id, BookElement.cust_id };
+        BookElement required[] = {BookElement.product_id, BookElement.fullTitle};
+        for (BookElement e : required) {
+            if (!this.has(e))
+                return "required:" + e + " missing from " + this;
+        }
+        return "";
+    }
+
     // unique value for book.
     public String id() {
         return getProduct_id();
@@ -74,7 +103,10 @@ public class Book implements Comparable<Book>, Serializable {
 
     // isPartialBook. A part of a single book. Not to be confused with one of a series.
     public boolean partial() {
-        char last = getProduct_id().charAt(getProduct_id().length() - 1);
+        String pid = getProduct_id();
+        if (pid.isEmpty()) throw new IllegalStateException("Undefined");
+        char last = pid.charAt(pid.length() - 1);
+        // last character is lowercase letter..
         return !Character.isDigit(last);
     }
 
@@ -181,12 +213,19 @@ public class Book implements Comparable<Book>, Serializable {
         set(BookElement.rating_average, rating_average);
     }
 
+    public void setRating_average(double rating_average) {
+        set(BookElement.rating_average, ""+ rating_average);
+    }
+
     public String getRating_count() {
         return get(BookElement.rating_count);
     }
 
     public void setRating_count(String rating_count) {
         set(BookElement.rating_count, rating_count);
+    }
+    public void setRating_count(int rating_count) {
+        set(BookElement.rating_count, ""+rating_count);
     }
 
     public String getRelease_date() {
@@ -237,6 +276,12 @@ public class Book implements Comparable<Book>, Serializable {
         }
 
         return out;
+    }
+
+    @Override
+    public int hashCode() {
+        assert (!getProduct_id().isEmpty());
+        return getProduct_id().hashCode();
     }
 
     public String getPurchaseDate() {

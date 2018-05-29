@@ -1067,183 +1067,183 @@ public class SuperTable<E extends SuperTableData<? extends Comparable>> implemen
             // got one report of an error somewhere in this function.
             // search bug reports for mccary@hotmail.com
             /*
-			 *
-			 * error_stacktrace=java.lang.ArrayIndexOutOfBoundsException: 4 at
-			 * org.eclipse.swt.widgets.Table._getItem(int) at
-			 * org.eclipse.swt.widgets.Table.wmNotifyChild(NMHDR, int, int) at
-			 * org.eclipse.swt.widgets.Control.wmNotify(NMHDR, int, int) at
-			 * org.eclipse.swt.widgets.Composite.wmNotify(NMHDR, int, int) at
-			 * org.eclipse.swt.widgets.Control.WM_NOTIFY(int, int) at
-			 * org.eclipse.swt.widgets.Control.windowProc(int, int, int, int) at
-			 * org.eclipse.swt.widgets.Display.windowProc(int, int, int, int)
-			 * <Break in method call trace. Could be due to JIT compiler
-			 * inlining of method.> at
-			 * org.eclipse.swt.internal.win32.OS.CallWindowProcW(int, int, int,
-			 * int, int) at
-			 * org.eclipse.swt.internal.win32.OS.CallWindowProc(int, int, int,
-			 * int, int) at org.eclipse.swt.widgets.Table.callWindowProc(int,
-			 * int, int, int, boolean) at
-			 * org.eclipse.swt.widgets.Table.callWindowProc(int, int, int, int)
-			 * at org.eclipse.swt.widgets.Control.windowProc(int, int, int, int)
-			 * at org.eclipse.swt.widgets.Table.windowProc(int, int, int, int)
-			 * at org.eclipse.swt.widgets.Display.windowProc(int, int, int, int)
-			 * <Break in method call trace. Could be due to JIT compiler
-			 * inlining of method.> at
-			 * org.eclipse.swt.internal.win32.OS.CallWindowProcW(int, int, int,
-			 * int, int) at
-			 * org.eclipse.swt.internal.win32.OS.CallWindowProc(int, int, int,
-			 * int, int) at org.eclipse.swt.widgets.Table.callWindowProc(int,
-			 * int, int, int, boolean) at
-			 * org.eclipse.swt.widgets.Table.callWindowProc(int, int, int, int)
-			 * at org.eclipse.swt.widgets.Control.windowProc(int, int, int, int)
-			 * at org.eclipse.swt.widgets.Table.windowProc(int, int, int, int)
-			 * at org.eclipse.swt.widgets.Display.windowProc(int, int, int, int)
-			 * <Break in method call trace. Could be due to JIT compiler
-			 * inlining of method.> at
-			 * org.eclipse.swt.internal.win32.OS.CallWindowProcW(int, int, int,
-			 * int, int) at
-			 * org.eclipse.swt.internal.win32.OS.CallWindowProc(int, int, int,
-			 * int, int) at org.eclipse.swt.widgets.Table.callWindowProc(int,
-			 * int, int, int, boolean) at
-			 * org.eclipse.swt.widgets.Table.callWindowProc(int, int, int, int)
-			 * at org.eclipse.swt.widgets.Table.windowProc(int, int, int, int)
-			 * at org.eclipse.swt.widgets.Display.windowProc(int, int, int, int)
-			 * <Break in method call trace. Could be due to JIT compiler
-			 * inlining of method.> at
-			 * org.eclipse.swt.internal.win32.OS.CallWindowProcW(int, int, int,
-			 * int, int) at
-			 * org.eclipse.swt.internal.win32.OS.CallWindowProc(int, int, int,
-			 * int, int) at org.eclipse.swt.widgets.Table.callWindowProc(int,
-			 * int, int, int, boolean) at
-			 * org.eclipse.swt.widgets.Table.callWindowProc(int, int, int, int)
-			 * at org.eclipse.swt.widgets.Control.windowProc(int, int, int, int)
-			 * at org.eclipse.swt.widgets.Table.windowProc(int, int, int, int)
-			 * at org.eclipse.swt.widgets.Display.windowProc(int, int, int, int)
-			 * <Break in method call trace. Could be due to JIT compiler
-			 * inlining of method.> at
-			 * org.eclipse.swt.internal.win32.OS.SendMessageW(int, int, int,
-			 * int) at org.eclipse.swt.internal.win32.OS.SendMessage(int, int,
-			 * int, int) at org.eclipse.swt.widgets.TableColumn.setWidth(int) at
-			 * ss.tables.SuperTable.noHorizontalScroll() at
-			 * ss.tables.SuperTable$ResizeEvent.handleEvent(Event) at
-			 * org.eclipse.swt.widgets.EventTable.sendEvent(Event) at
-			 * org.eclipse.swt.widgets.Widget.sendEvent(Event) at
-			 * org.eclipse.swt.widgets.Widget.sendEvent(int, Event, boolean) at
-			 * org.eclipse.swt.widgets.Widget.sendEvent(int) at
-			 * org.eclipse.swt.widgets.Table.setDeferResize(boolean) at
-			 * org.eclipse.swt.widgets.Table.setBounds(int, int, int, int, int,
-			 * boolean) at org.eclipse.swt.widgets.Control.setBounds(int, int,
-			 * int, int, int) at org.eclipse.swt.widgets.Control.setBounds(int,
-			 * int, int, int) at
-			 * org.eclipse.swt.custom.SashFormLayout.layout(Composite, boolean)
-			 * at org.eclipse.swt.widgets.Composite.updateLayout(boolean,
-			 * boolean) at org.eclipse.swt.widgets.Composite.WM_SIZE(int, int)
-			 * at org.eclipse.swt.widgets.Control.windowProc(int, int, int, int)
-			 * at org.eclipse.swt.widgets.Display.windowProc(int, int, int, int)
-			 * <Break in method call trace. Could be due to JIT compiler
-			 * inlining of method.> at
-			 * org.eclipse.swt.internal.win32.OS.DefWindowProcW(int, int, int,
-			 * int) at org.eclipse.swt.internal.win32.OS.DefWindowProc(int, int,
-			 * int, int) at
-			 * org.eclipse.swt.widgets.Scrollable.callWindowProc(int, int, int,
-			 * int) at org.eclipse.swt.widgets.Control.WM_WINDOWPOSCHANGED(int,
-			 * int) at org.eclipse.swt.widgets.Control.windowProc(int, int, int,
-			 * int) at org.eclipse.swt.widgets.Display.windowProc(int, int, int,
-			 * int) <Break in method call trace. Could be due to JIT compiler
-			 * inlining of method.> at
-			 * org.eclipse.swt.internal.win32.OS.EndDeferWindowPos(int) at
-			 * org.eclipse.swt.widgets.Composite.resizeChildren(boolean,
-			 * WINDOWPOS[]) at
-			 * org.eclipse.swt.widgets.Composite.resizeChildren() at
-			 * org.eclipse.swt.widgets.Composite.setResizeChildren(boolean) at
-			 * org.eclipse.swt.widgets.Composite.WM_SIZE(int, int) at
-			 * org.eclipse.swt.widgets.Control.windowProc(int, int, int, int) at
-			 * org.eclipse.swt.widgets.Display.windowProc(int, int, int, int)
-			 * <Break in method call trace. Could be due to JIT compiler
-			 * inlining of method.> at
-			 * org.eclipse.swt.internal.win32.OS.DefWindowProcW(int, int, int,
-			 * int) at org.eclipse.swt.internal.win32.OS.DefWindowProc(int, int,
-			 * int, int) at
-			 * org.eclipse.swt.widgets.Scrollable.callWindowProc(int, int, int,
-			 * int) at org.eclipse.swt.widgets.Control.WM_WINDOWPOSCHANGED(int,
-			 * int) at org.eclipse.swt.widgets.Control.windowProc(int, int, int,
-			 * int) at org.eclipse.swt.widgets.Display.windowProc(int, int, int,
-			 * int) <Break in method call trace. Could be due to JIT compiler
-			 * inlining of method.> at
-			 * org.eclipse.swt.internal.win32.OS.EndDeferWindowPos(int) at
-			 * org.eclipse.swt.widgets.Composite.resizeChildren(boolean,
-			 * WINDOWPOS[]) at
-			 * org.eclipse.swt.widgets.Composite.resizeChildren() at
-			 * org.eclipse.swt.widgets.Composite.setResizeChildren(boolean) at
-			 * org.eclipse.swt.widgets.Composite.WM_SIZE(int, int) at
-			 * org.eclipse.swt.widgets.Control.windowProc(int, int, int, int) at
-			 * org.eclipse.swt.widgets.Display.windowProc(int, int, int, int)
-			 * <Break in method call trace. Could be due to JIT compiler
-			 * inlining of method.> at
-			 * org.eclipse.swt.internal.win32.OS.DefWindowProcW(int, int, int,
-			 * int) at org.eclipse.swt.internal.win32.OS.DefWindowProc(int, int,
-			 * int, int) at
-			 * org.eclipse.swt.widgets.Scrollable.callWindowProc(int, int, int,
-			 * int) at org.eclipse.swt.widgets.Control.WM_WINDOWPOSCHANGED(int,
-			 * int) at org.eclipse.swt.widgets.Control.windowProc(int, int, int,
-			 * int) at org.eclipse.swt.widgets.Display.windowProc(int, int, int,
-			 * int) <Break in method call trace. Could be due to JIT compiler
-			 * inlining of method.> at
-			 * org.eclipse.swt.internal.win32.OS.EndDeferWindowPos(int) at
-			 * org.eclipse.swt.widgets.Composite.resizeChildren(boolean,
-			 * WINDOWPOS[]) at
-			 * org.eclipse.swt.widgets.Composite.resizeChildren() at
-			 * org.eclipse.swt.widgets.Composite.setResizeChildren(boolean) at
-			 * org.eclipse.swt.widgets.Composite.WM_SIZE(int, int) at
-			 * org.eclipse.swt.widgets.Canvas.WM_SIZE(int, int) at
-			 * org.eclipse.swt.widgets.Decorations.WM_SIZE(int, int) at
-			 * org.eclipse.swt.widgets.Control.windowProc(int, int, int, int) at
-			 * org.eclipse.swt.widgets.Canvas.windowProc(int, int, int, int) at
-			 * org.eclipse.swt.widgets.Decorations.windowProc(int, int, int,
-			 * int) at org.eclipse.swt.widgets.Shell.windowProc(int, int, int,
-			 * int) at org.eclipse.swt.widgets.Display.windowProc(int, int, int,
-			 * int) <Break in method call trace. Could be due to JIT compiler
-			 * inlining of method.> at
-			 * org.eclipse.swt.internal.win32.OS.DefWindowProcW(int, int, int,
-			 * int) at org.eclipse.swt.internal.win32.OS.DefWindowProc(int, int,
-			 * int, int) at org.eclipse.swt.widgets.Shell.callWindowProc(int,
-			 * int, int, int) at
-			 * org.eclipse.swt.widgets.Control.WM_WINDOWPOSCHANGED(int, int) at
-			 * org.eclipse.swt.widgets.Canvas.WM_WINDOWPOSCHANGED(int, int) at
-			 * org.eclipse.swt.widgets.Control.windowProc(int, int, int, int) at
-			 * org.eclipse.swt.widgets.Canvas.windowProc(int, int, int, int) at
-			 * org.eclipse.swt.widgets.Decorations.windowProc(int, int, int,
-			 * int) at org.eclipse.swt.widgets.Shell.windowProc(int, int, int,
-			 * int) at org.eclipse.swt.widgets.Display.windowProc(int, int, int,
-			 * int) <Break in method call trace. Could be due to JIT compiler
-			 * inlining of method.> at
-			 * org.eclipse.swt.internal.win32.OS.DefWindowProcW(int, int, int,
-			 * int) at org.eclipse.swt.internal.win32.OS.DefWindowProc(int, int,
-			 * int, int) at org.eclipse.swt.widgets.Shell.callWindowProc(int,
-			 * int, int, int) at org.eclipse.swt.widgets.Control.windowProc(int,
-			 * int, int, int) at org.eclipse.swt.widgets.Canvas.windowProc(int,
-			 * int, int, int) at
-			 * org.eclipse.swt.widgets.Decorations.windowProc(int, int, int,
-			 * int) at org.eclipse.swt.widgets.Shell.windowProc(int, int, int,
-			 * int) at org.eclipse.swt.widgets.Display.windowProc(int, int, int,
-			 * int) <Break in method call trace. Could be due to JIT compiler
-			 * inlining of method.> at
-			 * org.eclipse.swt.internal.win32.OS.DefWindowProcW(int, int, int,
-			 * int) at org.eclipse.swt.internal.win32.OS.DefWindowProc(int, int,
-			 * int, int) at org.eclipse.swt.widgets.Shell.callWindowProc(int,
-			 * int, int, int) at org.eclipse.swt.widgets.Control.windowProc(int,
-			 * int, int, int) at org.eclipse.swt.widgets.Canvas.windowProc(int,
-			 * int, int, int) at
-			 * org.eclipse.swt.widgets.Decorations.windowProc(int, int, int,
-			 * int) at org.eclipse.swt.widgets.Shell.windowProc(int, int, int,
-			 * int) at org.eclipse.swt.widgets.Display.windowProc(int, int, int,
-			 * int) <Break in method call trace. Could be due to JIT compiler
-			 * inlining of method.> at
-			 * org.eclipse.swt.internal.win32.OS.DispatchMessageW(MSG) at
-			 * org.eclipse.swt.internal.win32.OS.DispatchMessage(MSG) at
-			 * org.eclipse.swt.widgets.Display.readAndDispatch() at
-			 * ss.controller.GUI.runEventLoop()
-			 */
+             *
+             * error_stacktrace=java.lang.ArrayIndexOutOfBoundsException: 4 at
+             * org.eclipse.swt.widgets.Table._getItem(int) at
+             * org.eclipse.swt.widgets.Table.wmNotifyChild(NMHDR, int, int) at
+             * org.eclipse.swt.widgets.Control.wmNotify(NMHDR, int, int) at
+             * org.eclipse.swt.widgets.Composite.wmNotify(NMHDR, int, int) at
+             * org.eclipse.swt.widgets.Control.WM_NOTIFY(int, int) at
+             * org.eclipse.swt.widgets.Control.windowProc(int, int, int, int) at
+             * org.eclipse.swt.widgets.Display.windowProc(int, int, int, int)
+             * <Break in method call trace. Could be due to JIT compiler
+             * inlining of method.> at
+             * org.eclipse.swt.internal.win32.OS.CallWindowProcW(int, int, int,
+             * int, int) at
+             * org.eclipse.swt.internal.win32.OS.CallWindowProc(int, int, int,
+             * int, int) at org.eclipse.swt.widgets.Table.callWindowProc(int,
+             * int, int, int, boolean) at
+             * org.eclipse.swt.widgets.Table.callWindowProc(int, int, int, int)
+             * at org.eclipse.swt.widgets.Control.windowProc(int, int, int, int)
+             * at org.eclipse.swt.widgets.Table.windowProc(int, int, int, int)
+             * at org.eclipse.swt.widgets.Display.windowProc(int, int, int, int)
+             * <Break in method call trace. Could be due to JIT compiler
+             * inlining of method.> at
+             * org.eclipse.swt.internal.win32.OS.CallWindowProcW(int, int, int,
+             * int, int) at
+             * org.eclipse.swt.internal.win32.OS.CallWindowProc(int, int, int,
+             * int, int) at org.eclipse.swt.widgets.Table.callWindowProc(int,
+             * int, int, int, boolean) at
+             * org.eclipse.swt.widgets.Table.callWindowProc(int, int, int, int)
+             * at org.eclipse.swt.widgets.Control.windowProc(int, int, int, int)
+             * at org.eclipse.swt.widgets.Table.windowProc(int, int, int, int)
+             * at org.eclipse.swt.widgets.Display.windowProc(int, int, int, int)
+             * <Break in method call trace. Could be due to JIT compiler
+             * inlining of method.> at
+             * org.eclipse.swt.internal.win32.OS.CallWindowProcW(int, int, int,
+             * int, int) at
+             * org.eclipse.swt.internal.win32.OS.CallWindowProc(int, int, int,
+             * int, int) at org.eclipse.swt.widgets.Table.callWindowProc(int,
+             * int, int, int, boolean) at
+             * org.eclipse.swt.widgets.Table.callWindowProc(int, int, int, int)
+             * at org.eclipse.swt.widgets.Table.windowProc(int, int, int, int)
+             * at org.eclipse.swt.widgets.Display.windowProc(int, int, int, int)
+             * <Break in method call trace. Could be due to JIT compiler
+             * inlining of method.> at
+             * org.eclipse.swt.internal.win32.OS.CallWindowProcW(int, int, int,
+             * int, int) at
+             * org.eclipse.swt.internal.win32.OS.CallWindowProc(int, int, int,
+             * int, int) at org.eclipse.swt.widgets.Table.callWindowProc(int,
+             * int, int, int, boolean) at
+             * org.eclipse.swt.widgets.Table.callWindowProc(int, int, int, int)
+             * at org.eclipse.swt.widgets.Control.windowProc(int, int, int, int)
+             * at org.eclipse.swt.widgets.Table.windowProc(int, int, int, int)
+             * at org.eclipse.swt.widgets.Display.windowProc(int, int, int, int)
+             * <Break in method call trace. Could be due to JIT compiler
+             * inlining of method.> at
+             * org.eclipse.swt.internal.win32.OS.SendMessageW(int, int, int,
+             * int) at org.eclipse.swt.internal.win32.OS.SendMessage(int, int,
+             * int, int) at org.eclipse.swt.widgets.TableColumn.setWidth(int) at
+             * ss.tables.SuperTable.noHorizontalScroll() at
+             * ss.tables.SuperTable$ResizeEvent.handleEvent(Event) at
+             * org.eclipse.swt.widgets.EventTable.sendEvent(Event) at
+             * org.eclipse.swt.widgets.Widget.sendEvent(Event) at
+             * org.eclipse.swt.widgets.Widget.sendEvent(int, Event, boolean) at
+             * org.eclipse.swt.widgets.Widget.sendEvent(int) at
+             * org.eclipse.swt.widgets.Table.setDeferResize(boolean) at
+             * org.eclipse.swt.widgets.Table.setBounds(int, int, int, int, int,
+             * boolean) at org.eclipse.swt.widgets.Control.setBounds(int, int,
+             * int, int, int) at org.eclipse.swt.widgets.Control.setBounds(int,
+             * int, int, int) at
+             * org.eclipse.swt.custom.SashFormLayout.layout(Composite, boolean)
+             * at org.eclipse.swt.widgets.Composite.updateLayout(boolean,
+             * boolean) at org.eclipse.swt.widgets.Composite.WM_SIZE(int, int)
+             * at org.eclipse.swt.widgets.Control.windowProc(int, int, int, int)
+             * at org.eclipse.swt.widgets.Display.windowProc(int, int, int, int)
+             * <Break in method call trace. Could be due to JIT compiler
+             * inlining of method.> at
+             * org.eclipse.swt.internal.win32.OS.DefWindowProcW(int, int, int,
+             * int) at org.eclipse.swt.internal.win32.OS.DefWindowProc(int, int,
+             * int, int) at
+             * org.eclipse.swt.widgets.Scrollable.callWindowProc(int, int, int,
+             * int) at org.eclipse.swt.widgets.Control.WM_WINDOWPOSCHANGED(int,
+             * int) at org.eclipse.swt.widgets.Control.windowProc(int, int, int,
+             * int) at org.eclipse.swt.widgets.Display.windowProc(int, int, int,
+             * int) <Break in method call trace. Could be due to JIT compiler
+             * inlining of method.> at
+             * org.eclipse.swt.internal.win32.OS.EndDeferWindowPos(int) at
+             * org.eclipse.swt.widgets.Composite.resizeChildren(boolean,
+             * WINDOWPOS[]) at
+             * org.eclipse.swt.widgets.Composite.resizeChildren() at
+             * org.eclipse.swt.widgets.Composite.setResizeChildren(boolean) at
+             * org.eclipse.swt.widgets.Composite.WM_SIZE(int, int) at
+             * org.eclipse.swt.widgets.Control.windowProc(int, int, int, int) at
+             * org.eclipse.swt.widgets.Display.windowProc(int, int, int, int)
+             * <Break in method call trace. Could be due to JIT compiler
+             * inlining of method.> at
+             * org.eclipse.swt.internal.win32.OS.DefWindowProcW(int, int, int,
+             * int) at org.eclipse.swt.internal.win32.OS.DefWindowProc(int, int,
+             * int, int) at
+             * org.eclipse.swt.widgets.Scrollable.callWindowProc(int, int, int,
+             * int) at org.eclipse.swt.widgets.Control.WM_WINDOWPOSCHANGED(int,
+             * int) at org.eclipse.swt.widgets.Control.windowProc(int, int, int,
+             * int) at org.eclipse.swt.widgets.Display.windowProc(int, int, int,
+             * int) <Break in method call trace. Could be due to JIT compiler
+             * inlining of method.> at
+             * org.eclipse.swt.internal.win32.OS.EndDeferWindowPos(int) at
+             * org.eclipse.swt.widgets.Composite.resizeChildren(boolean,
+             * WINDOWPOS[]) at
+             * org.eclipse.swt.widgets.Composite.resizeChildren() at
+             * org.eclipse.swt.widgets.Composite.setResizeChildren(boolean) at
+             * org.eclipse.swt.widgets.Composite.WM_SIZE(int, int) at
+             * org.eclipse.swt.widgets.Control.windowProc(int, int, int, int) at
+             * org.eclipse.swt.widgets.Display.windowProc(int, int, int, int)
+             * <Break in method call trace. Could be due to JIT compiler
+             * inlining of method.> at
+             * org.eclipse.swt.internal.win32.OS.DefWindowProcW(int, int, int,
+             * int) at org.eclipse.swt.internal.win32.OS.DefWindowProc(int, int,
+             * int, int) at
+             * org.eclipse.swt.widgets.Scrollable.callWindowProc(int, int, int,
+             * int) at org.eclipse.swt.widgets.Control.WM_WINDOWPOSCHANGED(int,
+             * int) at org.eclipse.swt.widgets.Control.windowProc(int, int, int,
+             * int) at org.eclipse.swt.widgets.Display.windowProc(int, int, int,
+             * int) <Break in method call trace. Could be due to JIT compiler
+             * inlining of method.> at
+             * org.eclipse.swt.internal.win32.OS.EndDeferWindowPos(int) at
+             * org.eclipse.swt.widgets.Composite.resizeChildren(boolean,
+             * WINDOWPOS[]) at
+             * org.eclipse.swt.widgets.Composite.resizeChildren() at
+             * org.eclipse.swt.widgets.Composite.setResizeChildren(boolean) at
+             * org.eclipse.swt.widgets.Composite.WM_SIZE(int, int) at
+             * org.eclipse.swt.widgets.Canvas.WM_SIZE(int, int) at
+             * org.eclipse.swt.widgets.Decorations.WM_SIZE(int, int) at
+             * org.eclipse.swt.widgets.Control.windowProc(int, int, int, int) at
+             * org.eclipse.swt.widgets.Canvas.windowProc(int, int, int, int) at
+             * org.eclipse.swt.widgets.Decorations.windowProc(int, int, int,
+             * int) at org.eclipse.swt.widgets.Shell.windowProc(int, int, int,
+             * int) at org.eclipse.swt.widgets.Display.windowProc(int, int, int,
+             * int) <Break in method call trace. Could be due to JIT compiler
+             * inlining of method.> at
+             * org.eclipse.swt.internal.win32.OS.DefWindowProcW(int, int, int,
+             * int) at org.eclipse.swt.internal.win32.OS.DefWindowProc(int, int,
+             * int, int) at org.eclipse.swt.widgets.Shell.callWindowProc(int,
+             * int, int, int) at
+             * org.eclipse.swt.widgets.Control.WM_WINDOWPOSCHANGED(int, int) at
+             * org.eclipse.swt.widgets.Canvas.WM_WINDOWPOSCHANGED(int, int) at
+             * org.eclipse.swt.widgets.Control.windowProc(int, int, int, int) at
+             * org.eclipse.swt.widgets.Canvas.windowProc(int, int, int, int) at
+             * org.eclipse.swt.widgets.Decorations.windowProc(int, int, int,
+             * int) at org.eclipse.swt.widgets.Shell.windowProc(int, int, int,
+             * int) at org.eclipse.swt.widgets.Display.windowProc(int, int, int,
+             * int) <Break in method call trace. Could be due to JIT compiler
+             * inlining of method.> at
+             * org.eclipse.swt.internal.win32.OS.DefWindowProcW(int, int, int,
+             * int) at org.eclipse.swt.internal.win32.OS.DefWindowProc(int, int,
+             * int, int) at org.eclipse.swt.widgets.Shell.callWindowProc(int,
+             * int, int, int) at org.eclipse.swt.widgets.Control.windowProc(int,
+             * int, int, int) at org.eclipse.swt.widgets.Canvas.windowProc(int,
+             * int, int, int) at
+             * org.eclipse.swt.widgets.Decorations.windowProc(int, int, int,
+             * int) at org.eclipse.swt.widgets.Shell.windowProc(int, int, int,
+             * int) at org.eclipse.swt.widgets.Display.windowProc(int, int, int,
+             * int) <Break in method call trace. Could be due to JIT compiler
+             * inlining of method.> at
+             * org.eclipse.swt.internal.win32.OS.DefWindowProcW(int, int, int,
+             * int) at org.eclipse.swt.internal.win32.OS.DefWindowProc(int, int,
+             * int, int) at org.eclipse.swt.widgets.Shell.callWindowProc(int,
+             * int, int, int) at org.eclipse.swt.widgets.Control.windowProc(int,
+             * int, int, int) at org.eclipse.swt.widgets.Canvas.windowProc(int,
+             * int, int, int) at
+             * org.eclipse.swt.widgets.Decorations.windowProc(int, int, int,
+             * int) at org.eclipse.swt.widgets.Shell.windowProc(int, int, int,
+             * int) at org.eclipse.swt.widgets.Display.windowProc(int, int, int,
+             * int) <Break in method call trace. Could be due to JIT compiler
+             * inlining of method.> at
+             * org.eclipse.swt.internal.win32.OS.DispatchMessageW(MSG) at
+             * org.eclipse.swt.internal.win32.OS.DispatchMessage(MSG) at
+             * org.eclipse.swt.widgets.Display.readAndDispatch() at
+             * ss.controller.GUI.runEventLoop()
+             */
             log.error("error in noHorizontalScroll", t);
 
         }

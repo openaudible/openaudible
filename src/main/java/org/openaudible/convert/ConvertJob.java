@@ -28,7 +28,7 @@ public class ConvertJob implements IQueueJob, LineListener {
     private Process proc = null;
     private IProgressTask progress;
     final String duration;
-    final static int mp3Qscale=6;       // audio quality value 0 to 9. See https://trac.ffmpeg.org/wiki/Encode/MP3
+    final static int mp3Qscale = 6;       // audio quality value 0 to 9. See https://trac.ffmpeg.org/wiki/Encode/MP3
 
     public ConvertJob(Book b) {
         book = b;
@@ -60,25 +60,24 @@ public class ConvertJob implements IQueueJob, LineListener {
     public void takeLine(String s) {
         String find = "time=";
         int ch = s.indexOf(find);
-        if (ch!=-1) {
+        if (ch != -1) {
             nextMeta = false;
             long now = System.currentTimeMillis();
             if (now > next) {
                 next = now + interval;
                 // interval*=2;
                 // System.err.println(s);
-                String time = s.substring(ch+find.length());
+                String time = s.substring(ch + find.length());
                 int end = time.indexOf(".");
-                if (end==-1) end = time.indexOf(" ");
+                if (end == -1) end = time.indexOf(" ");
 
-                if (end==-1) end = time.length();
+                if (end == -1) end = time.length();
                 time = time.substring(0, end);
 
 
-
-                String status=time;
-                if (duration.length()>0)
-                    status += " of "+ duration;
+                String status = time;
+                if (duration.length() > 0)
+                    status += " of " + duration;
 
                 if (progress != null) {
                     progress.setTask(null, status.trim());
@@ -119,10 +118,10 @@ public class ConvertJob implements IQueueJob, LineListener {
         args.add("libmp3lame");     // see: https://trac.ffmpeg.org/wiki/Encode/MP3
         args.add("-qscale:a");      // https://trac.ffmpeg.org/wiki/Encode/MP3
 
-        if (mp3Qscale<0 || mp3Qscale>9)
-            throw new IOException("Invalid qscale:"+mp3Qscale);
+        if (mp3Qscale < 0 || mp3Qscale > 9)
+            throw new IOException("Invalid qscale:" + mp3Qscale);
 
-        args.add(""+mp3Qscale);
+        args.add("" + mp3Qscale);
 
         args.add(temp.getAbsolutePath());
 
@@ -140,7 +139,7 @@ public class ConvertJob implements IQueueJob, LineListener {
 
         ProcessBuilder pb = new ProcessBuilder(args);
         InputStreamReporter err;
-        InputStream errStream=null;
+        InputStream errStream = null;
 
         boolean success = false;
 
@@ -155,15 +154,15 @@ public class ConvertJob implements IQueueJob, LineListener {
             err.finish();
             while (!proc.waitFor(1, TimeUnit.SECONDS)) {
                 if (quit)
-                    throw new IOException("conversion quit"); }
-
+                    throw new IOException("conversion quit");
+            }
 
 
             int exitValue = proc.exitValue();
-            
-            LOG.info("createMP3:"+exitValue);
-            if (exitValue!=0)
-                throw new IOException("Conversion got non-zero response:"+exitValue);
+
+            LOG.info("createMP3:" + exitValue);
+            if (exitValue != 0)
+                throw new IOException("Conversion got non-zero response:" + exitValue);
 
             success = true;
 
@@ -235,14 +234,12 @@ public class ConvertJob implements IQueueJob, LineListener {
             ok = true;
             if (progress != null)
                 progress.setTask(null, "Complete");
-        }
-        catch(Exception e){
-            if (progress!=null) {
+        } catch (Exception e) {
+            if (progress != null) {
                 progress.setSubTask(e.getMessage());
             }
             throw e;
-        }
-        finally {
+        } finally {
             if (!ok) {
                 if (temp.exists())
                     temp.delete();

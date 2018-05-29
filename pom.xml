@@ -170,6 +170,11 @@
             <systemPath>${basedir}/swt/${swt_library}</systemPath>
         </dependency>
 
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20160212</version>
+        </dependency>
 
         <dependency>
             <groupId>commons-logging</groupId>
@@ -216,7 +221,5 @@
             <artifactId>opencsv</artifactId>
             <version>3.7</version>
         </dependency>
-
-
     </dependencies>
 </project>

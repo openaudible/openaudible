@@ -3,7 +3,18 @@ package org.openaudible.books;
 // Audio Book Attributes.
 //
 public enum BookElement {
-    product_id, codec, asin, infoLink, fullTitle, author, narratedBy, summary, description, duration, format, rating_average, rating_count, release_date, purchase_date, publisher, genre, shortTitle, copyright, user_id, cust_id;
+    product_id, codec, asin, infoLink, fullTitle, author, narratedBy, summary, description, duration, format, rating_average, rating_count, release_date, purchase_date, publisher, genre, shortTitle, copyright, user_id, cust_id, order_number;
+
+    public static BookElement findByName(String s) {
+
+        try {
+            return BookElement.valueOf(s);
+        } catch (Throwable th) {
+            System.out.println("No BookElement:" + s);
+        }
+        return null;
+    }
+
 
     public String displayName() {
         String o = this.name();
@@ -73,6 +84,10 @@ public enum BookElement {
             case cust_id:
                 o = "Customer ID";
                 break;
+            case order_number:
+                o = "Order #";
+                break;
+
             default:
                 assert (false);
         }

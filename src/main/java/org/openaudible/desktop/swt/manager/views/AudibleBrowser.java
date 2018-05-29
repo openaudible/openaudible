@@ -17,6 +17,7 @@ import org.openaudible.Directories;
 import org.openaudible.audible.AudibleClient;
 import org.openaudible.desktop.swt.gui.MessageBoxFactory;
 import org.openaudible.desktop.swt.gui.SWTAsync;
+import org.openaudible.util.Platform;
 
 import java.io.File;
 import java.net.URI;
@@ -25,7 +26,6 @@ import java.util.Collection;
 
 public class AudibleBrowser {
     public final static Log logger = LogFactory.getLog(AudibleBrowser.class);
-    // static ResourceBundle resourceBundle = ResourceBundle.getBundle("examples_browser");
     int index;
     boolean busy;
     Image icon = null;
@@ -45,6 +45,8 @@ public class AudibleBrowser {
     public AudibleBrowser(Composite parent, String url) {
         this.parent = parent;
         try {
+            if (Platform.isWindows())
+                silenceWindowsExplorer();
             browser = new Browser(parent, SWT.BORDER);
             browser.addTitleListener(event -> getShell().setText(event.title));
             Object t = browser.getWebBrowser();
@@ -70,6 +72,22 @@ public class AudibleBrowser {
         else
             show(false, null, null, false, false, false, false);
 
+    }
+
+    // Silence Windows SWT.browser widget from making awful clicks.
+    // For windows 32 and 64 bit SWT applications.
+    // Uses reflection to call OS.CoInternetSetFeatureEnabled(OS.FEATURE_DISABLE_NAVIGATION_SOUNDS, OS.SET_FEATURE_ON_PROCESS, true);
+    // Without importing platform specific
+    // #import org.eclipse.swt.internal.win32.OS
+    private void silenceWindowsExplorer() {
+        try {
+            Class<?> c = Class.forName("org.eclipse.swt.internal.win32.OS");
+            java.lang.reflect.Method method = c.getDeclaredMethod("CoInternetSetFeatureEnabled", Integer.TYPE, Integer.TYPE, Boolean.TYPE);
+            method.invoke(null, new Object[]{21, 2, true});
+        } catch (Throwable th) {
+            // Might fail.. but probably will never do harm.
+            th.printStackTrace();
+        }
     }
 
 
@@ -349,11 +367,11 @@ public class AudibleBrowser {
         SWTAsync.block(new SWTAsync("getCookies") {
                            @Override
                            public void task() {
-                               String listCookies="document.cookie.split( ';' ).map( function( x ) { return x.trim().split( '=' ); } )";
-                               String pageInfo="";// document.cookie.split( ';' ).map( function( x ) { return x.trim().split( '=' ); } )";
+                               String listCookies = "document.cookie.split( ';' ).map( function( x ) { return x.trim().split( '=' ); } )";
+                               String pageInfo = "";// document.cookie.split( ';' ).map( function( x ) { return x.trim().split( '=' ); } )";
 
-                               browser.execute("cookieCallback("+listCookies+");");
-                               browser.execute("pageInfoCallback("+pageInfo+");");
+                               browser.execute("cookieCallback(" + listCookies + ");");
+                               browser.execute("pageInfoCallback(" + pageInfo + ");");
 
 
                            }

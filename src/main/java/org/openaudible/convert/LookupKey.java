@@ -18,8 +18,8 @@ public enum LookupKey {
     instance;
     private static final Log LOG = LogFactory.getLog(LookupKey.class);
 
-    HashMap<String,String> map=new HashMap<>();     // hash, key
-    File prefs=null;
+    HashMap<String, String> map = new HashMap<>();     // hash, key
+    File prefs = null;
 
 
     public void load(File prefsFile) throws IOException {
@@ -28,24 +28,21 @@ public enum LookupKey {
             Gson gson = new GsonBuilder().create();
             String content = HTMLUtil.readFile(prefsFile);
             HashMap m = gson.fromJson(content, HashMap.class);
-            if (m!=null)
-            	map.putAll(m);
+            if (m != null)
+                map.putAll(m);
         }
         prefs = prefsFile;
     }
 
     public void save() throws IOException {
-        if (prefs!=null && map.size()>0)
-        {
+        if (prefs != null && map.size() > 0) {
             Gson gson = new Gson();
             String json = gson.toJson(map);
-            try (FileWriter writer = new FileWriter(prefs))
-            {
+            try (FileWriter writer = new FileWriter(prefs)) {
                 writer.write(json);
             }
         }
     }
-
 
 
     public String getFileChecksum(String path) throws IOException, InterruptedException {
@@ -108,16 +105,14 @@ public enum LookupKey {
         ArrayList<String> args = new ArrayList<>();
         args.add(getExecutable());
         // I don't know wjh
-        if (!Platform.isWindows())
-        {
-        	for (File f:tablesDir.listFiles())
-        		if (f.getName().contains(".rt"))
-        			args.add(f.getAbsolutePath());
-        } else
-        {
-        	args.add(tablesDir.getAbsolutePath());
+        if (!Platform.isWindows()) {
+            for (File f : tablesDir.listFiles())
+                if (f.getName().contains(".rt"))
+                    args.add(f.getAbsolutePath());
+        } else {
+            args.add(tablesDir.getAbsolutePath());
         }
-        
+
         args.add("-h");
         args.add(hash);
 

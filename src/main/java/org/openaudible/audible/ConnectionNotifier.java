@@ -30,13 +30,12 @@ public class ConnectionNotifier extends EventNotifier<ConnectionListener> implem
     }
 
     // allow gui to pass back new credentials.
-    public AudibleAccountPrefs getAccountPrefs(AudibleAccountPrefs in)
-    {
+    public AudibleAccountPrefs getAccountPrefs(AudibleAccountPrefs in) {
         AudibleAccountPrefs out = in;
 
         for (ConnectionListener l : getListeners()) {
             out = l.getAccountPrefs(out);
-            if (out==null) return null; // canceled
+            if (out == null) return null; // canceled
         }
         return out;
     }
@@ -51,13 +50,20 @@ public class ConnectionNotifier extends EventNotifier<ConnectionListener> implem
     }
 
     public boolean isDisconnected() {
-        return getState()==State.Disconnected;
+        return getState() == State.Disconnected;
+    }
+
+    public void setLastURL(String u) {
+
+
     }
 
     // not connected is unknown.
     // connected means in account
     // disconnected means a password is being asked for.
-    enum State {Not_Connected, Connected, Disconnected}
+    enum State {
+        Not_Connected, Connected, Disconnected
+    }
 }
 
 

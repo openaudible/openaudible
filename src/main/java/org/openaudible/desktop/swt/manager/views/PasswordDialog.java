@@ -25,7 +25,9 @@ import org.openaudible.util.Platform;
  */
 public class PasswordDialog extends TitleAreaDialog implements KeyListener {
 
-    /** Min. width of the dialog in DLUs */
+    /**
+     * Min. width of the dialog in DLUs
+     */
     private static final int dialogMinWidth = 320;
 
     private String dialogMessage;
@@ -34,7 +36,6 @@ public class PasswordDialog extends TitleAreaDialog implements KeyListener {
     private Text password;
     private Text user;
     private String title;
-
 
 
     // private Text username;
@@ -46,7 +47,6 @@ public class PasswordDialog extends TitleAreaDialog implements KeyListener {
      * <p>
      * Note that the <code>open</code> method blocks for input dialogs.
      * </p>
-     *
      */
     public PasswordDialog(Shell parentShell, String dialogTitle, String dialogMessage, String user,
                           String pass) {
@@ -123,7 +123,7 @@ public class PasswordDialog extends TitleAreaDialog implements KeyListener {
         ((GridLayout) parent.getLayout()).marginHeight = 10;
         ((GridLayout) parent.getLayout()).marginWidth = 10;
 
-         /** Create Buttons */
+        /** Create Buttons */
         createButton(parent, IDialogConstants.OK_ID, GUI.i18n.getTranslation("BUTTON_OK"), true)
                 .setFont(FontShop.dialogFont());
         createButton(parent, IDialogConstants.CANCEL_ID, GUI.i18n.getTranslation("BUTTON_CANCEL"),
@@ -255,8 +255,7 @@ public class PasswordDialog extends TitleAreaDialog implements KeyListener {
      * Set the layout data of the button to a GridData with appropriate widths
      * This method was slightly modified so that it is not setting a heightHint.
      *
-     * @param button
-     *            The button to layout
+     * @param button The button to layout
      */
     @Override
     protected void setButtonLayoutData(Button button) {
@@ -270,12 +269,11 @@ public class PasswordDialog extends TitleAreaDialog implements KeyListener {
     public static PasswordDialog getPasswordForSite(Shell shell, String user, String pass) {
         PasswordDialog gp = new PasswordDialog(shell, GUI.i18n.getTranslation("PASSWORD_TITLE"),
                 GUI.i18n.getTranslation("PASSWORD_MESSAGE"),
-               user, pass);
+                user, pass);
 
 
         int status = gp.open();
-        if (status == Window.OK)
-        {
+        if (status == Window.OK) {
             return gp;
         }
         return null;
