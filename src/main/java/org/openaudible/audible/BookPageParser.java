@@ -92,16 +92,14 @@ public enum BookPageParser {
             switch(k)
             {
                 case "description":
-                    elem = BookElement.description;
+                    elem = BookElement.summary;     // our summary is the description
                     break;
                 case "sku":
-
                     // elem = BookElement.product_id;
                     break;
 
                 case "duration":
                     // format is like "PT11H19M" .. skipping for now.
-
                     break;
 
                 case "productID":

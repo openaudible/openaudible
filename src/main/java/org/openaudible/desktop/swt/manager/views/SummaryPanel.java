@@ -54,6 +54,7 @@ public class SummaryPanel implements BookListener {
     }
 
     private void update(Book book) {
+
         summary.setText(book != null ? book.getSummary() : "");
     }
 
