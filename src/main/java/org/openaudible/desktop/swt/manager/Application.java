@@ -61,8 +61,9 @@ public class Application extends GUI {
         } catch (Throwable th) {
             logger.error("error", th);
         }
-        if (!GUI.isMac())
+        if (GUI.isWindows())
             shell.setImages(PaintShop.appIcon);
+
         shell.setText(getAppName());
         createLayout();
         shell.pack();

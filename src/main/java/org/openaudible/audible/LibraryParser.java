@@ -253,7 +253,7 @@ public enum LibraryParser {
             for (String params : split) {
                 String kv[] = params.split("=");
                 if (kv.length == 2) {
-                    LOG.info(kv[0] + "=" + kv[1]);
+                    // LOG.info(kv[0] + "=" + kv[1]);
                     BookElement elem = BookElement.findByName(kv[0]);
                     if (elem != null) {
                         b.set(elem, kv[1]);

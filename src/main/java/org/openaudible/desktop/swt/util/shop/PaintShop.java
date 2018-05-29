@@ -138,9 +138,6 @@ public class PaintShop {
         return getImage("128x128.png");
     }
 
-    public static void setShellImage(Shell s) {
-        s.setImages(appIcon);
-    }
 
     /**
      * Check the given Image for being NULL or disposed. Return false in that case.
