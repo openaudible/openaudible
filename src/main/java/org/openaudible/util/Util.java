@@ -1,7 +1,13 @@
 package org.openaudible.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.util.HashMap;
+
 public enum Util {
     instance;
+    private static final Log LOG = LogFactory.getLog(Util.class);
 
     public String timeString(long l, boolean includeHours) {
         // return ""+l;
@@ -114,6 +120,35 @@ public enum Util {
         }
         return s;
     }
+
+
+    public static HashMap<String, String> urlGetArgs(String url) {
+        HashMap<String, String> map = new HashMap<String, String>();
+
+        if (url.contains("?")) {
+
+            try {
+                String args = url.substring(url.indexOf("?") + 1, url.length());
+
+                String split[] = args.split("&");
+                for (String params : split) {
+                    String kv[] = params.split("=");
+                    if (kv.length == 2) {
+                        map.put(kv[0], kv[1]);
+
+                    } else {
+                        LOG.error("bad url param:" + params + " for " + url); /// happens when there is an & in title.
+                    }
+                }
+            } catch (Throwable th) {
+                LOG.error("Error parsing url:" + url + " for args.");
+            }
+        }
+        return map;
+
+
+    }
+
 
     public static String cleanString(String out) {
         out = replaceAll(out, "\r", "\n");

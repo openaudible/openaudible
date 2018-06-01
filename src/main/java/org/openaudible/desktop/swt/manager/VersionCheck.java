@@ -1,10 +1,10 @@
 package org.openaudible.desktop.swt.manager;
 
-import com.google.gson.JsonObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
+import org.json.JSONObject;
 import org.openaudible.desktop.swt.gui.MessageBoxFactory;
 import org.openaudible.desktop.swt.manager.menu.CommandCenter;
 import org.openaudible.util.HTTPGet;
@@ -20,15 +20,15 @@ public enum VersionCheck {
     // if verbose return state regardless.
     // if !verbose, only alert when new version is available.
     public void checkForUpdate(Shell shell, boolean verbose) {
-        JsonObject obj = versionCheck();
-        String msg = obj.get("msg").getAsString();
-        String title = obj.get("title").getAsString();
+        JSONObject obj = versionCheck();
+        String msg = obj.optString("msg");
+        String title = obj.optString("title","Version Check");
 
-        int diff = obj.get("diff").getAsInt();
+        int diff = obj.optInt("diff", 0);
         if (diff < 0) {
             MessageBoxFactory.showGeneral(shell, SWT.ICON_INFORMATION, title, msg);
             if (obj.has("site")) {
-                String url = obj.get("site").getAsString();
+                String url = obj.getString("site");
                 AudibleGUI.instance.browse(url);
             }
 
@@ -43,14 +43,14 @@ public enum VersionCheck {
         // return msg;
     }
 
-    public JsonObject getVersion() throws IOException {
+    public JSONObject getVersion() throws IOException {
         String url = Version.versionLink;
         url += "?";
         url += "platform=" + Platform.getPlatform().toString();
         url += "&version=" + Version.appVersion;
         // url += "&count=" + audible.getBookCount();
         LOG.info("versionCheck: " + url);
-        return HTTPGet.instance.getJSON(url);
+           return HTTPGet.instance.getJSON(url);
     }
 
     /**
@@ -84,56 +84,54 @@ public enum VersionCheck {
         return Integer.signum(vals1.length - vals2.length);
     }
 
-    public JsonObject versionCheck() {
-        JsonObject obj = null;
+    public JSONObject versionCheck() {
+        JSONObject obj = null;
         try {
             obj = getVersion();
 
             if (!obj.has("version"))
                 throw new IOException("missing version field\n" + obj);
-            String releaseVersion = obj.get("version").getAsString();
+            String releaseVersion = obj.getString("version");
 
             int diff = versionCompare(Version.appVersion, releaseVersion);
-            obj.addProperty("diff", "" + diff);
+            obj.put("diff", "" + diff);
             String msg, title;
 
             if (diff < 0) {
                 title = "Update Available";
                 msg = "An update is available!\nYour version: " + Version.appVersion + "\nRelease Version:" + releaseVersion;
-                if (obj.has("required") && obj.get("required").getAsBoolean())
+                if (obj.optBoolean("required", false))
                 {
                     msg += "\nThis upgrade is required. Old versions no longer supported.";
                     CommandCenter.instance.expiredApp = true;
                 }
+                msg += "\n"+obj.optString("old_news", "");
 
             } else if (diff > 0) {
                 title = "Using Pre-release";
                 msg = "You appear to be using a pre-release version\nYour version: " + Version.appVersion + "\nLatest Version:" + releaseVersion;
+                msg += "\n"+obj.optString("pre_release_news", "");
             } else {
                 title = "No update at this time";
                 msg = "Using the latest release version.";
+                msg += "\n"+obj.optString("current_news", "");
                 // allow a news field
-            }
-
-            if (obj.has("news"))
-            {
-                msg +="\n"+obj.get("news").getAsString();
             }
 
             if (obj.has("kill"))
             {
-                msg +="\n"+obj.get("kill").getAsString();
+                msg +="\n"+obj.getString("kill");
                 CommandCenter.instance.expiredApp = true;
             }
 
-            obj.addProperty("msg", msg);
-            obj.addProperty("title", title);
+            obj.put("msg", msg);
+            obj.put("title", title);
 
         } catch (IOException e) {
             if (obj == null)
-                obj = new JsonObject();
-            obj.addProperty("msg", "Error checking for latest version.\nError message: " + e.getMessage());
-            obj.addProperty("title", "Version check failed");
+                obj = new JSONObject();
+            obj.put("msg", "Error checking for latest version.\nError message: " + e.getMessage());
+            obj.put("title", "Version check failed");
         }
         return obj;
     }

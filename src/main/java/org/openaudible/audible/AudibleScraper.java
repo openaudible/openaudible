@@ -19,13 +19,12 @@ import org.openaudible.books.BookElement;
 import org.openaudible.progress.IProgressTask;
 import org.openaudible.util.EventTimer;
 import org.openaudible.util.HTMLUtil;
+import org.openaudible.util.Util;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.*;
 
 // audible.com web page scraper
@@ -513,12 +512,29 @@ public class AudibleScraper {
             if (next == null) {
                 assert (pageNum == 1);
                 setURL("/lib", "Reading Library...");
+
+                DomElement purchaseDateFilter = page.getElementByName("purchaseDateFilter");
+                if (purchaseDateFilter!=null)
+                {
+                    DomNodeList<DomNode> nodes = purchaseDateFilter.getChildNodes();
+                    for (DomNode n:nodes)
+                    {
+                        if (n instanceof HtmlOption)
+                        {
+                            // "all" is first option..
+                            ((HtmlOption) n).click();
+                            break ;
+                        }
+                    }
+                }
             } else {
                 // getProgress().setTask("Getting a list of your library.  );
                 EventTimer evt = new EventTimer();
                 String u = next.getAttribute("data-url");
                 if (u != null) {
-                    if (!u.endsWith("&")) u += "&";
+
+                    if (!u.endsWith("&"))
+                        u += "&";
                     u += "page=" + pageNum;
                     setURL(u, "Reading Library page " + pageNum + "... Found " + results.size() + " books");
                 } else {

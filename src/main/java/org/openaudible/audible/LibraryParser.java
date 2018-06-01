@@ -9,6 +9,7 @@ import org.openaudible.util.HTMLUtil;
 import org.openaudible.util.Util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 // Parse a page of library inforation.
@@ -18,6 +19,7 @@ public enum LibraryParser {
     instance;
     private static final Log LOG = LogFactory.getLog(LibraryParser.class);
     boolean debug = false;
+
 
 
     // Expected Columns:
@@ -38,11 +40,9 @@ public enum LibraryParser {
         }
 
         // get product id and asin first.
-        static BookColumns [] parseOrder = {Download, Other, Image, Title, Author, Length, Date_Added, Ratings};
+        static BookColumns[] parseOrder = {Download, Other, Image, Title, Author, Length, Date_Added, Ratings};
 
     }
-
-
 
 
     // return "next" button for next page of results.
@@ -57,6 +57,8 @@ public enum LibraryParser {
                 next = a;
             }
         }
+
+
         return next;
     }
 
@@ -74,9 +76,8 @@ public enum LibraryParser {
         int purchaseDateIndex = -1;
         List<HtmlElement> header = table.getElementsByTagName("th");
 
-        if (header.size() != BookColumns.size())
-        {
-            LOG.info("Skipping table with:"+header.size()+" cols");
+        if (header.size() != BookColumns.size()) {
+            LOG.info("Skipping table with:" + header.size() + " cols");
 
             return list;
         }
@@ -124,7 +125,7 @@ public enum LibraryParser {
         if (r.getCells().size() != BookColumns.size()) {
             LOG.error("wrong number of columns found: " + r.getCells().size() + " != " + BookColumns.size());
             LOG.error(xml);
-            if (debug)  HTMLUtil.debugNode(r, "bad_col.xml");
+            if (debug) HTMLUtil.debugNode(r, "bad_col.xml");
             return null;
         }
 
@@ -164,7 +165,7 @@ public enum LibraryParser {
         }
 
         int ch = text.indexOf("\n");
-        if (ch!=-1)
+        if (ch != -1)
             text = text.substring(0, ch);
 
 
@@ -180,28 +181,27 @@ public enum LibraryParser {
                     // /pd/Fiction/Exodus-Audiobook/B008I3VMMQ?
                     if (url.startsWith("/pd/")) {
                         int q = url.indexOf("?");
-                        if (q!=-1)
+                        if (q != -1)
                             url = url.substring(0, q);
 
                         boolean ok = false;
 
 
                         if (b.has(BookElement.asin) && url.contains(b.getAsin()))
-                            ok=true;
+                            ok = true;
 
                         if (b.has(BookElement.product_id) && url.contains(b.getProduct_id()))
-                            ok=true;
+                            ok = true;
                         if (ok)
                             b.setInfoLink(url);
                         else
-                            LOG.info("Unknown product link for "+b+" at "+url);
+                            LOG.info("Unknown product link for " + b + " at " + url);
                     }
                 }
 
-                if (text.contains("by parts"))
-                {
-                    LOG.error("error with title: "+text);
-                    if (debug) HTMLUtil.debugNode(cell, col.name()+".xml");
+                if (text.contains("by parts")) {
+                    LOG.error("error with title: " + text);
+                    if (debug) HTMLUtil.debugNode(cell, col.name() + ".xml");
                     // bug check.
                 }
 
@@ -241,29 +241,16 @@ public enum LibraryParser {
                 cust_id=xxx&amp;DownloadType=Now&amp;transfer_player=1&amp;title=Book Title&amp;codec=LC_32_22050_Mono&amp;awtype=AAX";
     */
 
+
     private void parseDownloadURL(HtmlAnchor a, Book b) {
         String url = a.getHrefAttribute();
-        String obj = a.toString();
 
-        try {
-
-            String args = url.substring(url.indexOf("?") + 1, url.length());
-
-            String split[] = args.split("&");
-            for (String params : split) {
-                String kv[] = params.split("=");
-                if (kv.length == 2) {
-                    // LOG.info(kv[0] + "=" + kv[1]);
-                    BookElement elem = BookElement.findByName(kv[0]);
-                    if (elem != null) {
-                        b.set(elem, kv[1]);
-                    }
-                } else {
-                    LOG.error("bad url param:" + params + " for " + url); /// happens when there is an & in title.
-                }
+        HashMap<String, String> args = Util.urlGetArgs(url);
+        for (String k : args.keySet()) {
+            BookElement elem = BookElement.findByName(k);
+            if (elem != null) {
+                b.set(elem, args.get(k));
             }
-        } catch (Throwable th) {
-            LOG.error("Error parsing anchor:" + url + " for " + obj);
         }
 
     }
