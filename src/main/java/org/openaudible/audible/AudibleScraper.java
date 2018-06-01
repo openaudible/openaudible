@@ -36,7 +36,7 @@ public class AudibleScraper {
     final AudibleAccountPrefs account;
     final static String cookiesFileName = "cookies.json";
 
-    boolean debugCust = true;
+    boolean debugCust = false;
     boolean loggedIn = false;
     String clickToDownload = "Click to download ";
 
