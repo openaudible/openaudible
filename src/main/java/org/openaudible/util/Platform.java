@@ -25,4 +25,7 @@ public enum Platform {
         return getPlatform().equals(win);
     }
 
+	public static boolean isLinux() {
+        return getPlatform().equals(linux);
+	}
 }

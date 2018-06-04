@@ -47,7 +47,12 @@ public class AudibleBrowser {
         try {
             if (Platform.isWindows())
                 silenceWindowsExplorer();
-            browser = new Browser(parent, SWT.BORDER);
+            int style = 0;
+            if (Platform.isLinux())
+            	style = SWT.WEBKIT;
+            else
+            	style = SWT.MOZILLA;
+            browser = new Browser(parent, style);
             browser.addTitleListener(event -> getShell().setText(event.title));
             Object t = browser.getWebBrowser();
 
@@ -56,6 +61,7 @@ public class AudibleBrowser {
 
 
         } catch (SWTError e) {
+            logger.error("error creating browser", e);
             error = e;
             /* Browser widget could not be instantiated */
             parent.setLayout(new FillLayout());
