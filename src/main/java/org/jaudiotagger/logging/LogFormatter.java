@@ -20,8 +20,7 @@ public final class LogFormatter extends Formatter {
     public static final String IDENT = "$Id: LogFormatter.java 836 2009-11-12 15:44:07Z paultaylor $";
     // Line separator string.  This is the value of the line.separator
     // property at the moment that the SimpleFormatter was created.
-    private final String lineSeparator = (String) java.security.AccessController.doPrivileged(new sun.security.action.
-            GetPropertyAction("line.separator"));
+    private final String lineSeparator = System.lineSeparator();
 
     private final SimpleDateFormat sfDateOut = new SimpleDateFormat("dd/MM/yyyy HH.mm.ss:");
     private final Date date = new Date();

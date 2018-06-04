@@ -234,7 +234,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     }
 
     public void convertAll() {
-        ArrayList<Book> l = new ArrayList();
+        ArrayList<Book> l = new ArrayList<>();
         for (Book b : audible.getBooks()) {
             if (!audible.hasMP3(b))
                 l.add(b);
@@ -243,7 +243,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     }
 
     public void downloadAll() {
-        ArrayList<Book> l = new ArrayList();
+        ArrayList<Book> l = new ArrayList<>();
         for (Book b : audible.getBooks()) {
             if (!audible.hasAAX(b))
                 l.add(b);
@@ -1076,7 +1076,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
                 File test = new File(path);
                 File dir = test.getParentFile();
 
-                ArrayList<File> aaxFiles = new ArrayList();
+                ArrayList<File> aaxFiles = new ArrayList<>();
                 for (String s : files) {
                     File f = new File(dir, s);
                     assert (f.exists());

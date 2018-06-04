@@ -264,7 +264,7 @@ public class AppMenu implements ITranslatable, SelectionListener {
     private void initMnemonics(MenuItem items[]) {
 
         /* Store chars that have been used as mnemonic */
-        Vector chars = new Vector();
+        Vector<String> chars = new Vector<>();
         /* For each MenuItem */
         for (MenuItem item : items) {
             String name = item.getText();
