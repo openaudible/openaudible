@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Display;
 import org.openaudible.desktop.swt.gui.GUI;
 import org.openaudible.desktop.swt.i8n.Translate;
 import org.openaudible.desktop.swt.manager.Application;
+import org.openaudible.util.Platform;
 
 // ugly singleton swt font manager
 public class FontShop {
@@ -121,8 +122,12 @@ public class FontShop {
 
     private Font newDefaultFont(int id) {
         Display display = Display.getCurrent();
-        int bump = 0;
+        int sizeAdjust = 0;
         Font fontCopy = null;
+        if (Platform.isLinux())
+        {
+            sizeAdjust -=2;
+        }
 
         switch (id) {
             case DIALOG_FONT:
@@ -131,11 +136,10 @@ public class FontShop {
             case TABLE_FONT:
                 fontCopy = JFaceResources.getDefaultFont();
                 if (GUI.isMac())
-                    bump = -1;
+                    sizeAdjust = -1;
                 break;
 
             case TEXT_FONT:
-
                 fontCopy = JFaceResources.getTextFont();
                 break;
 
@@ -151,16 +155,12 @@ public class FontShop {
         }
 
         FontData fd;
-
         if (fontCopy != null)
             fd = fontCopy.getFontData()[0];
         else
             fd = display.getSystemFont().getFontData()[0];
-        int size = Math.round(fd.getHeight()) + bump;
-
+        int size = Math.round(fd.getHeight()) + sizeAdjust;
         Font f = new Font(display, fd.getName(), size, 0);
-        FontData ff = f.getFontData()[0];
-
         return f;
     }
 
