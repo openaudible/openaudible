@@ -19,7 +19,6 @@ import org.openaudible.books.BookElement;
 import org.openaudible.progress.IProgressTask;
 import org.openaudible.util.EventTimer;
 import org.openaudible.util.HTMLUtil;
-import org.openaudible.util.Util;
 import org.w3c.dom.Node;
 
 import java.io.File;

@@ -164,15 +164,6 @@ public class FontShop {
         return f;
     }
 
-    private Font swapFont(Font old, Font newFont) {
-        if (old == newFont)
-            logger.error("font swap error.");
-
-        if (isset(old))
-            old.dispose();
-        return newFont;
-    }
-
     private void newStyledFont(int index) {
         boldFonts[index] = newStyledFont(index, SWT.BOLD);
         italicFonts[index] = newStyledFont(index, SWT.BOLD);

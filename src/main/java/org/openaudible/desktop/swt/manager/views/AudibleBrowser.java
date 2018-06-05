@@ -44,31 +44,21 @@ public class AudibleBrowser {
 
     public AudibleBrowser(Composite parent, String url) {
         this.parent = parent;
-        try {
-            if (Platform.isWindows())
-                silenceWindowsExplorer();
-            int style = 0;
-            if (Platform.isLinux())
-            	style = SWT.WEBKIT;
-            else
-            	style = SWT.MOZILLA;
-            browser = new Browser(parent, style);
-            browser.addTitleListener(event -> getShell().setText(event.title));
-            Object t = browser.getWebBrowser();
 
-            customHeader = new String[1];
-            customHeader[0] = "User-agent: " + AudibleClient.swtWindows;
+        if (Platform.isWindows())
+            silenceWindowsExplorer();
+        int style = 0;
 
+        if (Platform.isLinux())
+            style = SWT.WEBKIT;
 
-        } catch (SWTError e) {
-            logger.error("error creating browser", e);
-            error = e;
-            /* Browser widget could not be instantiated */
-            parent.setLayout(new FillLayout());
-            Label label = new Label(parent, SWT.CENTER | SWT.WRAP);
-            label.setText(getResourceString("BrowserNotCreated"));
-            return;
-        }
+        browser = new Browser(parent, style);
+        browser.addTitleListener(event -> getShell().setText(event.title));
+        Object t = browser.getWebBrowser();
+
+        customHeader = new String[1];
+        customHeader[0] = "User-agent: " + AudibleClient.swtWindows;
+
         initResources();
         if (url.length() > 0)
             setUrl(getResourceString(url));
@@ -115,9 +105,24 @@ public class AudibleBrowser {
         shell.setLayout(layout);
         shell.setText(url);
         shell.setSize(900, 800);
-        AudibleBrowser app = new AudibleBrowser(shell, url);
-        shell.open();
-        return app;
+        try {
+            AudibleBrowser app = new AudibleBrowser(shell, url);
+            shell.open();
+            return app;
+        } catch(Throwable th)
+        {
+            shell.dispose();
+            String err = "Uh oh. An error occurred opening the internal web browser. \n\nThis means your system may not be compatible with this version of OpenAudible.\n\nCheck the console window and copy this error and stack trace below. \n"+
+                    "Create or view existing code issues at:\nhttps://github.com/openaudible/openaudible/issues \n";
+            String m = ""+ th.getMessage();
+            m = m.replace("No more handles", "");
+            m = m.replace("[", " ");
+            m = m.replace("]", " ");
+            err += "\n\nError code:\n"+m.trim();
+            logger.error(err, th);
+            MessageBoxFactory.showError(null, "Error opening internal web browser", err);
+            return null;
+        }
     }
 
     public static void main(String[] args) {
