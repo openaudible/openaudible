@@ -12,6 +12,10 @@ import org.openaudible.desktop.swt.manager.menu.AppMenu;
 import org.openaudible.desktop.swt.manager.menu.CommandCenter;
 import org.openaudible.desktop.swt.util.shop.LayoutShop;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
+import org.openaudible.util.Platform;
+
+import java.io.File;
+import java.io.IOException;
 
 public abstract class GUI implements ITranslatable {
     /**
@@ -154,6 +158,39 @@ public abstract class GUI implements ITranslatable {
      */
     public static boolean usePrinting() {
         return (isWindows() || isSolaris() || isMac());
+    }
+
+    public static void explore(File m) {
+
+        String mac = "open ";
+
+
+        String cmd = null;
+        switch(Platform.getPlatform())
+        {
+
+            case mac:
+                cmd = "open ";
+                if (!m.isDirectory()) cmd += "-R ";
+                break;
+            case win:
+                cmd = "Explorer /select, ";
+                break;
+            case linux:
+                cmd = "gnome-open PATH ";
+                break;
+        }
+
+        if (cmd != null) {
+            cmd += "\"" + m.getAbsolutePath() + "\"";
+            System.err.println(cmd);
+            try {
+                Runtime.getRuntime().exec(cmd);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     public abstract String getAppName();

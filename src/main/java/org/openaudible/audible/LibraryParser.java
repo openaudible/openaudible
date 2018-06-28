@@ -247,6 +247,10 @@ public enum LibraryParser {
 
         HashMap<String, String> args = Util.urlGetArgs(url);
         for (String k : args.keySet()) {
+
+
+
+
             BookElement elem = BookElement.findByName(k);
             if (elem != null) {
                 b.set(elem, args.get(k));

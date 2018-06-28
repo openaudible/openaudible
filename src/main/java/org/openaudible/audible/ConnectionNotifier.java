@@ -52,11 +52,8 @@ public class ConnectionNotifier extends EventNotifier<ConnectionListener> implem
     public boolean isDisconnected() {
         return getState() == State.Disconnected;
     }
-
-    public void setLastURL(String u) {
-
-
-    }
+    
+    
 
     // not connected is unknown.
     // connected means in account
@@ -64,6 +61,17 @@ public class ConnectionNotifier extends EventNotifier<ConnectionListener> implem
     enum State {
         Not_Connected, Connected, Disconnected
     }
+
+
+
+	@Override
+	public void loginFailed(String url, String html)
+	{
+        for (ConnectionListener l : getListeners()) {
+            l.loginFailed(url, html);
+        }
+		
+	}
 }
 
 

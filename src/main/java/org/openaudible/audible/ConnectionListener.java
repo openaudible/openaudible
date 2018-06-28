@@ -7,7 +7,6 @@ import org.openaudible.AudibleAccountPrefs;
  */
 public interface ConnectionListener {
     void connectionChanged(boolean connected);
-
     AudibleAccountPrefs getAccountPrefs(AudibleAccountPrefs in);
-
+    void loginFailed(String url, String html);
 }

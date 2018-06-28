@@ -7,7 +7,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.openaudible.Audible;
 import org.openaudible.AudibleAccountPrefs;
@@ -565,20 +567,8 @@ public class AudibleGUI implements BookListener, ConnectionListener {
             Book b = onlyOneSelected();
             File m = audible.getMP3FileDest(b);
             if (m.exists()) {
-                String mac = "open -R ";
-                String win = "Explorer /select, ";
+                GUI.explore(m);
 
-                String cmd = null;
-                if (Platform.isMac())
-                    cmd = mac;
-                if (Platform.isWindows())
-                    cmd = win;
-                // TODO: Support linux.
-                if (cmd != null) {
-                    cmd += "\"" + m.getAbsolutePath() + "\"";
-                    System.err.println(cmd);
-                    Runtime.getRuntime().exec(cmd);
-                }
 
                 // Desktop.getDesktop().open(m.getParentFile());
             }
@@ -1162,5 +1152,22 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         }
 
     }
+
+	@Override
+	public void loginFailed(String url, String html)
+	{
+		
+        SWTAsync.slow(new SWTAsync("Login problem...") {
+            public void task() {
+        		String message = "There was a problem logging in... Try to view the page in the OpenAudible Browser?";
+        		boolean ok = MessageBoxFactory.showGeneralYesNo(null, "Trouble logging in", message);
+        		if (ok)
+        			browse(url);
+            }
+        });
+
+		
+		
+	}
 
 }

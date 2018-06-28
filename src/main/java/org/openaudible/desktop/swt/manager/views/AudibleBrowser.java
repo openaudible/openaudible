@@ -258,18 +258,37 @@ public class AudibleBrowser {
         new BrowserFunction(browser, "cookieCallback") {
             @Override
             public Object function(Object[] objects) {
+
                 ArrayList<Cookie> list = new ArrayList<>();
                 String u = browser.getUrl();
+
                 if (u.contains("audible.")) {
+                    // Get host from url.
+                    // https://www.audible.com/
+                    String host = "www.audible.com";
+
+                    if (u.startsWith("http"))
+                    {
+                        String[] parts = u.split("/");
+                        if (parts!=null && parts.length>2)
+                        {
+                            if (parts[2].contains("audible"))
+                                host = parts[2];
+                        }
+                    }
+
+
                     Object[] keyValuePairs = (Object[]) objects[0];
                     for (Object o : keyValuePairs) {
                         Object arr[] = (Object[]) o;
-                        Cookie c = new Cookie("www.audible.com", arr[0].toString(), arr[1].toString());
+                        Cookie c = new Cookie(host, arr[0].toString(), arr[1].toString());
                         list.add(c);
                     }
                     cookies = list;
                 } else
                     logger.info("Expected url to include audible, instead: " + u);
+               
+                logger.info("cookieCallback: " + list.size());
 
                 return null;
             }
@@ -279,8 +298,8 @@ public class AudibleBrowser {
         new BrowserFunction(browser, "pageInfoCallback") {
             @Override
             public Object function(Object[] objects) {
-                ArrayList<Cookie> list = new ArrayList<>();
-
+                String u = browser.getUrl();
+                logger.info("pageInfoCallback: " + u);
                 return null;
             }
         };

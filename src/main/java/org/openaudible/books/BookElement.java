@@ -10,7 +10,26 @@ public enum BookElement {
         try {
             return BookElement.valueOf(s);
         } catch (Throwable th) {
-            System.out.println("No BookElement:" + s);
+            switch(s)
+            {
+                case "title":
+                    return shortTitle;
+                case "DownloadType":
+                    break;
+                case "domain":
+                    break;
+                case "awtype":
+                    break;
+                case "transfer_player":
+                    break;
+
+                default:
+                    //
+                    System.out.println("No BookElement:" + s);
+                    break;
+            }
+
+
         }
         return null;
     }

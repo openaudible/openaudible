@@ -50,8 +50,6 @@ public class AudibleClient extends WebClient {
             }
         });
 
-        CookieManager cm = this.getCookieManager();
-
 
         this.waitForBackgroundJavaScript(15000);
         if (!maxDebug) {

@@ -63,27 +63,6 @@ public class AudibleScraper {
         this.page = page;
         LOG.info("pageLoaded:" + page.getUrl() + " " + page.getTitleText());
 
-
-        if (page != null && debugCust) {
-            String xml = page.asXml();
-            int i1 = xml.indexOf("cust_id");
-
-            int i2 = xml.indexOf("order_number");
-            String s1 = "", s2 = "";
-            if (i1 != -1) {
-                s1 = xml.substring(i1 - 300, i1 + 300);
-            }
-            if (i2 != -1) {
-                s2 = xml.substring(i2 - 300, i2 + 300);
-            }
-            if (s1.length() > 0 || s2.length() > 0) {
-                LOG.info("Found cust_id:s1=" + s1 + "\ns2=" + s2);
-            }
-        }
-
-
-        // progress.setSubTask("page.getTitleText());
-
     }
 
     public boolean isLoggedIn() {
@@ -109,7 +88,7 @@ public class AudibleScraper {
             } else {
                 if (page != null) {
                     String u = page.getUrl().toString();
-                    ConnectionNotifier.getInstance().setLastURL(u);
+                    ConnectionNotifier.getInstance().loginFailed(u, page.asXml());
                 }
 
             }
@@ -144,7 +123,7 @@ public class AudibleScraper {
         setLoggedIn(false);
     }
 
-    public void saveCookies() throws IOException {
+	public void saveCookies() throws IOException {
 
         CookieManager cm = getWebClient().getCookieManager();
         ArrayList<BasicClientCookie> list = new ArrayList<>();
@@ -232,12 +211,24 @@ public class AudibleScraper {
 
         if (getProgress() != null)
             getProgress().setTask("Submitting credentials...");
+        HTMLUtil.debugNode(page, "submitting-credentials");
 
         setPage(submit.click());
         boolean ok = checkLoggedIn();
 
         if (!ok)
-            HTMLUtil.debugNode(page, "login submitted");
+        {
+            HTMLUtil.debugNode(page, "login failed");
+            LOG.info(page.getUrl());
+            
+            LOG.info("Login failed, see html files at:"+HTMLUtil.debugFile("submitting-credentials").getAbsolutePath()+" and "+HTMLUtil.debugFile("login failed").getAbsolutePath());
+        
+        
+        }
+        else
+        {
+        	HTMLUtil.debugFile("submitting-credentials").delete();
+        }
 
         return ok;
     }
@@ -455,30 +446,6 @@ public class AudibleScraper {
     }
 
 
-/*
-    private DomDocumentFragment getLibraryFragment(int pageNum, int items) throws IOException, SAXException {
-        EventTimer evt = new EventTimer();
-        String url = getAudibleBase()+"/lib-ajax";
-        WebRequest webRequest = new WebRequest(new URL(url), HttpMethod.POST);
-        webRequest.setRequestBody("progType=all&timeFilter=all&itemsPerPage=" + items + "&searchTerm=&searchType=&sortColumn=&sortType=down&page=" + pageNum + "&mode=normal&subId=&subTitle=");
-        WebResponse webResponse = getWebClient().getWebConnection().getResponse(webRequest);
-        String content = webResponse.getContentAsString();
-        DomDocumentFragment frag = new DomDocumentFragment(page);
-        HTMLParser.parseFragment(frag, content);
-        LOG.info(evt.reportString("get Library Page:" + pageNum));
-        return frag;
-    }
-
-
-    public Collection<Book> fetchFirstLibraryPage() throws Exception {
-        if (page == null)
-            home();
-        LOG.info("Accessing audible library...");
-        HashSet<Book> results = new HashSet<>();
-        lib();
-        return results;
-    }
-*/
 
     public Collection<Book> fetchLibraryQuick(HashMap<String, Book> books) throws Exception {
         return _fetchLibrary(books);
@@ -487,7 +454,7 @@ public class AudibleScraper {
     public Collection<Book> _fetchLibrary(HashMap<String, Book> existingBooks) throws Exception {
         if (page == null)
             home();
-        LOG.info("Accessing audible library...");
+       // LOG.info("Accessing audible library...");
         HashSet<Book> results = new HashSet<>();
         // getWebClient().setJavascriptEnabled(false);
         progress.setTask("Scanning your library to get your list of books...", "");
@@ -511,21 +478,8 @@ public class AudibleScraper {
             if (next == null) {
                 assert (pageNum == 1);
                 setURL("/lib", "Reading Library...");
+                setPageFilter();
 
-                DomElement purchaseDateFilter = page.getElementByName("purchaseDateFilter");
-                if (purchaseDateFilter!=null)
-                {
-                    DomNodeList<DomNode> nodes = purchaseDateFilter.getChildNodes();
-                    for (DomNode n:nodes)
-                    {
-                        if (n instanceof HtmlOption)
-                        {
-                            // "all" is first option..
-                            ((HtmlOption) n).click();
-                            break ;
-                        }
-                    }
-                }
             } else {
                 // getProgress().setTask("Getting a list of your library.  );
                 EventTimer evt = new EventTimer();
@@ -555,7 +509,7 @@ public class AudibleScraper {
             int newBooks = 0;
 
             for (Book b : list) {
-                LOG.info(b.toString());
+                // LOG.info(b.toString());
                 if (b.partial())
                     continue;
                 if (results.contains(b)) {
@@ -577,12 +531,57 @@ public class AudibleScraper {
             next = LibraryParser.instance.getNextPage(page);
             if (next == null)
                 break;
+            //LOG.info("next page:"+next);
         }
 
         return results;
     }
 
-    public Collection<Book> fetchLibrary() throws Exception {
+    private void setPageFilter() 
+	{
+        DomElement purchaseDateFilter = page.getElementByName("purchaseDateFilter");
+        if (purchaseDateFilter!=null && purchaseDateFilter instanceof HtmlSelect)
+        {
+    		HtmlSelect h = (HtmlSelect)purchaseDateFilter;
+    		int i = h.getSelectedIndex();
+    		if (i!=0)
+    		{
+                HtmlOption all = h.getOption(0);
+                String url = all.getAttribute("data-url");
+    			try
+				{
+        			if (url!=null && !url.isEmpty())
+        			{
+        			    //LOG.info("url: "+ url);
+                        String newURL = url+ "&purchaseDateFilter=all&programFilter=all&sortBy=PURCHASE_DATE.dsc";
+                        page = (HtmlPage) setURL(newURL, "Setting view filter");
+                        LOG.info("new URL: "+ page.getUrl());
+                    }
+    				h = (HtmlSelect) page.getElementByName("purchaseDateFilter");
+    				i = h.getSelectedIndex();
+    				if (i!=0)
+    				{
+    					LOG.error("Expected filter to be set to 0, not "+i);
+    				}
+
+				} catch (Exception e)
+				{
+				    LOG.error("Error setting filter.. update may be required.",e);
+				}
+    		}
+    		
+    		return;
+        } else 
+        {
+        	LOG.info("warning: did not find library filter htmlSelect.");
+        }
+
+		
+	}
+
+
+
+	public Collection<Book> fetchLibrary() throws Exception {
         return _fetchLibrary(null);
     }
 

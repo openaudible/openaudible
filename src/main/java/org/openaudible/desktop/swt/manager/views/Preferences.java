@@ -4,6 +4,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -12,6 +14,7 @@ import org.openaudible.Audible;
 import org.openaudible.AudibleAccountPrefs;
 import org.openaudible.AudibleRegion;
 import org.openaudible.Directories;
+import org.openaudible.desktop.swt.gui.GUI;
 import org.openaudible.desktop.swt.gui.MessageBoxFactory;
 import org.openaudible.desktop.swt.manager.AudibleGUI;
 
@@ -179,11 +182,32 @@ public class Preferences extends Dialog {
         createAccountGroup(c);
         createDirectoryGroup(c);
         createAutomationGroup(c);
+        createPrefsLocation(c);
 
         this.getShell().setText("Preferences");
         populate();
 
         return null;
+    }
+
+    private void createPrefsLocation(GridComposite c) {
+        c = new GridComposite(c, SWT.NONE, 2, false, GridData.FILL_HORIZONTAL);
+
+        String loc = Directories.getDir(Directories.META).getAbsolutePath();
+        String name = Directories.META.displayName();
+        Label l = new Label(c, SWT.NONE);
+        l.setText(name+": "+loc);
+
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+
+        Button b = c.newButton(SWT.PUSH, "Show");
+        b.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                GUI.explore(Directories.getDir(Directories.META));
+            }
+        });
+
     }
 
     private void createAccountGroup(GridComposite c) {
