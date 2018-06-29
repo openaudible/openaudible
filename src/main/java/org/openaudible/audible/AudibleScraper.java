@@ -539,43 +539,40 @@ public class AudibleScraper {
 
     private void setPageFilter() 
 	{
-        DomElement purchaseDateFilter = page.getElementByName("purchaseDateFilter");
-        if (purchaseDateFilter!=null && purchaseDateFilter instanceof HtmlSelect)
-        {
-    		HtmlSelect h = (HtmlSelect)purchaseDateFilter;
-    		int i = h.getSelectedIndex();
-    		if (i!=0)
-    		{
-                HtmlOption all = h.getOption(0);
-                String url = all.getAttribute("data-url");
-    			try
-				{
-        			if (url!=null && !url.isEmpty())
-        			{
-        			    //LOG.info("url: "+ url);
-                        String newURL = url+ "&purchaseDateFilter=all&programFilter=all&sortBy=PURCHASE_DATE.dsc";
-                        page = (HtmlPage) setURL(newURL, "Setting view filter");
-                        LOG.info("new URL: "+ page.getUrl());
+	    try {
+            DomElement purchaseDateFilter = page.getElementByName("purchaseDateFilter");
+            if (purchaseDateFilter != null && purchaseDateFilter instanceof HtmlSelect) {
+                HtmlSelect h = (HtmlSelect) purchaseDateFilter;
+                int i = h.getSelectedIndex();
+                if (i != 0) {
+                    HtmlOption all = h.getOption(0);
+                    String url = all.getAttribute("data-url");
+                    try {
+                        if (url != null && !url.isEmpty()) {
+                            //LOG.info("url: "+ url);
+                            String newURL = url + "&purchaseDateFilter=all&programFilter=all&sortBy=PURCHASE_DATE.dsc";
+                            page = (HtmlPage) setURL(newURL, "Setting view filter");
+                            LOG.info("new URL: " + page.getUrl());
+                        }
+                        h = (HtmlSelect) page.getElementByName("purchaseDateFilter");
+                        i = h.getSelectedIndex();
+                        if (i != 0) {
+                            LOG.error("Expected filter to be set to 0, not " + i);
+                        }
+
+                    } catch (Exception e) {
+                        LOG.error("Error setting filter.. update may be required.", e);
                     }
-    				h = (HtmlSelect) page.getElementByName("purchaseDateFilter");
-    				i = h.getSelectedIndex();
-    				if (i!=0)
-    				{
-    					LOG.error("Expected filter to be set to 0, not "+i);
-    				}
+                }
 
-				} catch (Exception e)
-				{
-				    LOG.error("Error setting filter.. update may be required.",e);
-				}
-    		}
-    		
-    		return;
-        } else 
+                return;
+            } else {
+                LOG.info("warning: did not find library filter htmlSelect.");
+            }
+        } catch(Throwable th)
         {
-        	LOG.info("warning: did not find library filter htmlSelect.");
+            LOG.error("Unable to set purchaseDateFilter.", th);
         }
-
 		
 	}
 
