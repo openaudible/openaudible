@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openaudible.books.Book;
 import org.openaudible.convert.AAXParser;
-import org.openaudible.convert.TagMP3AudioBook;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -177,22 +176,6 @@ public class AudibleCLI {
                 test(audible.find(r[1]));
 
                 break;
-            case retag: {
-                if (args.length() == 0) {
-                    for (Book b : audible.getBooks()) {
-                        if (audible.hasMP3(b))
-                            TagMP3AudioBook.retag(b);
-                    }
-                } else {
-                    Book b = audible.findFirst(args, true);
-                    File m = audible.getMP3FileDest(b);
-                    if (!m.exists())
-                        throw new Exception("No mp3 for " + b);
-                    // ParseAAX.instance.update(b);
-                    TagMP3AudioBook.retag(b);
-                }
-                break;
-            }
 
             case quit:
                 quit = true;

@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+// Do not use for mission critical applications.. needless to say.
 public abstract class ThreadedQueue<E> implements IQueueListener<E> {
     private static final Log LOG = LogFactory.getLog(ThreadedQueue.class);
 
@@ -30,7 +31,6 @@ public abstract class ThreadedQueue<E> implements IQueueListener<E> {
 
     public ThreadedQueue(int concurrentJobs) {
         this.concurrentJobs = concurrentJobs;
-
     }
 
     public void addListener(IQueueListener<E> l) {

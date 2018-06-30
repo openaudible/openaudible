@@ -16,6 +16,7 @@ import org.openaudible.desktop.swt.gui.tables.EnumTable;
 import org.openaudible.desktop.swt.manager.AudibleGUI;
 import org.openaudible.desktop.swt.manager.menu.AppMenu;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
+import org.openaudible.util.TimeToSeconds;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -120,7 +121,24 @@ public class BookTable extends EnumTable<Book, BookTableColumn> implements BookL
         }
     }
 
-    public Comparable<String> getColumnComparable(BookTableColumn column, Book b) {
+
+    public String getColumnDisplayable(BookTableColumn column, Book b) {
+        String s;
+        if (column.equals(BookTableColumn.Time))
+        {
+
+            //long seconds = TimeToSeconds.parseTimeStringToSeconds(b.getDuration());
+           // TimeToSeconds.secondsToTime()
+            return b.getDuration();
+
+        }
+        s = super.getColumnDisplayable(column, b);
+        return s;
+    }
+
+
+
+    public Comparable<?> getColumnComparable(BookTableColumn column, Book b) {
         switch (column) {
             case Author:
                 return b.getAuthor();
@@ -138,7 +156,8 @@ public class BookTable extends EnumTable<Book, BookTableColumn> implements BookL
             case Narrated_By:
                 return b.getNarratedBy();
             case Time:
-                return b.getDuration();
+                // compare duration as seconds, not as a string..
+                return TimeToSeconds.parseTimeStringToSeconds(b.getDuration());
             case Title:
                 return b.getFullTitle();
             case Purchased:

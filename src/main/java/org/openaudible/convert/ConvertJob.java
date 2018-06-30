@@ -4,8 +4,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openaudible.Audible;
 import org.openaudible.Directories;
+import org.openaudible.audible.AudibleUtils;
 import org.openaudible.books.Book;
 import org.openaudible.progress.IProgressTask;
+import org.openaudible.util.DebugBuffer;
 import org.openaudible.util.InputStreamReporter;
 import org.openaudible.util.LineListener;
 import org.openaudible.util.queues.IQueueJob;
@@ -30,7 +32,8 @@ public class ConvertJob implements IQueueJob, LineListener {
     private IProgressTask progress;
     final String duration;
     final static int mp3Qscale = 6;       // audio quality value 0 to 9. See https://trac.ffmpeg.org/wiki/Encode/MP3
-    static boolean addAdditionalTags = true;
+
+    final DebugBuffer stdErr = new DebugBuffer();
 
     public ConvertJob(Book b) {
         book = b;
@@ -60,6 +63,8 @@ public class ConvertJob implements IQueueJob, LineListener {
     // frame=    1 fps=0.0 q=0.0 size=       2kB time=06:17:11.44 bitrate=   0.0kbits/s
     @Override
     public void takeLine(String s) {
+
+
         String find = "time=";
         int ch = s.indexOf(find);
         if (ch != -1) {
@@ -86,6 +91,9 @@ public class ConvertJob implements IQueueJob, LineListener {
                 }
             }
 
+        } else
+        {
+            stdErr.accept(s);
         }
 
         String endMeta[] = {"Stream mapping:", "Press [q]"};
@@ -116,9 +124,28 @@ public class ConvertJob implements IQueueJob, LineListener {
         args.add("-map_metadata");
         args.add("0");
 
+        if (false) {
+
+//            addTag(args, "copyright", book.getCopyright());
+            addTag(args, "performer", book.getNarratedBy());
+//            addTag(args, "publisher", book.getPublisher());
+//            addTag(args, "lyrics", book.getSummary());
+            String year = AudibleUtils.getYear(book);
+            addTag(args, "year", year);
+            String genre = book.getGenre();
+            if (genre.isEmpty())
+                genre = "Audiobook";
+            // addTag(args, "genre", genre);
+
+
+        }
+
+
+
         args.add("-codec:a");
         args.add("libmp3lame");     // see: https://trac.ffmpeg.org/wiki/Encode/MP3
         args.add("-qscale:a");      // https://trac.ffmpeg.org/wiki/Encode/MP3
+
 
         if (mp3Qscale < 0 || mp3Qscale > 9)
             throw new IOException("Invalid qscale:" + mp3Qscale);
@@ -163,8 +190,12 @@ public class ConvertJob implements IQueueJob, LineListener {
             int exitValue = proc.exitValue();
 
             LOG.info("createMP3:" + exitValue);
-            if (exitValue != 0)
+            if (exitValue != 0) {
+
+                LOG.error(stdErr.toString());
+
                 throw new IOException("Conversion got non-zero response:" + exitValue);
+            }
 
             success = true;
 
@@ -190,6 +221,18 @@ public class ConvertJob implements IQueueJob, LineListener {
         }
     }
 
+    private void addTag(ArrayList<String> args, String key, String value) {
+        if (!value.isEmpty()) {
+            args.add("-metadata");
+            args.add("key="+key);
+            value = value.replace("\"", "");
+
+            args.add(value);
+
+        }
+
+    }
+
     private synchronized String getActivationBytes(File aaxFile) throws IOException, InterruptedException {
         // synchronized -- if two files have same hash, only do lookup once.
 
@@ -208,11 +251,6 @@ public class ConvertJob implements IQueueJob, LineListener {
     }
 
 
-    public void tagMP3() throws Exception {
-
-        if (addAdditionalTags)
-            TagMP3AudioBook.setMP3Tags(book, temp, image);
-    }
 
     public void renameMP3() throws IOException {
         boolean ok = temp.renameTo(mp3);
@@ -233,9 +271,6 @@ public class ConvertJob implements IQueueJob, LineListener {
             if (progress != null)
                 progress.setTask("Creating MP3 " + book, "");
             createMP3();
-            if (progress != null)
-                progress.setTask(null, "Adding tags");
-            tagMP3();
             if (progress != null)
                 progress.setTask(null, "Finalizing MP3");
             renameMP3();

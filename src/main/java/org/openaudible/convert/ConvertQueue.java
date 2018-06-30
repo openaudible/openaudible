@@ -15,7 +15,7 @@ public class ConvertQueue extends ThreadedQueue<Book> {
     private static final Log LOG = LogFactory.getLog(ConvertQueue.class);
 
     public ConvertQueue() {
-        super(3);
+        super(6);       // how many concurrent conversions to do.
     }
 
     @Override

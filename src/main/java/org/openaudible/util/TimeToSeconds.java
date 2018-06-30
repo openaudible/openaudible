@@ -11,26 +11,58 @@ public class TimeToSeconds {
             throw new NumberFormatException("parseTimeString empty str");
 
         int h = 0;
-        int m, s;
-        String units[] = str.split(":");
-        switch (units.length) {
-            case 2:
-                // mm:ss
-                m = Integer.parseInt(units[0]);
-                s = Integer.parseInt(units[1]);
-                break;
+        int m=0, s=0;
+        if (str.contains("m") || str.contains("h") || str.contains("s"))
+        {
+            for (String unit:str.split(" "))
+            {
+                if (unit.contains("m"))
+                {
+                    unit = unit.replace("m", "");
+                    m = Integer.parseInt(unit.trim());
+                } else
+                if (unit.contains("h"))
+                {
+                    unit = unit.replace("h", "");
+                    h = Integer.parseInt(unit.trim());
+                } else
+                if (unit.contains("s"))
+                {
+                    unit = unit.replace("s", "");
+                    s = Integer.parseInt(unit.trim());
+                } else { throw new NumberFormatException("invalid time format:"+str); }
+            }
+        } else {
+            String units[] = str.split(":");
+            switch (units.length) {
+                case 2:
+                    // mm:ss
+                    m = Integer.parseInt(units[0]);
+                    s = Integer.parseInt(units[1]);
+                    break;
 
-            case 3:
-                // hh:mm:ss
-                h = Integer.parseInt(units[0]);
-                m = Integer.parseInt(units[1]);
-                s = Integer.parseInt(units[2]);
-                break;
+                case 3:
+                    // hh:mm:ss
+                    h = Integer.parseInt(units[0]);
+                    m = Integer.parseInt(units[1]);
+                    s = Integer.parseInt(units[2]);
+                    break;
 
-            default:
-                throw new NumberFormatException("parseTimeString failed:" + str);
+                default:
+
+                    throw new NumberFormatException("parseTimeString failed:" + str);
+            }
+
+            if (m>60)
+                throw new NumberFormatException("parseTimeString minute > 60:" + str);
+            if (s>60)
+                throw new NumberFormatException("parseTimeString second > 60:" + str);
+
+
+
         }
-        if (m < 0 || m > 60 || s < 0 || s > 60 || h < 0)
+
+        if (m < 0 || s < 0 || h < 0)
             throw new NumberFormatException("parseTimeString range error:" + str);
         return h * 3600 + m * 60 + s;
     }
