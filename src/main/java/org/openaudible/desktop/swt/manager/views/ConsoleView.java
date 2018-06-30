@@ -97,6 +97,29 @@ public class ConsoleView implements Console.ILogRecordPublisher {
             }
         });
         copyItem.setText(JFaceResources.getString("copy")); //$NON-NLS-1$
+
+
+        MenuItem clearItem = new MenuItem(copyMenu, SWT.NONE);
+        clearItem.addSelectionListener(new SelectionListener() {
+            /*
+             * @see SelectionListener.widgetSelected (SelectionEvent)
+             */
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                clear();
+            }
+
+            /*
+             * @see SelectionListener.widgetDefaultSelected(SelectionEvent)
+             */
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                clear();
+            }
+        });
+        clearItem.setText(JFaceResources.getString("Clear")); //$NON-NLS-1$
+
+
         consoleText.setMenu(copyMenu);
         consoleText.getShell().setMenu(copyMenu);
 
