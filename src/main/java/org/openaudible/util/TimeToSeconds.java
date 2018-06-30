@@ -11,26 +11,21 @@ public class TimeToSeconds {
             throw new NumberFormatException("parseTimeString empty str");
 
         int h = 0;
-        int m=0, s=0;
-        if (str.contains("m") || str.contains("h") || str.contains("s"))
-        {
-            for (String unit:str.split(" "))
-            {
-                if (unit.contains("m"))
-                {
+        int m = 0, s = 0;
+        if (str.contains("m") || str.contains("h") || str.contains("s")) {
+            for (String unit : str.split(" ")) {
+                if (unit.contains("m")) {
                     unit = unit.replace("m", "");
                     m = Integer.parseInt(unit.trim());
-                } else
-                if (unit.contains("h"))
-                {
+                } else if (unit.contains("h")) {
                     unit = unit.replace("h", "");
                     h = Integer.parseInt(unit.trim());
-                } else
-                if (unit.contains("s"))
-                {
+                } else if (unit.contains("s")) {
                     unit = unit.replace("s", "");
                     s = Integer.parseInt(unit.trim());
-                } else { throw new NumberFormatException("invalid time format:"+str); }
+                } else {
+                    throw new NumberFormatException("invalid time format:" + str);
+                }
             }
         } else {
             String units[] = str.split(":");
@@ -53,11 +48,10 @@ public class TimeToSeconds {
                     throw new NumberFormatException("parseTimeString failed:" + str);
             }
 
-            if (m>60)
+            if (m > 60)
                 throw new NumberFormatException("parseTimeString minute > 60:" + str);
-            if (s>60)
+            if (s > 60)
                 throw new NumberFormatException("parseTimeString second > 60:" + str);
-
 
 
         }

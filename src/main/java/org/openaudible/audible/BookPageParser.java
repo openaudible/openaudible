@@ -18,23 +18,21 @@ public enum BookPageParser {
     private static final Log LOG = LogFactory.getLog(BookPageParser.class);
 
     // audible uses a lot of cdata. It is useful.
-    List<String> getCDATATags(String html)
-    {
+    List<String> getCDATATags(String html) {
         ArrayList<String> list = new ArrayList<>();
-        String startTag="<![CDATA[";
+        String startTag = "<![CDATA[";
         String endTag = "//]]>";
 
         int ch = 0;
-        for (;;)
-        {
+        for (; ; ) {
             int start = html.indexOf(startTag, ch);
             if (start == -1) break;
             int end = html.indexOf(endTag, ch);
-            assert(end!=-1);
+            assert (end != -1);
             if (end == -1) break;
-            String cdata = html.substring(start+startTag.length(), end).trim();
+            String cdata = html.substring(start + startTag.length(), end).trim();
             list.add(cdata);
-            ch = end+endTag.length();
+            ch = end + endTag.length();
         }
 
 
@@ -46,21 +44,17 @@ public enum BookPageParser {
         // HTMLUtil.debugNode(page, "book_info");
         String xml = page.asXml();
         List<String> cdataList = getCDATATags(xml);
-        for (String cd:cdataList)
-        {
-            if (cd.startsWith("["))
-            {
+        for (String cd : cdataList) {
+            if (cd.startsWith("[")) {
                 cd = cd.replace("\n", "");      // getting parse errors.
 
                 try {
                     JSONArray jsonArray = new JSONArray(cd);
-                    for (int x=0;x<jsonArray.length();x++)
-                    {
+                    for (int x = 0; x < jsonArray.length(); x++) {
                         JSONObject obj = jsonArray.getJSONObject(x);
                         extractFromJSON(obj, b);
                     }
-                }catch(Throwable th)
-                {
+                } catch (Throwable th) {
                     LOG.info(cd);
                     LOG.error("cdata json parse error", th);
                 }
@@ -83,14 +77,12 @@ public enum BookPageParser {
 
         // LOG.info(obj.toString(2));
 
-        for (String k:obj.keySet())
-        {
+        for (String k : obj.keySet()) {
             Object value = obj.get(k);
-            String str = value!=null ? value.toString():"";
+            String str = value != null ? value.toString() : "";
             BookElement elem = null;
 
-            switch(k)
-            {
+            switch (k) {
                 case "description":
                     elem = BookElement.summary;     // our summary is the description
                     break;
@@ -123,10 +115,10 @@ public enum BookPageParser {
                 case "aggregateRating":
                     JSONObject rating = obj.getJSONObject(k);
                     double rvalue = rating.optDouble("ratingValue", 0);
-                    int rcount = rating.optInt("ratingCount",0);
-                    if (rvalue>0)
-                    b.setRating_average(rvalue);
-                    if (rcount>0)
+                    int rcount = rating.optInt("ratingCount", 0);
+                    if (rvalue > 0)
+                        b.setRating_average(rvalue);
+                    if (rcount > 0)
                         b.setRating_count(rcount);
                     break;
                 case "name":
@@ -140,8 +132,7 @@ public enum BookPageParser {
                     break;
             }
 
-            if (elem!=null && !str.isEmpty())
-            {
+            if (elem != null && !str.isEmpty()) {
                 if (!str.equals(b.get(elem))) {
                     LOG.info("set " + elem + " from " + b.get(elem) + " to " + str);
                     b.set(elem, str);
@@ -163,15 +154,13 @@ public enum BookPageParser {
     // array of 'person' objects.
     private String personToString(JSONArray arr) {
         String out = "";
-        for (int x=0;x<arr.length();x++)
-        {
+        for (int x = 0; x < arr.length(); x++) {
             JSONObject p = arr.getJSONObject(x);
-            assert(p.getString("@type").equals("Person"));
-            String name = p.optString("name","");
-            if (!name.isEmpty())
-            {
+            assert (p.getString("@type").equals("Person"));
+            String name = p.optString("name", "");
+            if (!name.isEmpty()) {
                 if (!out.isEmpty())
-                    out+=",";
+                    out += ",";
                 out += name;
             }
         }

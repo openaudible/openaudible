@@ -69,8 +69,8 @@ public class Book implements Comparable<Book>, Serializable {
     }
 
     public boolean equals(Book that) {
-        if (that==null) return false;
-        if (this==that) return true;
+        if (that == null) return false;
+        if (this == that) return true;
         boolean e1 = this.getProduct_id().equals(that.getProduct_id());
         return e1;
     }
@@ -208,7 +208,7 @@ public class Book implements Comparable<Book>, Serializable {
     }
 
     public void setRating_average(double rating_average) {
-        set(BookElement.rating_average, ""+ rating_average);
+        set(BookElement.rating_average, "" + rating_average);
     }
 
     public String getRating_count() {
@@ -218,8 +218,9 @@ public class Book implements Comparable<Book>, Serializable {
     public void setRating_count(String rating_count) {
         set(BookElement.rating_count, rating_count);
     }
+
     public void setRating_count(int rating_count) {
-        set(BookElement.rating_count, ""+rating_count);
+        set(BookElement.rating_count, "" + rating_count);
     }
 
     public String getRelease_date() {

@@ -17,7 +17,6 @@ import org.openaudible.util.SimpleProcess;
 import org.openaudible.util.SimpleProcess.Results;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public abstract class GUI implements ITranslatable {
@@ -165,22 +164,20 @@ public abstract class GUI implements ITranslatable {
 
     public static void explore(File m) {
 
-        ArrayList<String>cmdLine = new ArrayList<>();
-        
-        switch(Platform.getPlatform())
-        {
-            case mac:
-            	cmdLine.add("open");
+        ArrayList<String> cmdLine = new ArrayList<>();
 
-                if (!m.isDirectory())
-                {
-                	cmdLine.add("-R");
+        switch (Platform.getPlatform()) {
+            case mac:
+                cmdLine.add("open");
+
+                if (!m.isDirectory()) {
+                    cmdLine.add("-R");
                 }
                 break;
             case win:
                 cmdLine.add("Explorer ");
                 cmdLine.add("/select,");
-               
+
                 break;
             case linux:
                 cmdLine.add("gnome-open");
@@ -188,21 +185,20 @@ public abstract class GUI implements ITranslatable {
                 break;
         }
         if (cmdLine.isEmpty()) return;
-        
+
         try {
-        	cmdLine.add(m.getAbsolutePath());
-        	
-        	SimpleProcess p = new SimpleProcess(cmdLine);
-        	p.run();
-        	
-        	Results r = p.getResults();
-        	
+            cmdLine.add(m.getAbsolutePath());
+
+            SimpleProcess p = new SimpleProcess(cmdLine);
+            p.run();
+
+            Results r = p.getResults();
 
 
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
 
     }
 

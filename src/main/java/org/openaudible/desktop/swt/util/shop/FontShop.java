@@ -124,9 +124,8 @@ public class FontShop {
         Display display = Display.getCurrent();
         int sizeAdjust = 0;
         Font fontCopy = null;
-        if (Platform.isLinux())
-        {
-            sizeAdjust -=2;
+        if (Platform.isLinux()) {
+            sizeAdjust -= 2;
         }
 
         switch (id) {

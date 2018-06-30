@@ -22,7 +22,7 @@ public enum VersionCheck {
     public void checkForUpdate(Shell shell, boolean verbose) {
         JSONObject obj = versionCheck();
         String msg = obj.optString("msg");
-        String title = obj.optString("title","Version Check");
+        String title = obj.optString("title", "Version Check");
 
         int diff = obj.optInt("diff", 0);
         if (diff < 0) {
@@ -50,7 +50,7 @@ public enum VersionCheck {
         url += "&version=" + Version.appVersion;
         // url += "&count=" + audible.getBookCount();
         LOG.info("versionCheck: " + url);
-           return HTTPGet.instance.getJSON(url);
+        return HTTPGet.instance.getJSON(url);
     }
 
     /**
@@ -100,27 +100,25 @@ public enum VersionCheck {
             if (diff < 0) {
                 title = "Update Available";
                 msg = "An update is available!\nYour version: " + Version.appVersion + "\nRelease Version:" + releaseVersion;
-                if (obj.optBoolean("required", false))
-                {
+                if (obj.optBoolean("required", false)) {
                     msg += "\nThis upgrade is required. Old versions no longer supported.";
                     CommandCenter.instance.expiredApp = true;
                 }
-                msg += "\n"+obj.optString("old_news", "");
+                msg += "\n" + obj.optString("old_news", "");
 
             } else if (diff > 0) {
                 title = "Using Pre-release";
                 msg = "You appear to be using a pre-release version\nYour version: " + Version.appVersion + "\nLatest Version:" + releaseVersion;
-                msg += "\n"+obj.optString("pre_release_news", "");
+                msg += "\n" + obj.optString("pre_release_news", "");
             } else {
                 title = "No update at this time";
                 msg = "Using the latest release version.";
-                msg += "\n"+obj.optString("current_news", "");
+                msg += "\n" + obj.optString("current_news", "");
                 // allow a news field
             }
 
-            if (obj.has("kill"))
-            {
-                msg +="\n"+obj.getString("kill");
+            if (obj.has("kill")) {
+                msg += "\n" + obj.getString("kill");
                 CommandCenter.instance.expiredApp = true;
             }
 

@@ -90,11 +90,10 @@ public class HTMLUtil {
         return null;
     }
 
-    public static File debugFile(String what)
-    {
+    public static File debugFile(String what) {
         return new File(Directories.getTmpDir(), what);
     }
-    
+
     public static String debugNode(DomNode p, String what) {
         String xml = "";
 

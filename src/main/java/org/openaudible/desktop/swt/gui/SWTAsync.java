@@ -15,7 +15,7 @@ public abstract class SWTAsync implements Runnable {
     public static boolean quit = false;
     public static boolean useStack = Version.appDebug;
     public static boolean useTimer = Version.appDebug;
-    static Hashtable <String, TimeStats>timeResults = new Hashtable<>(); //
+    static Hashtable<String, TimeStats> timeResults = new Hashtable<>(); //
     static long block_count = 0;
     Exception stack = null;
     final String taskName;

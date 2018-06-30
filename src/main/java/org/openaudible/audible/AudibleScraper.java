@@ -53,7 +53,6 @@ public class AudibleScraper {
     }
 
 
-
     public HtmlPage getPage() {
         return page;
     }
@@ -123,7 +122,7 @@ public class AudibleScraper {
         setLoggedIn(false);
     }
 
-	public void saveCookies() throws IOException {
+    public void saveCookies() throws IOException {
 
         CookieManager cm = getWebClient().getCookieManager();
         ArrayList<BasicClientCookie> list = new ArrayList<>();
@@ -216,18 +215,15 @@ public class AudibleScraper {
         setPage(submit.click());
         boolean ok = checkLoggedIn();
 
-        if (!ok)
-        {
+        if (!ok) {
             HTMLUtil.debugNode(page, "login failed");
             LOG.info(page.getUrl());
-            
-            LOG.info("Login failed, see html files at:"+HTMLUtil.debugFile("submitting-credentials").getAbsolutePath()+" and "+HTMLUtil.debugFile("login failed").getAbsolutePath());
-        
-        
-        }
-        else
-        {
-        	HTMLUtil.debugFile("submitting-credentials").delete();
+
+            LOG.info("Login failed, see html files at:" + HTMLUtil.debugFile("submitting-credentials").getAbsolutePath() + " and " + HTMLUtil.debugFile("login failed").getAbsolutePath());
+
+
+        } else {
+            HTMLUtil.debugFile("submitting-credentials").delete();
         }
 
         return ok;
@@ -446,7 +442,6 @@ public class AudibleScraper {
     }
 
 
-
     public Collection<Book> fetchLibraryQuick(HashMap<String, Book> books) throws Exception {
         return _fetchLibrary(books);
     }
@@ -454,14 +449,14 @@ public class AudibleScraper {
     public Collection<Book> _fetchLibrary(HashMap<String, Book> existingBooks) throws Exception {
         if (page == null)
             home();
-       // LOG.info("Accessing audible library...");
+        // LOG.info("Accessing audible library...");
         HashSet<Book> results = new HashSet<>();
         // getWebClient().setJavascriptEnabled(false);
         progress.setTask("Scanning your library to get your list of books...", "");
         int pageNum = 0;
         HtmlElement next = null;
         String prev = "";
-        LibraryParser.instance.howToListenFound=false;
+        LibraryParser.instance.howToListenFound = false;
 
         while (true) {
             progress.throwCanceled();
@@ -529,8 +524,7 @@ public class AudibleScraper {
 
             if (newBooks == 0) {
 
-                if (LibraryParser.instance.howToListenFound)
-                {
+                if (LibraryParser.instance.howToListenFound) {
                     LOG.error("Looks like your settings need changing. Using your browser, go to Audible: Account: Settings. Then disable: Check for Audible Download Manager ");
                     throw new AudibleSettingsError();
                 }
@@ -548,9 +542,8 @@ public class AudibleScraper {
         return results;
     }
 
-    private void setPageFilter() 
-	{
-	    try {
+    private void setPageFilter() {
+        try {
             DomElement purchaseDateFilter = page.getElementByName("purchaseDateFilter");
             if (purchaseDateFilter != null && purchaseDateFilter instanceof HtmlSelect) {
                 HtmlSelect h = (HtmlSelect) purchaseDateFilter;
@@ -580,16 +573,14 @@ public class AudibleScraper {
             } else {
                 LOG.info("warning: did not find library filter htmlSelect.");
             }
-        } catch(Throwable th)
-        {
+        } catch (Throwable th) {
             LOG.error("Unable to set purchaseDateFilter.", th);
         }
-		
-	}
+
+    }
 
 
-
-	public Collection<Book> fetchLibrary() throws Exception {
+    public Collection<Book> fetchLibrary() throws Exception {
         return _fetchLibrary(null);
     }
 
@@ -603,7 +594,6 @@ public class AudibleScraper {
         String url = getAudibleBase() + b.getInfoLink();
         return url;
     }
-
 
 
     public boolean hasInfo(Book b) {

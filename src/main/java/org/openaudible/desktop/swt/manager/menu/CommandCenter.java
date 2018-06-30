@@ -29,7 +29,7 @@ import org.openaudible.desktop.swt.util.shop.WidgetShop;
 public class CommandCenter {
     public final static Log logger = LogFactory.getLog(CommandCenter.class);
     public static CommandCenter instance;
-    public boolean expiredApp =false;
+    public boolean expiredApp = false;
     boolean confirmQuit = true;
     boolean confirmSave = true;
     private Clipboard cb;
@@ -289,7 +289,7 @@ public class CommandCenter {
 
     public boolean getEnabled(Command c) {
         if (expiredApp)
-            return c==Command.Quit || c==Command.Check_For_Update || c==Command.About;
+            return c == Command.Quit || c == Command.Check_For_Update || c == Command.About;
         switch (c) {
             case Convert:
                 return AudibleGUI.instance.canConvert();

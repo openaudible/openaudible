@@ -86,10 +86,10 @@ public class SimpleProcess {
 
 
         } finally {
-        	if (is!=null)
-            is.finish();
-        	if (err!=null)
-            err.finish();
+            if (is != null)
+                is.finish();
+            if (err != null)
+                err.finish();
 
         }
 

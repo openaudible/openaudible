@@ -52,8 +52,7 @@ public class ConnectionNotifier extends EventNotifier<ConnectionListener> implem
     public boolean isDisconnected() {
         return getState() == State.Disconnected;
     }
-    
-    
+
 
     // not connected is unknown.
     // connected means in account
@@ -63,15 +62,13 @@ public class ConnectionNotifier extends EventNotifier<ConnectionListener> implem
     }
 
 
-
-	@Override
-	public void loginFailed(String url, String html)
-	{
+    @Override
+    public void loginFailed(String url, String html) {
         for (ConnectionListener l : getListeners()) {
             l.loginFailed(url, html);
         }
-		
-	}
+
+    }
 }
 
 

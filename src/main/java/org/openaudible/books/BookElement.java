@@ -10,8 +10,7 @@ public enum BookElement {
         try {
             return BookElement.valueOf(s);
         } catch (Throwable th) {
-            switch(s)
-            {
+            switch (s) {
                 case "title":
                     return shortTitle;
                 case "DownloadType":

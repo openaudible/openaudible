@@ -144,12 +144,11 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
         }
     }
 
-	@Override
-	public void loginFailed(String url, String html)
-	{
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void loginFailed(String url, String html) {
+        // TODO Auto-generated method stub
+
+    }
 
 
 }

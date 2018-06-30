@@ -109,16 +109,15 @@ public class AudibleBrowser {
             AudibleBrowser app = new AudibleBrowser(shell, url);
             shell.open();
             return app;
-        } catch(Throwable th)
-        {
+        } catch (Throwable th) {
             shell.dispose();
-            String err = "Uh oh. An error occurred opening the internal web browser. \n\nThis means your system may not be compatible with this version of OpenAudible.\n\nCheck the console window and copy this error and stack trace below. \n"+
+            String err = "Uh oh. An error occurred opening the internal web browser. \n\nThis means your system may not be compatible with this version of OpenAudible.\n\nCheck the console window and copy this error and stack trace below. \n" +
                     "Create or view existing code issues at:\nhttps://github.com/openaudible/openaudible/issues \n";
-            String m = ""+ th.getMessage();
+            String m = "" + th.getMessage();
             m = m.replace("No more handles", "");
             m = m.replace("[", " ");
             m = m.replace("]", " ");
-            err += "\n\nError code:\n"+m.trim();
+            err += "\n\nError code:\n" + m.trim();
             logger.error(err, th);
             MessageBoxFactory.showError(null, "Error opening internal web browser", err);
             return null;
@@ -267,11 +266,9 @@ public class AudibleBrowser {
                     // https://www.audible.com/
                     String host = "www.audible.com";
 
-                    if (u.startsWith("http"))
-                    {
+                    if (u.startsWith("http")) {
                         String[] parts = u.split("/");
-                        if (parts!=null && parts.length>2)
-                        {
+                        if (parts != null && parts.length > 2) {
                             if (parts[2].contains("audible"))
                                 host = parts[2];
                         }
@@ -287,7 +284,7 @@ public class AudibleBrowser {
                     cookies = list;
                 } else
                     logger.info("Expected url to include audible, instead: " + u);
-               
+
                 logger.info("cookieCallback: " + list.size());
 
                 return null;

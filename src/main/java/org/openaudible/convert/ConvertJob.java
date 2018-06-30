@@ -91,8 +91,7 @@ public class ConvertJob implements IQueueJob, LineListener {
                 }
             }
 
-        } else
-        {
+        } else {
             stdErr.accept(s);
         }
 
@@ -139,7 +138,6 @@ public class ConvertJob implements IQueueJob, LineListener {
 
 
         }
-
 
 
         args.add("-codec:a");
@@ -224,7 +222,7 @@ public class ConvertJob implements IQueueJob, LineListener {
     private void addTag(ArrayList<String> args, String key, String value) {
         if (!value.isEmpty()) {
             args.add("-metadata");
-            args.add("key="+key);
+            args.add("key=" + key);
             value = value.replace("\"", "");
 
             args.add(value);
@@ -251,7 +249,6 @@ public class ConvertJob implements IQueueJob, LineListener {
     }
 
 
-
     public void renameMP3() throws IOException {
         boolean ok = temp.renameTo(mp3);
         if (!ok) {
@@ -259,7 +256,7 @@ public class ConvertJob implements IQueueJob, LineListener {
             Files.copy(temp.toPath(), mp3.toPath());
             temp.delete();
             if (!mp3.exists())
-                throw new IOException("Error renaming: " + temp.getAbsolutePath() + " size ["+temp.length()+"] to " + mp3.getAbsolutePath()+" mp3 exists="+mp3.exists());
+                throw new IOException("Error renaming: " + temp.getAbsolutePath() + " size [" + temp.length() + "] to " + mp3.getAbsolutePath() + " mp3 exists=" + mp3.exists());
         }
     }
 
@@ -278,7 +275,7 @@ public class ConvertJob implements IQueueJob, LineListener {
             if (progress != null)
                 progress.setTask(null, "Complete");
         } catch (Exception e) {
-            LOG.error("Error converting book:"+book, e);
+            LOG.error("Error converting book:" + book, e);
             if (progress != null) {
                 progress.setSubTask(e.getMessage());
             }

@@ -32,7 +32,7 @@ import java.util.List;
 
 /**
  * Built from the following specifications:
- *
+ * <p>
  * RSS Spec: http://cyber.law.harvard.edu/rss/rss.html
  * ATOM Spec: https://tools.ietf.org/html/rfc4287
  * Itunes Spec: http://www.apple.com/itunes/podcasts/specs.html

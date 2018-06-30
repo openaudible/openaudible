@@ -124,18 +124,16 @@ public class BookTable extends EnumTable<Book, BookTableColumn> implements BookL
 
     public String getColumnDisplayable(BookTableColumn column, Book b) {
         String s;
-        if (column.equals(BookTableColumn.Time))
-        {
+        if (column.equals(BookTableColumn.Time)) {
 
             //long seconds = TimeToSeconds.parseTimeStringToSeconds(b.getDuration());
-           // TimeToSeconds.secondsToTime()
+            // TimeToSeconds.secondsToTime()
             return b.getDuration();
 
         }
         s = super.getColumnDisplayable(column, b);
         return s;
     }
-
 
 
     public Comparable<?> getColumnComparable(BookTableColumn column, Book b) {

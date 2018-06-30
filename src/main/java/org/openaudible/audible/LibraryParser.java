@@ -105,15 +105,12 @@ public enum LibraryParser {
                 continue;    // skip header row.
             Book b = parseLibraryRow(r);
 
-            if (b != null)
-            {
+            if (b != null) {
                 String chk = b.checkBook();
-                if (chk.isEmpty())
-                {
+                if (chk.isEmpty()) {
                     list.add(b);
-                } else
-                {
-                    LOG.info("Warning, problem parsing book: "+b+" error: "+chk);
+                } else {
+                    LOG.info("Warning, problem parsing book: " + b + " error: " + chk);
                 }
             }
 
@@ -133,8 +130,7 @@ public enum LibraryParser {
         String xml = Util.cleanString(r.asXml());
         if (r.getCells().size() == 0)
             return null;    // empty row.
-        if (xml.contains("/howtolisten"))
-        {
+        if (xml.contains("/howtolisten")) {
             // this is a problem.. settings need to be changed.
             howToListenFound = true;
         }
@@ -155,8 +151,8 @@ public enum LibraryParser {
 
         if (!debugString.isEmpty()) {
             int count = Util.substringCount(debugString, xml);
-            if (count>0)
-                LOG.info("Found debugString: " + count + " "+debugString);
+            if (count > 0)
+                LOG.info("Found debugString: " + count + " " + debugString);
         }
 
         if (debug) HTMLUtil.debugNode(r, "cur_row");
@@ -267,7 +263,7 @@ public enum LibraryParser {
 
         HashMap<String, String> args = Util.urlGetArgs(url);
         for (String k : args.keySet()) {
-            
+
             BookElement elem = BookElement.findByName(k);
             if (elem != null) {
                 b.set(elem, args.get(k));
