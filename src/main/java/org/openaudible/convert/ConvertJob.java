@@ -13,6 +13,7 @@ import org.openaudible.util.queues.IQueueJob;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -29,6 +30,7 @@ public class ConvertJob implements IQueueJob, LineListener {
     private IProgressTask progress;
     final String duration;
     final static int mp3Qscale = 6;       // audio quality value 0 to 9. See https://trac.ffmpeg.org/wiki/Encode/MP3
+    static boolean addAdditionalTags = true;
 
     public ConvertJob(Book b) {
         book = b;
@@ -207,13 +209,19 @@ public class ConvertJob implements IQueueJob, LineListener {
 
 
     public void tagMP3() throws Exception {
-        TagMP3AudioBook.setMP3Tags(book, temp, image);
+
+        if (addAdditionalTags)
+            TagMP3AudioBook.setMP3Tags(book, temp, image);
     }
 
     public void renameMP3() throws IOException {
         boolean ok = temp.renameTo(mp3);
         if (!ok) {
-            throw new IOException("Error renaming: " + temp.getAbsolutePath() + " to " + mp3.getAbsolutePath());
+            mp3.delete();
+            Files.copy(temp.toPath(), mp3.toPath());
+            temp.delete();
+            if (!mp3.exists())
+                throw new IOException("Error renaming: " + temp.getAbsolutePath() + " size ["+temp.length()+"] to " + mp3.getAbsolutePath()+" mp3 exists="+mp3.exists());
         }
     }
 
@@ -235,6 +243,7 @@ public class ConvertJob implements IQueueJob, LineListener {
             if (progress != null)
                 progress.setTask(null, "Complete");
         } catch (Exception e) {
+            LOG.error("Error converting book:"+book, e);
             if (progress != null) {
                 progress.setSubTask(e.getMessage());
             }
