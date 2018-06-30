@@ -337,10 +337,25 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 
                     MessageBoxFactory.showGeneral(null, 0, "Log in via web browser...", "Unable to connect right now.\n\nTry logging on to Audible from this web page and try again.\n\nIf this keeps ");
 
-                } catch (Throwable e) {
+                } catch(AudibleSettingsError ase){
+                    String msg = "OpenAudible detected a problem trying to get your book list.\n\n";
+                    msg += "Please change your settings in "+audible.getAudibleURL()+".\n"+
+                            "Log into your audible account, click on the Account link, then settings.\n" +
+                                "  "+browseSettings()+"\n"+
+                            "Uncheck (disable) the setting marked: Check for Audible Download Manager\n\n"+
+                            "After changing the setting, try again. \n"+
+                            "(You may also want to check for an update or other known problems.)";
+
+                    MessageBoxFactory.showError(null, "Audible settings need to be changed", msg);
+                }
+                catch (Throwable e) {
                     LOG.info("Error refreshing library", e);
-                    if (!wasCanceled())
+                    if (!wasCanceled()) {
+
+
                         showError(e, "refreshing library");
+                    }
+
                 } finally {
                     audible.setProgress(null);
                 }
@@ -778,7 +793,13 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     }
 
 
+    public String browseSettings() {
+        return audible.getAudibleURL() + "/account/settings";
+    }
+
+
     public void browse(final String url) {
+
 
         SWTAsync.run(new SWTAsync("browse") {
             @Override

@@ -20,6 +20,7 @@ public enum LibraryParser {
     private static final Log LOG = LogFactory.getLog(LibraryParser.class);
     boolean debug = false;
 
+    boolean howToListenFound = false;
 
 
     // Expected Columns:
@@ -100,10 +101,22 @@ public enum LibraryParser {
         for (HtmlTableRow r : table.getRows()) {
 
             rindex++;
-            if (rindex == 1) continue;    // skip header row.
+            if (rindex == 1)
+                continue;    // skip header row.
             Book b = parseLibraryRow(r);
-            if (b != null && b.isOK())
-                list.add(b);
+
+            if (b != null)
+            {
+                String chk = b.checkBook();
+                if (chk.isEmpty())
+                {
+                    list.add(b);
+                } else
+                {
+                    LOG.info("Warning, problem parsing book: "+b+" error: "+chk);
+                }
+            }
+
         }
 
         LOG.info("Library page contains: " + list.size() + " book(s)");
@@ -112,7 +125,7 @@ public enum LibraryParser {
     }
 
 
-    String debugString = "BK_PENG_003023xxx";
+    String debugString = "OR_ORIG";
 
 
     private Book parseLibraryRow(HtmlTableRow r) {
@@ -120,7 +133,11 @@ public enum LibraryParser {
         String xml = Util.cleanString(r.asXml());
         if (r.getCells().size() == 0)
             return null;    // empty row.
-
+        if (xml.contains("/howtolisten"))
+        {
+            // this is a problem.. settings need to be changed.
+            howToListenFound = true;
+        }
 
         if (r.getCells().size() != BookColumns.size()) {
             LOG.error("wrong number of columns found: " + r.getCells().size() + " != " + BookColumns.size());
@@ -136,8 +153,11 @@ public enum LibraryParser {
         b.setAsin(asin);
 
 
-        int count = Util.substringCount(debugString, xml);
-        LOG.info("Found " + count + " product_id");
+        if (!debugString.isEmpty()) {
+            int count = Util.substringCount(debugString, xml);
+            if (count>0)
+                LOG.info("Found debugString: " + count + " "+debugString);
+        }
 
         if (debug) HTMLUtil.debugNode(r, "cur_row");
         List<HtmlElement> cells = r.getElementsByTagName("td");

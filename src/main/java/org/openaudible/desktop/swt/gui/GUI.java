@@ -13,9 +13,12 @@ import org.openaudible.desktop.swt.manager.menu.CommandCenter;
 import org.openaudible.desktop.swt.util.shop.LayoutShop;
 import org.openaudible.desktop.swt.util.shop.PaintShop;
 import org.openaudible.util.Platform;
+import org.openaudible.util.SimpleProcess;
+import org.openaudible.util.SimpleProcess.Results;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public abstract class GUI implements ITranslatable {
     /**
@@ -162,34 +165,44 @@ public abstract class GUI implements ITranslatable {
 
     public static void explore(File m) {
 
-        String mac = "open ";
-
-
-        String cmd = null;
+        ArrayList<String>cmdLine = new ArrayList<>();
+        
         switch(Platform.getPlatform())
         {
-
             case mac:
-                cmd = "open ";
-                if (!m.isDirectory()) cmd += "-R ";
+            	cmdLine.add("open");
+
+                if (!m.isDirectory())
+                {
+                	cmdLine.add("-R");
+                }
                 break;
             case win:
-                cmd = "Explorer /select, ";
+                cmdLine.add("Explorer ");
+                cmdLine.add("/select,");
+               
                 break;
             case linux:
-                cmd = "gnome-open PATH ";
+                cmdLine.add("gnome-open");
+                cmdLine.add("PATH");
                 break;
         }
+        if (cmdLine.isEmpty()) return;
+        
+        try {
+        	cmdLine.add(m.getAbsolutePath());
+        	
+        	SimpleProcess p = new SimpleProcess(cmdLine);
+        	p.run();
+        	
+        	Results r = p.getResults();
+        	
 
-        if (cmd != null) {
-            cmd += "\"" + m.getAbsolutePath() + "\"";
-            System.err.println(cmd);
-            try {
-                Runtime.getRuntime().exec(cmd);
-            } catch (IOException e) {
+
+            } catch (Throwable e) {
                 e.printStackTrace();
             }
-        }
+        
 
     }
 

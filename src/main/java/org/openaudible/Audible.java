@@ -506,7 +506,7 @@ public class Audible implements IQueueListener<Book> {
     public ArrayList<Book> toDownload() {
         ArrayList<Book> list = new ArrayList<>();
         for (Book b : getBooks()) {
-            if (!hasAAX(b) && !hasMP3(b))
+            if (!hasAAX(b) && !hasMP3(b) && downloadQueue.canAdd(b))
                 list.add(b);
         }
         return list;
@@ -515,7 +515,7 @@ public class Audible implements IQueueListener<Book> {
     public ArrayList<Book> toConvert() {
         ArrayList<Book> list = new ArrayList<>();
         for (Book b : getBooks()) {
-            if (hasAAX(b) && !hasMP3(b))
+            if (hasAAX(b) && !hasMP3(b) && convertQueue.canAdd(b))
                 list.add(b);
 
         }

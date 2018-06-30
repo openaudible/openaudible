@@ -4,8 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -196,7 +194,7 @@ public class Preferences extends Dialog {
         String loc = Directories.getDir(Directories.META).getAbsolutePath();
         String name = Directories.META.displayName();
         Label l = new Label(c, SWT.NONE);
-        l.setText(name+": "+loc);
+        l.setText(name + ": " + loc);
 
         GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 
@@ -212,7 +210,7 @@ public class Preferences extends Dialog {
 
     private void createAccountGroup(GridComposite c) {
 
-        Group group = c.newGroup("Audible Account", 3);
+        Group group = c.newGroup("Audible Account", 2);
         group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
         GridData gd;
 
@@ -221,13 +219,12 @@ public class Preferences extends Dialog {
             region.add(r.displayName());
         }
         gd = new GridData();
-        gd.widthHint = 250;
+        gd.widthHint = 200;
         region.setLayoutData(gd);
 
-        new Label(group, 0);
+        // new Label(group, 0);
 
         email = GridComposite.newTextPair(group, "Audible Email");
-        new Label(group, 0);
         gd = new GridData();
         gd.widthHint = 250;
         email.setLayoutData(gd);
@@ -240,10 +237,10 @@ public class Preferences extends Dialog {
         gd.widthHint = 50;
 
 
-        gd = new GridData();
-        gd.widthHint = 150;
-        region.setLayoutData(gd);
-
+//        gd = new GridData();
+//        gd.widthHint = 150;
+//        region.setLayoutData(gd);
+//
         // key.setEditable(false);
     }
 

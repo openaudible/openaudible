@@ -461,6 +461,7 @@ public class AudibleScraper {
         int pageNum = 0;
         HtmlElement next = null;
         String prev = "";
+        LibraryParser.instance.howToListenFound=false;
 
         while (true) {
             progress.throwCanceled();
@@ -526,8 +527,18 @@ public class AudibleScraper {
                 }
             }
 
-            if (newBooks == 0)
+            if (newBooks == 0) {
+
+                if (LibraryParser.instance.howToListenFound)
+                {
+                    LOG.error("Looks like your settings need changing. Using your browser, go to Audible: Account: Settings. Then disable: Check for Audible Download Manager ");
+                    throw new AudibleSettingsError();
+                }
+
                 break;
+            }
+
+
             next = LibraryParser.instance.getNextPage(page);
             if (next == null)
                 break;
