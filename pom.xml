@@ -142,6 +142,14 @@
             <id>maven-eclipse-repo</id>
             <url>http://maven-eclipse.github.io/maven</url>
         </repository>
+
+
+            <repository>
+                <id>jaudiotagger-repository</id>
+                <url>https://dl.bintray.com/ijabz/maven</url>
+            </repository>
+
+
     </repositories>
 
 
@@ -214,6 +222,12 @@
             <artifactId>log4j-core</artifactId>
             <version>2.3</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.jthink</groupId>
+            <artifactId>jaudiotagger</artifactId>
+            <version>2.2.3</version>
         </dependency>
 
         <dependency>
