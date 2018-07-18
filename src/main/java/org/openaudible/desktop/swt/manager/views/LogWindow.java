@@ -68,11 +68,12 @@ public class LogWindow {
         data = new GridData(GridData.FILL_BOTH);
         data.horizontalSpan = numCols;
         textView.setLayoutData(data);
-
-        commandLine = new Text(shell, SWT.SINGLE | SWT.BORDER);
-        data = new GridData(GridData.VERTICAL_ALIGN_END);
-        data.horizontalSpan = numCols;
-        commandLine.setLayoutData(data);
+        if (false) {
+            commandLine = new Text(shell, SWT.SINGLE | SWT.BORDER);
+            data = new GridData(GridData.VERTICAL_ALIGN_END);
+            data.horizontalSpan = numCols;
+            commandLine.setLayoutData(data);
+        } else commandLine = null;      // off.. not implemented
 
 
         shell.addListener(SWT.Close, event -> close());

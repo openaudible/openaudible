@@ -310,6 +310,27 @@ public class Audible implements IQueueListener<Book> {
             }
         }
 
+        // Look for books with missing info and re-parse if needed.
+        // Information can be lost if
+        boolean needSave = false;
+        for (Book b:getBooks())
+        {
+            if (!b.has(BookElement.summary) && hasAAX(b))
+            {
+                task.setTask("Updating book information", "Reading "+b);
+                needSave = AAXParser.instance.parseBook(b);
+            }
+        }
+
+        if (needSave)
+        {
+            try {
+                save();
+            } catch (IOException e) {
+                LOG.error("Saving error..", e);
+            }
+        }
+
     }
 
     public void updateFileCache() {
@@ -736,7 +757,7 @@ public class Audible implements IQueueListener<Book> {
 
         if (audibleScraper != null)
             audibleScraper.logout();
-
+        AudibleScraper.deleteCookies();
     }
 
     public String getAudibleURL() {

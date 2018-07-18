@@ -40,6 +40,10 @@ public class ConnectionNotifier extends EventNotifier<ConnectionListener> implem
         return out;
     }
 
+    public void signout()
+    {
+        state = State.SignedOut;
+    }
 
     public State getState() {
         return state;
@@ -58,14 +62,17 @@ public class ConnectionNotifier extends EventNotifier<ConnectionListener> implem
     // connected means in account
     // disconnected means a password is being asked for.
     enum State {
-        Not_Connected, Connected, Disconnected
+        Not_Connected, Connected, Disconnected, SignedOut
     }
 
 
     @Override
     public void loginFailed(String url, String html) {
-        for (ConnectionListener l : getListeners()) {
-            l.loginFailed(url, html);
+
+        if (state!=State.SignedOut) {
+            for (ConnectionListener l : getListeners()) {
+                l.loginFailed(url, html);
+            }
         }
 
     }

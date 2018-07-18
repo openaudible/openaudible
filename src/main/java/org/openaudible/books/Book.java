@@ -288,4 +288,20 @@ public class Book implements Comparable<Book>, Serializable {
     }
 
 
+
+    public String getPurchaseDateSortable() {
+        String date = getPurchaseDate();
+        if (!date.isEmpty()) {
+            String dt[] = date.split("-");
+            if (dt.length == 3) {
+                return "20"+ dt[2] + "-" + dt[0] + "-" + dt[1];    // yyyy-mm-dd for sorting and viewing
+                // warning, y3k bug
+            } else
+            {
+
+            }
+        }
+
+        return date;
+    }
 }

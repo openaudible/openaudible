@@ -26,7 +26,7 @@ public class Preferences extends Dialog {
     final String paths[] = new String[Directories.values().length];
     final Text dirText[] = new Text[dirs.length];
     Combo region;
-    Button autoConvert;
+    Button autoConvert, autoDownload, autoWebPage;
 
     private Text email, password;
     private boolean pathsChanged = false;
@@ -75,6 +75,8 @@ public class Preferences extends Dialog {
         }
 
         autoConvert.setSelection(AudibleGUI.instance.prefs.autoConvert);
+        autoDownload.setSelection(AudibleGUI.instance.prefs.autoDownload);
+        autoWebPage.setSelection(AudibleGUI.instance.prefs.autoWebPage);
 
 
     }
@@ -99,6 +101,8 @@ public class Preferences extends Dialog {
         }
 
         AudibleGUI.instance.prefs.autoConvert = autoConvert.getSelection();
+        AudibleGUI.instance.prefs.autoDownload = autoDownload.getSelection();
+        AudibleGUI.instance.prefs.autoWebPage = autoWebPage.getSelection();
 
 
         if (pathsChanged) {
@@ -165,9 +169,18 @@ public class Preferences extends Dialog {
         Group group = c.newGroup("Automation", 1);
         GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
         group.setLayoutData(gd);
+
+        autoDownload = GridComposite.newCheck(group, "Automatically download books");
+        gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+        autoDownload.setLayoutData(gd);
+
         autoConvert = GridComposite.newCheck(group, "Automatically convert to MP3");
         gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
         autoConvert.setLayoutData(gd);
+
+        autoWebPage = GridComposite.newCheck(group, "Automatically Update Web Page");
+        gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+        autoWebPage.setLayoutData(gd);
     }
 
     /**

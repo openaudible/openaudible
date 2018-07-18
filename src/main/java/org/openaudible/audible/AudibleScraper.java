@@ -113,13 +113,33 @@ public class AudibleScraper {
     }
 
     public void logout() {
+
+        ConnectionNotifier.getInstance().signout();
+
+        try {
+            setURL("/signout");
+        } catch(Throwable th)
+        {
+            LOG.info("signout error, ignorning...");
+
+        }
         CookieManager cm = getWebClient().getCookieManager();
         cm.clearCookies();
         File cookiesFile = Directories.META.getDir(cookiesFileName);
         if (cookiesFile.exists()) {
             cookiesFile.delete();
         }
-        setLoggedIn(false);
+
+
+    }
+
+    public static void deleteCookies()
+    {
+        File cookiesFile = Directories.META.getDir(cookiesFileName);
+        if (cookiesFile.exists()) {
+            cookiesFile.delete();
+        }
+
     }
 
     public void saveCookies() throws IOException {

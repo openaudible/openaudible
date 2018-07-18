@@ -33,7 +33,7 @@ public class AppMenu implements ITranslatable, SelectionListener {
     private final Command[] actionCommands = {Command.ViewInAudible, Command.Show_MP3, Command.Play, Command.Download,
             Command.Convert, Command.Refresh_Book_Info};
     private final Command[] controlCommands = {Command.Connect, Command.Quick_Refresh, Command.Rescan_Library, Command.Download_All, Command.Convert_All,
-            Command.MenuSeparator, Command.Browser}; // , Command.MenuSeparator, Command.Logout};
+            Command.MenuSeparator, Command.Browser, Command.Logout}; // , Command.MenuSeparator, Command.Logout};
 
     private final Command[] aboutCommands = {Command.Help, Command.AppWebPage, Command.Check_For_Update, Command.About};
 

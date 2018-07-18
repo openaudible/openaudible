@@ -12,7 +12,7 @@ import java.util.LinkedList;
 public abstract class ThreadedQueue<E> implements IQueueListener<E> {
     private static final Log LOG = LogFactory.getLog(ThreadedQueue.class);
 
-    final int concurrentJobs;       // number of jobs that can be run at once
+    int concurrentJobs;       // number of jobs that can be run at once
     volatile boolean quit = false;
     int totalThreads = 0;
 
@@ -42,6 +42,8 @@ public abstract class ThreadedQueue<E> implements IQueueListener<E> {
         assert (ok);
         return ok;
     }
+
+
 
     public int size() {
         return queue.size();
@@ -279,6 +281,14 @@ public abstract class ThreadedQueue<E> implements IQueueListener<E> {
                 j.quitJob();
         }
 
+    }
+
+    public int getConcurrentJobs() {
+        return concurrentJobs;
+    }
+
+    public void setConcurrentJobs(int concurrentJobs) {
+        this.concurrentJobs = concurrentJobs;
     }
 
 

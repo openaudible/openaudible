@@ -24,7 +24,7 @@ public class WebPage {
     final File webDir;
     final IProgressTask progress;   // required
     int thumbSize = 200; // If changed, need to change html
-    final static String indexName = "books.html";
+   // final static String indexName = "books.html";
 
     public WebPage(File dir, IProgressTask t) {
         webDir = dir;
@@ -43,7 +43,7 @@ public class WebPage {
         i.rating_count = b.get(BookElement.rating_count);
         i.audible = b.get(BookElement.infoLink);
         i.description = b.get(BookElement.description);
-        i.purchased = b.get(BookElement.purchase_date);
+        i.purchased = b.getPurchaseDateSortable();
         return i;
     }
 

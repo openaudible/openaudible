@@ -180,8 +180,10 @@ public abstract class GUI implements ITranslatable {
 
                 break;
             case linux:
-                cmdLine.add("gnome-open");
-                cmdLine.add("PATH");
+                // gio open %s
+                // gnome-open
+                cmdLine.add("nautilus");
+                cmdLine.add("--browser");
                 break;
         }
         if (cmdLine.isEmpty()) return;
@@ -193,7 +195,7 @@ public abstract class GUI implements ITranslatable {
             p.run();
 
             Results r = p.getResults();
-
+            logger.info(r.getErrorString());
 
         } catch (Throwable e) {
             e.printStackTrace();

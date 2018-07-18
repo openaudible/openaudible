@@ -159,12 +159,8 @@ public class BookTable extends EnumTable<Book, BookTableColumn> implements BookL
             case Title:
                 return b.getFullTitle();
             case Purchased:
-                String date = b.getPurchaseDate();
-                String dt[] = date.split("-");
-                if (dt.length == 3) {
-                    return dt[2] + "-" + dt[0] + "-" + dt[1];    // yy-mm-dd for sorting and viewing
-                }
-                return date;
+                return b.getPurchaseDateSortable();
+
             default:
                 assert (false);
                 break;

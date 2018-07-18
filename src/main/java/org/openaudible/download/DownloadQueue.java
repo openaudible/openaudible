@@ -29,12 +29,12 @@ public class DownloadQueue extends ThreadedQueue<Book> {
     }
 
     public boolean canAdd(Book b) {
-        assert (b.has(BookElement.user_id));
-        assert (b.has(BookElement.product_id));
-        if (!super.canAdd(b)) return false;
-        if (!b.has(BookElement.user_id)) return false;
-        if (!b.has(BookElement.product_id)) return false;
         if (Audible.instance.hasAAX(b)) return false;
+        if (!super.canAdd(b)) return false;
+        if (!b.has(BookElement.user_id))
+            return false;
+        if (!b.has(BookElement.product_id))
+            return false;
         return true;
     }
 

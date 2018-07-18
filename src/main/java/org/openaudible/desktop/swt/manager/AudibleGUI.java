@@ -301,11 +301,14 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     }
 
     public void convertMP3(Collection<Book> list) {
-        bookNotifier.setEnabled(false);
-        audible.convertQueue.addAll(list);
-        bookNotifier.setEnabled(true);
-        bookNotifier.booksUpdated();
+        if (list.size() > 0) {
+            bookNotifier.setEnabled(false);
+            audible.convertQueue.addAll(list);
+            bookNotifier.setEnabled(true);
+            bookNotifier.booksUpdated();
+        }
     }
+
 
     public boolean hasAAX(Book b) {
         return audible.hasAAX(b);
@@ -421,16 +424,26 @@ public class AudibleGUI implements BookListener, ConnectionListener {
                 msg = "You have " + dl.size() + " book(s) to download.\n";
             if (conv.size() != 0)
                 msg = "You have " + conv.size() + " book(s) to convert to MP3\n";
-            msg += "Would you like to start these job(s) now?";
 
             LOG.info(msg + " autoConvert=" + prefs.autoConvert);
+            if (prefs.autoConvert  || prefs.autoDownload)
+            {
+                if (prefs.autoConvert)
+                    convertMP3(conv);
+                if (prefs.autoDownload)
+                    downloadAAX(dl);
 
-            boolean ok = prefs.autoConvert;
-            if (!ok) ok = MessageBoxFactory.showGeneralYesNo(null, "Start jobs?", msg);
-            if (ok) {
-                audible.convertQueue.addAll(conv);
-                audible.downloadQueue.addAll(dl);
+            } else {
+
+                msg += "Would you like to start these job(s) now?";
+
+                boolean ok = MessageBoxFactory.showGeneralYesNo(null, "Start jobs?", msg);
+                if (ok) {
+                    convertMP3(conv);
+                    downloadAAX(dl);
+                }
             }
+
         }
     }
 
@@ -611,8 +624,11 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 
             PageBuilderTask task = new PageBuilderTask(destDir, list);
             ProgressDialog.doProgressTask(task);
-            File index = new File(destDir, "index.html");
+            File index = new File(destDir, "books.html");
             if (index.exists()) {
+
+                LOG.info("Book html file is: "+index.getAbsolutePath());
+
                 try {
                     URI i = index.toURI();
                     String u = i.toString();
@@ -621,6 +637,9 @@ public class AudibleGUI implements BookListener, ConnectionListener {
                 } catch (Exception e) {
                     showError(e, "displaying web page");
                 }
+            } else
+            {
+                assert(false);
             }
 
         } catch (Exception e) {
@@ -837,7 +856,10 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     public boolean logout() {
         SWTAsync.assertGUI();
 
-        if (browser != null && browser.isDisposed()) {
+        if (browser != null && !browser.isDisposed()) {
+
+            String url = userPass.audibleRegion.getBaseURL()+"/signout";
+            browser.setUrl(url);
             browser.close();
         }
 
@@ -848,6 +870,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         } catch (Throwable e) {
             LOG.info("unable to set cookies: ", e);
         }
+
 
         return false;
     }
@@ -929,6 +952,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         public void jobCompleted(final ThreadedQueue<Book> queue, final IQueueJob job, final Book o) {
             booksUpdated();
             bookNotifier.bookUpdated(o);
+            checkAutomation();
         }
 
         @Override
@@ -954,9 +978,9 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         final WebPage pageBuilder;
         final List<Book> books;
 
-        PageBuilderTask(File dest, final List<Book> list) {
+        PageBuilderTask(File destDir, final List<Book> list) {
             super("Creating Your Audiobook Web Page");
-            pageBuilder = new WebPage(dest, this);
+            pageBuilder = new WebPage(destDir, this);
             books = list;
         }
 
@@ -973,6 +997,26 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         }
     }
 
+
+    // called after every book is downloaded or converted.
+    public void checkAutomation()
+    {
+        ArrayList<Book> dl = audible.toDownload();
+        ArrayList<Book> conv = audible.toConvert();
+
+        if (prefs.autoConvert)
+            convertMP3(conv);
+        if (prefs.autoDownload)
+            downloadAAX(dl);
+
+        if (dl.size()==0 && conv.size()==0 && prefs.autoWebPage)
+        {
+            exportWebPage();
+        }
+
+    }
+
+
     public void load() throws IOException {
         Audible.instance.load();
 
@@ -984,6 +1028,14 @@ public class AudibleGUI implements BookListener, ConnectionListener {
                 String content = HTMLUtil.readFile(prefsFile);
                 prefs = gson.fromJson(content, Prefs.class);
             }
+
+            if (prefs.concurrentConversions<1||prefs.concurrentConversions>10)
+                prefs.concurrentConversions = 5;
+            if (prefs.concurrentDownloads<1||prefs.concurrentDownloads>10)
+                prefs.concurrentDownloads = 3;
+
+            audible.convertQueue.setConcurrentJobs(prefs.concurrentConversions);
+            audible.convertQueue.setConcurrentJobs(prefs.concurrentDownloads);
 
 
         } catch (Throwable th) {
