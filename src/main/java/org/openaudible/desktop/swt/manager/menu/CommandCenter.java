@@ -23,7 +23,9 @@ import org.openaudible.desktop.swt.manager.views.Preferences;
 import org.openaudible.desktop.swt.util.shop.WidgetShop;
 
 /**
- * The CommandCenter is responsible to react on user-action. User action may for example occur when any item from the main menu is selected. The execute command is the main switch for running commands
+ * The CommandCenter is responsible to react on user-action.
+ * User action may for example occur when any item from the main menu is selected.
+ * The execute command is the main switch for running commands
  */
 
 public class CommandCenter {
@@ -41,10 +43,6 @@ public class CommandCenter {
         this.app = a;
         instance = this;
         cb = new Clipboard(display);
-    }
-
-    public void search() {
-
     }
 
     public void userError(String s) {
@@ -179,7 +177,7 @@ public class CommandCenter {
 
     public void execute(Command c) {
         CommandCenter e = this;
-        logger.info("Execute: " + c);
+        logger.info("Command: " + c);
 
         switch (c) {
             case About:
@@ -232,7 +230,7 @@ public class CommandCenter {
                 VersionCheck.instance.checkForUpdate(shell, true);
                 break;
             case Export_Web_Page:
-                AudibleGUI.instance.exportWebPage();
+                AudibleGUI.instance.exportWebPage(true);
                 break;
             case Refresh_Book_Info:
                 AudibleGUI.instance.refreshBookInfo();

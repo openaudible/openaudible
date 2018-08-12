@@ -108,7 +108,10 @@ public class AudibleScraper {
             for (BasicClientCookie bc : list) {
                 Cookie c = new Cookie(bc.getDomain(), bc.getName(), bc.getValue());
                 cm.addCookie(c);
+                // LOG.info("Cookie: "+c);
+
             }
+            LOG.info("Loaded "+list.size()+" cookies");
         }
     }
 
@@ -164,8 +167,12 @@ public class AudibleScraper {
         FileUtils.writeByteArrayToFile(cookiesFile, o.getBytes());
     }
 
-
+    static int maxLoginAttempts = 2;
     protected boolean login() throws IOException {
+        return login(0);
+    }
+
+    protected boolean login(int attempt) throws IOException {
 
         AudibleAccountPrefs copy = account;
 
@@ -187,6 +194,8 @@ public class AudibleScraper {
         HtmlForm login = page.getFormByName("signIn");
 
         if (login == null) {
+            // TODO: find sign-in anchor and click it..
+
             LOG.info("login form not found for page:" + page.getTitleText());
             return false;
         }
@@ -220,7 +229,7 @@ public class AudibleScraper {
         HtmlElement captchaImageDiv = findById("ap_captcha_img");
 
         if (captchaImageDiv != null || ap_captcha_table != null) {
-
+            LOG.info("Appears to be a captcha... I am a bot.");
             return false;
         }
 
@@ -240,7 +249,10 @@ public class AudibleScraper {
             LOG.info(page.getUrl());
 
             LOG.info("Login failed, see html files at:" + HTMLUtil.debugFile("submitting-credentials").getAbsolutePath() + " and " + HTMLUtil.debugFile("login failed").getAbsolutePath());
-
+            if (attempt<maxLoginAttempts)
+            {
+                login(attempt+1);
+            }
 
         } else {
             HTMLUtil.debugFile("submitting-credentials").delete();
@@ -278,13 +290,12 @@ public class AudibleScraper {
 
         if (signOut == null && accountDetails == null && signIn == null) {
             HTMLUtil.debugNode(page, "checkLoggedIn");
-
         }
         return isLoggedIn();
     }
 
     public String homeURL() {
-        return "/access";
+        return "/";
     }
 
     public String getPageURL() {
@@ -308,8 +319,7 @@ public class AudibleScraper {
         if (true)
             getWebClient().setJavascriptEnabled(true);
         try {
-            setURL(homeURL());
-            // HTMLUtil.debugNode(page, "homeURL");
+            setURL(homeURL(), "Loading web page...");
 
             if (checkLoggedIn())
                 return;
@@ -355,32 +365,66 @@ public class AudibleScraper {
         return null;
     }
 
-    /*
+    public boolean setURLAndLogIn(String u) throws IOException {
 
-    public boolean clickLib() throws Exception {
-        HtmlAnchor lib=null;
-        for (HtmlAnchor n : page.getAnchors()) {
-            if (n.getHrefAttribute().contains("/lib"))
-                lib = n;
+        setURL(u);
+        if (!checkLoggedIn()) {
+            LOG.info("not logged in after going to:"+u);
+            // trouble.. try again
+            login();
+            return checkLoggedIn();
         }
-
-
-        if (lib!=null) {
-            setPage(lib.click());
-            return true;
-        } else {
-            return false;
-        }
-
-
-
-
-
+        return true;
     }
 
-*/
-
     public void lib() throws Exception {
+        String browserURL = ConnectionNotifier.instance.getLastURL();
+
+        if (!browserURL.isEmpty())
+        {
+            LOG.info("Using library location from browser: "+browserURL);
+            if (setURLAndLogIn(browserURL))
+                return;
+        }
+
+        if (!setURLAndLogIn("/lib"))
+            throw new Exception("Unable to access your library. Try logging in with Browser (Cmd-B) to view your library page and try again..  \n\nThere may also be a change in audible's web site that has broken this code.");
+
+/*
+        HtmlAnchor lib=null;
+        if (page!=null)
+        {
+            String debug = "";
+
+            for (HtmlAnchor  a : page.getAnchors())
+            {
+                String ref = a.getHrefAttribute();
+                debug += ref+"\n";
+                if (a.getHrefAttribute().startsWith("/lib"))
+                {
+                    lib = a;
+                    browserURL = ref;
+                    break;
+                }
+            }
+
+            // LOG.info(debug);
+        }
+
+        if (lib!=null)
+        {
+            page = lib.click();
+            if (!checkLoggedIn()) {
+                LOG.info("Clicked lib, but not logged in anymore.");
+                // trouble.. try again
+                login();
+                if (!checkLoggedIn())
+                    throw new Exception("Got logged out. Try logging in with Browser to your library page and try again..");
+            }
+            return;
+        }
+
+        boolean ok = setURLAndLogIn("/lib");
 
         setURL("/lib");
         if (!checkLoggedIn()) {
@@ -391,6 +435,7 @@ public class AudibleScraper {
             setURL("/lib");
         }
 
+*/
 
     }
 
@@ -493,7 +538,8 @@ public class AudibleScraper {
 
             if (next == null) {
                 assert (pageNum == 1);
-                setURL("/lib", "Reading Library...");
+                lib();
+                // setURL("/lib", "Reading Library...");
                 setPageFilter();
 
             } else {
@@ -565,8 +611,8 @@ public class AudibleScraper {
     private void setPageFilter() {
         try {
             DomElement purchaseDateFilter = page.getElementByName("purchaseDateFilter");
-            if (purchaseDateFilter != null && purchaseDateFilter instanceof HtmlSelect) {
-                HtmlSelect h = (HtmlSelect) purchaseDateFilter;
+
+            HtmlSelect h = (HtmlSelect) purchaseDateFilter;
                 int i = h.getSelectedIndex();
                 if (i != 0) {
                     HtmlOption all = h.getOption(0);
@@ -590,11 +636,11 @@ public class AudibleScraper {
                 }
 
                 return;
-            } else {
-                LOG.info("warning: did not find library filter htmlSelect.");
-            }
+
         } catch (Throwable th) {
-            LOG.error("Unable to set purchaseDateFilter.", th);
+            LOG.info("Unable to set purchaseDateFilter. Writing debug log to no_date.html. This may mean we are unable to get all of your books. You may need to log in with the Browser and set the filters to show all books.");
+            HTMLUtil.debugNode(page, "no_date.html");
+
         }
 
     }

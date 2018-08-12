@@ -612,7 +612,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     }
 
 
-    public void exportWebPage() {
+    public void exportWebPage(boolean showUserInterface) {
         try {
             File destDir = Directories.getDir(Directories.WEB);
 
@@ -622,18 +622,18 @@ public class AudibleGUI implements BookListener, ConnectionListener {
             // sort by purchase date.
             list.sort((b1, b2) -> -1 * b1.getPurchaseDate().compareTo(b2.getPurchaseDate()));
 
-            PageBuilderTask task = new PageBuilderTask(destDir, list);
+            PageBuilderTask task = new PageBuilderTask(destDir, list, prefs.webPageIncludeMP3);
             ProgressDialog.doProgressTask(task);
-            File index = new File(destDir, "books.html");
+            File index = new File(destDir, "index.html");
             if (index.exists()) {
 
-                LOG.info("Book html file is: "+index.getAbsolutePath());
 
                 try {
                     URI i = index.toURI();
                     String u = i.toString();
-                    AudibleGUI.instance.browse(u);
-
+                    LOG.info("Book html file is: "+index.getAbsolutePath()+" url="+u);
+                    if (showUserInterface             )
+                        AudibleGUI.instance.browse(u);
                 } catch (Exception e) {
                     showError(e, "displaying web page");
                 }
@@ -978,9 +978,9 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         final WebPage pageBuilder;
         final List<Book> books;
 
-        PageBuilderTask(File destDir, final List<Book> list) {
+        PageBuilderTask(File destDir, final List<Book> list, boolean includeMP3) {
             super("Creating Your Audiobook Web Page");
-            pageBuilder = new WebPage(destDir, this);
+            pageBuilder = new WebPage(destDir, this, includeMP3);
             books = list;
         }
 
@@ -1011,7 +1011,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 
         if (dl.size()==0 && conv.size()==0 && prefs.autoWebPage)
         {
-            exportWebPage();
+            exportWebPage(false);
         }
 
     }

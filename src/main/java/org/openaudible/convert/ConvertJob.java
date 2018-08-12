@@ -274,8 +274,13 @@ public class ConvertJob implements IQueueJob, LineListener {
             ok = true;
             if (progress != null)
                 progress.setTask(null, "Complete");
+
+            long time = System.currentTimeMillis() - start;
+
+            LOG.info("Converted your "+book+" to mp3: "+mp3.getAbsolutePath()+" size="+mp3.length()+" in " + (time / 1000L) + " seconds.");
+
         } catch (Exception e) {
-            LOG.error("Error converting book:" + book, e);
+            LOG.error("Error converting book to MP3:" + book, e);
             if (progress != null) {
                 progress.setSubTask(e.getMessage());
             }
@@ -288,9 +293,7 @@ public class ConvertJob implements IQueueJob, LineListener {
                     mp3.delete();
             }
         }
-        long time = System.currentTimeMillis() - start;
 
-        LOG.info("converted " + mp3.getAbsolutePath() + " " + (int) time / 1000 + " seconds.");
         return mp3;
     }
 

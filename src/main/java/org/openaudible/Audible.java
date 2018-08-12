@@ -121,6 +121,18 @@ public class Audible implements IQueueListener<Book> {
         }
     }
 
+    // fix book info
+    private Book normalizeBook(Book b)
+    {
+        String link = b.getInfoLink();
+        if (link.startsWith("/"))
+        {
+            // convert to full URL.
+            b.setInfoLink("https://www.audible.com"+link);
+        }
+        return b;
+    }
+
     boolean takeBook(Book b) {
         if (!ok(b)) {
             LOG.warn("invalid book: " + checkBook(b));
@@ -130,6 +142,9 @@ public class Audible implements IQueueListener<Book> {
         if (!hasBook(b)) {
             if (!ignoreBook(b)) {
                 synchronized (books) {
+                    normalizeBook(b);
+
+
                     books.put(b.getProduct_id(), b);
                 }
                 BookNotifier.getInstance().bookAdded(b);
@@ -363,8 +378,9 @@ public class Audible implements IQueueListener<Book> {
                     booksUpdated++;
             }
         }
-        if (booksUpdated > 0 && quick)
-            updateLibrary(false);
+
+//        if (booksUpdated > 0 && quick)
+//            updateLibrary(false);
 
 
         LOG.info("Updated " + list.size() + " books");
@@ -722,7 +738,7 @@ public class Audible implements IQueueListener<Book> {
 
     @Override
     public void jobCompleted(ThreadedQueue<Book> queue, IQueueJob job, Book b) {
-        LOG.info(queue.toString() + " completed:" + b + " size:" + queue.size());
+        LOG.info(queue.toString() + " completed:" + b + " remaining queue size:" + queue.size());
         if (queue == downloadQueue) {
             try {
                 AAXParser.instance.update(b);

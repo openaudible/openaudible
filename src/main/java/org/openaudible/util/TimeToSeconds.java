@@ -70,4 +70,18 @@ public class TimeToSeconds {
         }
     }
 
+    public static String secondsToHHMM(long sec) {
+
+        int m = (int) Math.round(sec/60.0);
+        int h = m/60;
+        m = m%60;
+        if (m>0 || h>0) {
+            String hh = h < 10 ? "0" + h : "" + h;
+            String mm = m < 10 ? "0" + m : "" + m;
+            return hh + ":" + mm;
+        }
+        return "";
+
+    }
+
 }

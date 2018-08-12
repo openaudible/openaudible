@@ -15,6 +15,7 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.*;
 import org.openaudible.Directories;
 import org.openaudible.audible.AudibleClient;
+import org.openaudible.audible.ConnectionNotifier;
 import org.openaudible.desktop.swt.gui.MessageBoxFactory;
 import org.openaudible.desktop.swt.gui.SWTAsync;
 import org.openaudible.util.Platform;
@@ -249,6 +250,20 @@ public class AudibleBrowser {
             data.right = new FormAttachment(100, -5);
             data.bottom = new FormAttachment(100, -5);
             progressBar.setLayoutData(data);
+
+            LocationListener ll = new LocationListener() {
+                @Override
+                public void changing(LocationEvent locationEvent) {
+
+                }
+
+                @Override
+                public void changed(LocationEvent locationEvent) {
+                    ConnectionNotifier.instance.setLastURL(locationEvent.location);
+                }
+            };
+
+            browser.addLocationListener(ll);
 
             browser.addStatusTextListener(event -> status.setText(event.text));
         }

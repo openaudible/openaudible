@@ -8,6 +8,7 @@ import org.openaudible.books.BookElement;
 import org.openaudible.util.HTMLUtil;
 import org.openaudible.util.Util;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,11 +65,11 @@ public enum LibraryParser {
     }
 
 
-    public ArrayList<Book> parseLibraryFragment(DomNode fragment) {
+    public ArrayList<Book> parseLibraryFragment(HtmlPage p) {
         ArrayList<Book> list = new ArrayList<>();
         ArrayList<String> colNames = new ArrayList<>();
 
-        HtmlTable table = fragment.getFirstByXPath("//table");
+        HtmlTable table = p.getFirstByXPath("//table");
         if (table == null)
             return list;
 
@@ -103,7 +104,7 @@ public enum LibraryParser {
             rindex++;
             if (rindex == 1)
                 continue;    // skip header row.
-            Book b = parseLibraryRow(r);
+            Book b = parseLibraryRow(p, r);
 
             if (b != null) {
                 String chk = b.checkBook();
@@ -125,7 +126,7 @@ public enum LibraryParser {
     String debugString = "OR_ORIG";
 
 
-    private Book parseLibraryRow(HtmlTableRow r) {
+    private Book parseLibraryRow(HtmlPage p, HtmlTableRow r) {
 
         String xml = Util.cleanString(r.asXml());
         if (r.getCells().size() == 0)
@@ -160,14 +161,14 @@ public enum LibraryParser {
 
         for (BookColumns col : BookColumns.parseOrder) {
             HtmlElement cell = cells.get(col.ordinal());
-            parseBookColumn(col, cell, b);
+            parseBookColumn(p, col, cell, b);
         }
 
         return b;
     }
 
 
-    private void parseBookColumn(BookColumns col, HtmlElement cell, Book b) {
+    private void parseBookColumn(HtmlPage p, BookColumns col, HtmlElement cell, Book b) {
 
         // HTMLUtil.debugNode(cell, col.name()+".xml");
         String text = Util.cleanString(cell.asText());
@@ -192,24 +193,32 @@ public enum LibraryParser {
                 anchors = cell.getElementsByTagName("a");
                 for (int x = 0; x < anchors.size(); x++) {
                     HtmlAnchor a = (HtmlAnchor) anchors.get(x);
-                    String url = a.getHrefAttribute();
+                    String href = a.getHrefAttribute();
 
                     // /pd/Fiction/Exodus-Audiobook/B008I3VMMQ?
-                    if (url.startsWith("/pd/")) {
-                        int q = url.indexOf("?");
+                    if (href.startsWith("/pd/")) {
+                        URL url = p.getUrl();
+                        String protocol = url.getProtocol();
+                        String host = url.getHost();
+
+                        int q = href.indexOf("?");
                         if (q != -1)
-                            url = url.substring(0, q);
+                            href = href.substring(0, q);
 
                         boolean ok = false;
 
 
-                        if (b.has(BookElement.asin) && url.contains(b.getAsin()))
+                        if (b.has(BookElement.asin) && href.contains(b.getAsin()))
                             ok = true;
 
-                        if (b.has(BookElement.product_id) && url.contains(b.getProduct_id()))
+                        if (b.has(BookElement.product_id) && href.contains(b.getProduct_id()))
                             ok = true;
-                        if (ok)
-                            b.setInfoLink(url);
+                        if (ok) {
+
+                            String full_url = String.format("%s://%s%s", protocol, host, href);
+
+                            b.setInfoLink(full_url);
+                        }
                         else
                             LOG.info("Unknown product link for " + b + " at " + url);
                     }

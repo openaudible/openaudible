@@ -78,7 +78,6 @@ public class Preferences extends Dialog {
         autoDownload.setSelection(AudibleGUI.instance.prefs.autoDownload);
         autoWebPage.setSelection(AudibleGUI.instance.prefs.autoWebPage);
 
-
     }
 
     private void fetch() {

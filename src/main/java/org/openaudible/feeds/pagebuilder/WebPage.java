@@ -2,6 +2,8 @@ package org.openaudible.feeds.pagebuilder;
 
 import com.google.gson.Gson;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.jetty.util.IO;
 import org.openaudible.Audible;
 import org.openaudible.BookToFilenameStrategy;
@@ -18,17 +20,20 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class WebPage {
+    private static final Log LOG = LogFactory.getLog(WebPage.class);
     final File webDir;
     final IProgressTask progress;   // required
     int thumbSize = 200; // If changed, need to change html
-   // final static String indexName = "books.html";
+    final boolean includeMP3;
 
-    public WebPage(File dir, IProgressTask t) {
+    public WebPage(File dir, IProgressTask t, boolean includeMP3) {
         webDir = dir;
         progress = t;
+        this.includeMP3 = includeMP3;
         assert (t != null);
     }
 
@@ -36,26 +41,28 @@ public class WebPage {
         BookInfo i = new BookInfo();
         i.title = b.get(BookElement.fullTitle);
         i.author = b.get(BookElement.author);
-        i.narratedBy = b.get(BookElement.narratedBy);
+        i.narrated_by = b.get(BookElement.narratedBy);
         i.summary = b.get(BookElement.summary);
-        i.run_time = b.get(BookElement.duration);
+        i.duration = b.getDurationHHMM();
         i.rating_average = b.get(BookElement.rating_average);
         i.rating_count = b.get(BookElement.rating_count);
-        i.audible = b.get(BookElement.infoLink);
+
+        i.link_url = b.getInfoLink();
+
         i.description = b.get(BookElement.description);
-        i.purchased = b.getPurchaseDateSortable();
+        i.purchase_date = b.getPurchaseDateSortable();
+        i.release_date = b.getReleaseDateSortable();
         return i;
     }
 
-    public void subtask(Book b, String s) throws Exception {
 
+    public void subtask(Book b, String s) throws Exception {
         String n = b.getShortTitle();
         if (n.length() > 32)
             n = n.substring(0, 28) + "...";
         progress.setSubTask(s + " " + n);
         if (progress.wasCanceled())
             throw new Exception("User canceled");
-
     }
 
     public void buildPage(List<Book> books) throws Exception {
@@ -64,61 +71,73 @@ public class WebPage {
         File coverImages = new File(webDir, "cover");
         File thumbImages = new File(webDir, "thumb");
 
-        if (!mp3Dir.exists())
-            mp3Dir.mkdirs();
         if (!coverImages.exists())
             coverImages.mkdirs();
         if (!thumbImages.exists())
             thumbImages.mkdirs();
-
-
-        Gson gson = new Gson();
         ArrayList<BookInfo> list = new ArrayList<>();
 
-        ArrayList<Book> toCopy = new ArrayList<>();
-        for (Book b : books) {
-            File mp3 = Audible.instance.getMP3FileDest(b);
-            if (!mp3.exists())
-                continue;
-            String fileName = getFileName(b); // human readable, without extension.
-            String mp3Name = fileName + ".mp3";
-            File mp3File = new File(mp3Dir, mp3Name);
+        if (includeMP3) {
+            if (!mp3Dir.exists())
+                mp3Dir.mkdirs();
 
-            if (!mp3File.exists() || mp3File.length() != mp3.length()) {
-                toCopy.add(b);
-            }
-        }
-        if (toCopy.size() > 0) {
             progress.setTask("Copying MP3s to Web Page Directory", "");
-            int count = 1;
-            for (Book b : toCopy) {
-                if (progress.wasCanceled())
-                    throw new Exception("Canceled");
 
+            ArrayList<Book> toCopy = new ArrayList<>();
+            for (Book b : books) {
                 File mp3 = Audible.instance.getMP3FileDest(b);
+                if (!mp3.exists())
+                    continue;
                 String fileName = getFileName(b); // human readable, without extension.
                 String mp3Name = fileName + ".mp3";
                 File mp3File = new File(mp3Dir, mp3Name);
-                progress.setTask("Copying book " + count + " of " + toCopy.size() + " to " + mp3File.getAbsolutePath());
 
-                CopyWithProgress.copyWithProgress(progress, mp3, mp3File);
+                if (!mp3File.exists()) {
+                    toCopy.add(b);
+                } else {
+                    long s1 = mp3File.length();
+                    long s2 = mp3.length();
+                    long m1 = mp3File.lastModified();
+                    long m2 = mp3.lastModified();
 
-                count++;
+                    if (s1 != s2) {
+                        String d1 = m1 != 0 ? new Date(m1).toString() : "0";
+                        String d2 = m2 != 0 ? new Date(m2).toString() : "0";
+                        LOG.info("Replacing book " + mp3.getPath() + " with " + mp3File.getPath() + " s1=" + s1 + " s2=" + s2 + " d1=" + d1 + " d2=" + d2);
+                        boolean ok = mp3.delete();
+                        if (ok)
+                            toCopy.add(b);
+                    }
+                }
             }
 
+            if (toCopy.size() > 0) {
+                int count = 1;
+                for (Book b : toCopy) {
+                    if (progress.wasCanceled())
+                        throw new Exception("Canceled");
+
+                    File mp3 = Audible.instance.getMP3FileDest(b);
+                    String fileName = getFileName(b); // human readable, without extension.
+                    String mp3Name = fileName + ".mp3";
+                    File mp3File = new File(mp3Dir, mp3Name);
+                    progress.setTask("Copying book " + count + " of " + toCopy.size() + " to " + mp3File.getAbsolutePath());
+                    CopyWithProgress.copyWithProgress(progress, mp3, mp3File);
+                    count++;
+                }
+            }
         }
 
-
         progress.setTask("Creating Book Web Page", "");
-
 
         for (Book b : books) {
             File mp3 = Audible.instance.getMP3FileDest(b);
 
-            subtask(b, "Reading");
+            subtask(b, "Compiling book list");
 
-            // only export mp3
-            if (!mp3.exists())
+
+                // only export mp3
+            if (includeMP3 && !mp3.exists())
                 continue;
 
             File img = Audible.instance.getImageFileDest(b);
@@ -130,10 +149,11 @@ public class WebPage {
 
             File coverFile = new File(coverImages, coverName);
             File thumbFile = new File(thumbImages, thumbName);
-            File mp3File = new File(mp3Dir, mp3Name);
 
             BookInfo i = toBookInfo(b);
-            i.mp3 = mp3Name;
+            if (includeMP3)
+                i.mp3 = mp3Name;
+
 
             if (img.exists()) {
                 if (!coverFile.exists() || coverFile.length() != img.length()) {
@@ -151,13 +171,14 @@ public class WebPage {
                 i.image = "";
 
             list.add(i);
+            if (progress.wasCanceled())
+                throw new Exception("User canceled");
 
         }
 
-        if (progress.wasCanceled())
-            throw new Exception("User canceled");
         progress.setTask(null, "Exporting web data");
 
+        Gson gson = new Gson();
         String json = gson.toJson(list);
 
         try (FileWriter writer = new FileWriter(new File(webDir, "books.json"))) {

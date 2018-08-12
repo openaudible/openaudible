@@ -19,6 +19,7 @@ unused/
 caches
 Desktop.ini
 Thumbs.db
+*/Thumbs.db
 
 # java
 *.class

@@ -1,6 +1,8 @@
 package org.openaudible.audible;
 
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openaudible.AudibleAccountPrefs;
 import org.openaudible.util.EventNotifier;
 
@@ -8,6 +10,11 @@ import org.openaudible.util.EventNotifier;
 public class ConnectionNotifier extends EventNotifier<ConnectionListener> implements ConnectionListener {
     public static final ConnectionNotifier instance = new ConnectionNotifier();
     State state = State.Not_Connected;
+    private static final Log LOG = LogFactory.getLog(ConnectionNotifier.class);
+
+    private String lastURL="";
+
+
 
     private ConnectionNotifier() {
     }
@@ -18,11 +25,15 @@ public class ConnectionNotifier extends EventNotifier<ConnectionListener> implem
 
     @Override
     public void connectionChanged(boolean connected) {
-        state = connected ? State.Connected : State.Disconnected;
 
-        for (ConnectionListener l : getListeners()) {
-            l.connectionChanged(connected);
+        State newState = connected ? State.Connected : State.Disconnected;
+        if (state!=newState) {
+            state = newState;
+            for (ConnectionListener l : getListeners()) {
+                l.connectionChanged(connected);
+            }
         }
+
     }
 
     public boolean isConnected() {
@@ -55,6 +66,15 @@ public class ConnectionNotifier extends EventNotifier<ConnectionListener> implem
 
     public boolean isDisconnected() {
         return getState() == State.Disconnected;
+    }
+
+    public String getLastURL() {
+        return lastURL;
+    }
+
+    public void setLastURL(String lastURL) {
+        this.lastURL = lastURL;
+        LOG.info("Setting lastURL to:"+lastURL);
     }
 
 

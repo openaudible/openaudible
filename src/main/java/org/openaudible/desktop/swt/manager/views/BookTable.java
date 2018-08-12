@@ -125,10 +125,9 @@ public class BookTable extends EnumTable<Book, BookTableColumn> implements BookL
     public String getColumnDisplayable(BookTableColumn column, Book b) {
         String s;
         if (column.equals(BookTableColumn.Time)) {
-
             //long seconds = TimeToSeconds.parseTimeStringToSeconds(b.getDuration());
             // TimeToSeconds.secondsToTime()
-            return b.getDuration();
+            return b.getDurationHHMM();
 
         }
         s = super.getColumnDisplayable(column, b);
@@ -153,11 +152,15 @@ public class BookTable extends EnumTable<Book, BookTableColumn> implements BookL
 */
             case Narrated_By:
                 return b.getNarratedBy();
+
             case Time:
                 // compare duration as seconds, not as a string..
                 return TimeToSeconds.parseTimeStringToSeconds(b.getDuration());
             case Title:
                 return b.getFullTitle();
+
+            case Released:
+                return b.getReleaseDateSortable();
             case Purchased:
                 return b.getPurchaseDateSortable();
 
