@@ -511,6 +511,18 @@ public class AudibleScraper {
         return _fetchLibrary(books);
     }
 
+
+    // isPartialBook. A part of a single book. Not to be confused with one of a series.
+    // In the US, productID that ends in a lowercase letter is a partial.
+    // in the UK, a partial book has PUB_000123bUK
+    // So if a book product ID contains any lower case letter, it should be a partial..
+    public boolean isPartialBook(Book b)
+    {
+        String pid = b.getProduct_id();
+        return !pid.equals(pid.toUpperCase());
+    }
+
+
     public Collection<Book> _fetchLibrary(HashMap<String, Book> existingBooks) throws Exception {
         if (page == null)
             home();
@@ -572,8 +584,11 @@ public class AudibleScraper {
 
             for (Book b : list) {
                 // LOG.info(b.toString());
-                if (b.partial())
+                if (isPartialBook(b))
+                {
+                    LOG.error("ignore partial book: " + b);
                     continue;
+                }
                 if (results.contains(b)) {
                     LOG.error("duplicate book:" + b);
                     assert (false);

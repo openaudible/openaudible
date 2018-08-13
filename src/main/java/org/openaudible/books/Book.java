@@ -100,14 +100,6 @@ public class Book implements Comparable<Book>, Serializable {
         return getProduct_id();
     }
 
-    // isPartialBook. A part of a single book. Not to be confused with one of a series.
-    public boolean partial() {
-        String pid = getProduct_id();
-        if (pid.isEmpty()) throw new IllegalStateException("Undefined");
-        char last = pid.charAt(pid.length() - 1);
-        // last character is lowercase letter..
-        return !Character.isDigit(last);
-    }
 
     @Override
     public int compareTo(Book that) {
