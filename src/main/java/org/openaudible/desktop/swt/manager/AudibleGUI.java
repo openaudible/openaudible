@@ -455,6 +455,28 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         downloadAAX(getSelected());
     }
 
+    public void ignoreSelected() {
+        List<Book> sel = getSelected();
+
+        if (!sel.isEmpty())
+        {
+            Book first = sel.get(0);
+            String title = "Are you sure you want to ignore books";
+            String bodySingular = "Are you sure you want to ignore the following book? \n\t"+ first.getFullTitle()+"\n\nIt will be added to the ignore list and not shown in OpenAudible anymore.";
+            String bodyPlurel = "You selected "+sel.size()+" books. Are you sure you want to ignore them? \n\nThey will added to the ignore list and not be shown in OpenAudible anymore.";
+            String body = sel.size()==1 ? bodySingular:bodyPlurel;
+
+            boolean yn = MessageBoxFactory.showGeneralYesNo(getShell(), title,body);
+            if (yn)
+            {
+                audible.addToIgnoreSet(sel);
+                BookNotifier.getInstance().booksUpdated();      // redraw all.
+            }
+
+
+        }
+    }
+
     public void convertSelected() {
         convertMP3(getSelected());
     }
@@ -618,7 +640,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 
             ArrayList<Book> list = new ArrayList<>();
             list.addAll(audible.getBooks());
-            Collections.sort(list);
+            // Collections.sort(list);
             // sort by purchase date.
             list.sort((b1, b2) -> -1 * b1.getPurchaseDate().compareTo(b2.getPurchaseDate()));
 
@@ -736,18 +758,30 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     }
 
 
+    private boolean displayBook(Book b) {
+        if (audible.isIgnoredBook(b))
+            return false;
+
+        if (textFilter.isEmpty()) return true;    // don't skip any books if no filter.
+        String text = textFilter.toLowerCase();
+        BookElement elems[] = {BookElement.fullTitle, BookElement.author, BookElement.narratedBy, BookElement.shortTitle};
+
+        for (BookElement e : elems) {
+            if (b.has(e) && b.get(e).toLowerCase().contains(text))
+                return true;
+        }
+        return false;
+    }
+
+
     // if search text is filled, return books that match.
     // otherwise, return all books (default)
     public List<Book> getDisplayedBooks() {
         ArrayList<Book> displayed = new ArrayList<>();
-        if (textFilter.isEmpty())
-            displayed.addAll(Audible.instance.getBooks());
-        else {
-            for (Book b : Audible.instance.getBooks()) {
-                if (bookContainsText(b, textFilter))
-                    displayed.add(b);
-            }
-
+        for (Book b : Audible.instance.getBooks())
+        {
+            if (displayBook(b))
+                displayed.add(b);
         }
         return displayed;
     }
@@ -757,16 +791,6 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         bookNotifier.booksUpdated();
     }
 
-    private boolean bookContainsText(Book b, String text) {
-        text = text.toLowerCase();
-        BookElement elems[] = {BookElement.fullTitle, BookElement.author, BookElement.narratedBy, BookElement.shortTitle};
-
-        for (BookElement e : elems) {
-            if (b.has(e) && b.get(e).toLowerCase().contains(text))
-                return true;
-        }
-        return false;
-    }
 
     public void parseAAX() {
         ProgressTask task = new ProgressTask("Parse AAX File") {
@@ -1225,10 +1249,11 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     @Override
     public void loginFailed(String url, String html) {
 
-        SWTAsync.slow(new SWTAsync("Login problem...") {
+        SWTAsync.slow(new SWTAsync("Need to open browser...") {
             public void task() {
-                String message = "There was a problem logging in... Try to view the page in the OpenAudible Browser?";
-                boolean ok = MessageBoxFactory.showGeneralYesNo(null, "Trouble logging in", message);
+                String message = "Unable to automatically log in... \n\nPlease use the OpenAudible web browser to log onto your audible account and navigate to your library (list of books) and try to connect again." +
+                        "\n\nOpen OpenAudible Browser Now?";
+                boolean ok = MessageBoxFactory.showGeneralYesNo(null, "Log in to your audible account", message);
                 if (ok)
                     browse(url);
             }

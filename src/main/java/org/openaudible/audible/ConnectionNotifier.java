@@ -74,6 +74,10 @@ public class ConnectionNotifier extends EventNotifier<ConnectionListener> implem
 
     public void setLastURL(String lastURL) {
         this.lastURL = lastURL;
+        if (!lastURL.contains("audible"))
+        {
+            LOG.warn("expected audible");
+        }
         LOG.info("Setting lastURL to:"+lastURL);
     }
 

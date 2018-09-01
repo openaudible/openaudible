@@ -59,6 +59,9 @@ public class Audible implements IQueueListener<Book> {
     private final HashMap<String, Book> books = new HashMap<>(); // Book.id(), Book
     // AudibleRegion region = AudibleRegion.US;
 
+    private final HashSet<String> ignoreSet = new HashSet<>();        // book ID's to ignore.
+
+
     public Audible() {
 
     }
@@ -155,19 +158,61 @@ public class Audible implements IQueueListener<Book> {
     }
 
     Book removeBook(Book b) {
-        Book out = null;
+        Book out;
         synchronized (books) {
-            out = books.remove(b.getProduct_id());
+            out = books.remove(b.id());
         }
         assert (out != null);
         return out;
     }
 
+    public void addToIgnoreSet(Collection<Book> books)
+    {
+        for (Book b:books) {
+            removeBook(b);
+            ignoreSet.add(b.id());
+        }
+        saveIgnoreSet();
+    }
+
+    final static String ignoreSetFileName = "ignore.json";
+    private void loadIgnoreSet() {
+        try {
+            Gson gson = new GsonBuilder().create();
+            File prefsFile = Directories.META.getDir(ignoreSetFileName);
+
+            if (prefsFile.exists()) {
+                String content = HTMLUtil.readFile(prefsFile);
+                HashSet set = gson.fromJson(content, HashSet.class);
+                if (set!=null) {
+                    ignoreSet.clear();
+                    ignoreSet.addAll(set);
+                }
+            }
+        } catch (Throwable th) {
+            LOG.info("Error loadIgnoreSet", th);
+        }
+
+    }
+
+    private void saveIgnoreSet() {
+        if (!ignoreSet.isEmpty()) {
+            Gson gson = new GsonBuilder().create();
+            try {
+                HTMLUtil.writeFile(Directories.META.getDir(ignoreSetFileName), gson.toJson(ignoreSet));
+            }catch(Throwable th)
+            {
+                LOG.error("Error saving ignore list!",th);
+            }
+        }
+    }
+
+
     protected boolean ignoreBook(Book b) {
-        String id = b.getProduct_id();
+        String id = b.id();
         if (id.length() == 0)
             return true;
-        return id.contains("FR_PRMO_");
+        return ignoreSet.contains(b);
     }
 
     public boolean ok(Book b) {
@@ -218,8 +263,7 @@ public class Audible implements IQueueListener<Book> {
         }
         updateFileCache();
         LookupKey.instance.load(Directories.BASE.getDir(keysFileName));
-
-
+        loadIgnoreSet();
     }
 
     public synchronized void save() throws IOException {
@@ -807,5 +851,8 @@ public class Audible implements IQueueListener<Book> {
         return book;
     }
 
+    public boolean isIgnoredBook(Book b) {
+        return ignoreSet.contains(b.id());
+    }
 }
 

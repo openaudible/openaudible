@@ -14,7 +14,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// WebClient to connect to audible.
+// WebClient to connect to audible.com site
 // Cookies are used to track logged in state and can be transfered from external web browser.
 public class AudibleClient extends WebClient {
     private static final Log LOG = LogFactory.getLog(AudibleClient.class);

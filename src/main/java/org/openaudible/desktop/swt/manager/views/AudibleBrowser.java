@@ -22,6 +22,7 @@ import org.openaudible.util.Platform;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -33,7 +34,6 @@ public class AudibleBrowser {
     boolean title = false;
     Composite parent;
     Text locationBar;
-    private Browser browser;
     ToolBar toolbar;
     Canvas canvas;
     ToolItem itemBack, itemForward;
@@ -42,6 +42,7 @@ public class AudibleBrowser {
     SWTError error = null;
     Collection<Cookie> cookies;
     String customHeader[];
+    private Browser browser;
 
     public AudibleBrowser(Composite parent, String url) {
         this.parent = parent;
@@ -70,23 +71,6 @@ public class AudibleBrowser {
             show(false, null, null, false, false, false, false);
 
     }
-
-    // Silence Windows SWT.browser widget from making awful clicks.
-    // For windows 32 and 64 bit SWT applications.
-    // Uses reflection to call OS.CoInternetSetFeatureEnabled(OS.FEATURE_DISABLE_NAVIGATION_SOUNDS, OS.SET_FEATURE_ON_PROCESS, true);
-    // Without importing platform specific
-    // #import org.eclipse.swt.internal.win32.OS
-    private void silenceWindowsExplorer() {
-        try {
-            Class<?> c = Class.forName("org.eclipse.swt.internal.win32.OS");
-            java.lang.reflect.Method method = c.getDeclaredMethod("CoInternetSetFeatureEnabled", Integer.TYPE, Integer.TYPE, Boolean.TYPE);
-            method.invoke(null, new Object[]{21, 2, true});
-        } catch (Throwable th) {
-            // Might fail.. but probably will never do harm.
-            th.printStackTrace();
-        }
-    }
-
 
     /**
      * Gets a string from the resource bundle. We don't want to crash because of a missing String. Returns the key if not found.
@@ -139,15 +123,39 @@ public class AudibleBrowser {
         display.dispose();
     }
 
+    public static void showHelp(Display display) {
+        File dir = Directories.getHelpDirectory();
+        File index = new File(dir, "index.html");
+        if (index.exists()) {
+            URI uri = index.toURI();
+            String u = uri.toString();
+            newBrowserWindow(display, u);
+        } else {
+            MessageBoxFactory.showError(null, "Unable to open help. Expected at:" + index.getAbsolutePath());
+        }
+    }
+
+    // Silence Windows SWT.browser widget from making awful clicks.
+    // For windows 32 and 64 bit SWT applications.
+    // Uses reflection to call OS.CoInternetSetFeatureEnabled(OS.FEATURE_DISABLE_NAVIGATION_SOUNDS, OS.SET_FEATURE_ON_PROCESS, true);
+    // Without importing platform specific
+    // #import org.eclipse.swt.internal.win32.OS
+    private void silenceWindowsExplorer() {
+        try {
+            Class<?> c = Class.forName("org.eclipse.swt.internal.win32.OS");
+            java.lang.reflect.Method method = c.getDeclaredMethod("CoInternetSetFeatureEnabled", Integer.TYPE, Integer.TYPE, Boolean.TYPE);
+            method.invoke(null, new Object[]{21, 2, true});
+        } catch (Throwable th) {
+            // Might fail.. but probably will never do harm.
+            th.printStackTrace();
+        }
+    }
+
     /**
      * Disposes of all resources associated with a particular instance of the BrowserApplication.
      */
     public void dispose() {
         freeResources();
-    }
-
-    public SWTError getError() {
-        return error;
     }
 /*
 
@@ -155,6 +163,10 @@ public class AudibleBrowser {
         return browser;
     }
 */
+
+    public SWTError getError() {
+        return error;
+    }
 
     public void setShellDecoration(Image icon, boolean title) {
         this.icon = icon;
@@ -259,7 +271,25 @@ public class AudibleBrowser {
 
                 @Override
                 public void changed(LocationEvent locationEvent) {
-                    ConnectionNotifier.instance.setLastURL(locationEvent.location);
+
+                    try {
+                        String u = locationEvent.location;
+                        if (u.startsWith("http")) {
+
+                            URL url = new URL(u);
+                            String h = url.getHost();
+                            if (h.contains("audible")) {
+                                ConnectionNotifier.instance.setLastURL(locationEvent.location);
+                            } else
+                            {
+                                System.err.println("ignore non-audible..."+h);
+                            }
+
+                        }
+                    } catch (Throwable th) {
+                        th.printStackTrace();
+                    }
+
                 }
             };
 
@@ -435,18 +465,6 @@ public class AudibleBrowser {
 
     public boolean isDisposed() {
         return browser == null || browser.isDisposed();
-    }
-
-    public static void showHelp(Display display) {
-        File dir = Directories.getHelpDirectory();
-        File index = new File(dir, "index.html");
-        if (index.exists()) {
-            URI uri = index.toURI();
-            String u = uri.toString();
-            newBrowserWindow(display, u);
-        } else {
-            MessageBoxFactory.showError(null, "Unable to open help. Expected at:" + index.getAbsolutePath());
-        }
     }
 
     public void close() {

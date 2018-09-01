@@ -262,6 +262,9 @@ public class CommandCenter {
             case Logout:
                 AudibleGUI.instance.logout();
                 break;
+            case Ignore_Book:
+                AudibleGUI.instance.ignoreSelected();
+                break;
 
             default:
                 logger.info("Unknown cmd: " + c);
@@ -314,7 +317,6 @@ public class CommandCenter {
                 return AudibleGUI.instance.canConvertAll();
             case Logout:
                 return ConnectionNotifier.getInstance().isConnected();
-
             case Preferences:
             case Quit:
             case About:
@@ -327,6 +329,7 @@ public class CommandCenter {
             case Cut:
             case Paste:
                 return false;
+            case Ignore_Book:
             case Refresh_Book_Info:
                 return AudibleGUI.instance.getSelected().size() > 0;
             case Rescan_Library:

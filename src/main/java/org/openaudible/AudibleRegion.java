@@ -3,9 +3,11 @@ package org.openaudible;
 import java.security.InvalidParameterException;
 
 public enum AudibleRegion {
-    US, UK, DE, FR, AU, IT, JP, CA;
+    US, UK, DE, FR, AU, /* IT, */ JP, CA;
 
     // audible.de, audible.fr, audible.com.au, audible.it, audible.jp, audible.ca
+    // italy doesn't seem to have a way to list all books.
+    // all sites untested except US.
 
     public String getBaseURL() {
         return "https://" + this.getBaseDomain();
@@ -23,8 +25,7 @@ public enum AudibleRegion {
                 return "audible.fr";
             case AU:
                 return "audible.com.au";
-            case IT:
-                return "audible.it";
+            // case IT: return "audible.it";
             case JP:
                 return "audible.co.jp";
             case CA:

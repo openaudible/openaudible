@@ -122,7 +122,13 @@ public class WebPage {
                     String mp3Name = fileName + ".mp3";
                     File mp3File = new File(mp3Dir, mp3Name);
                     progress.setTask("Copying book " + count + " of " + toCopy.size() + " to " + mp3File.getAbsolutePath());
-                    CopyWithProgress.copyWithProgress(progress, mp3, mp3File);
+
+                    try {
+                        CopyWithProgress.copyWithProgress(progress, mp3, mp3File);
+                    } catch(Throwable th)
+                    {
+                        LOG.error("error copying mp3:"+mp3.getAbsolutePath()+" to "+mp3File.getAbsolutePath()+" for book "+b);
+                    }
                     count++;
                 }
             }

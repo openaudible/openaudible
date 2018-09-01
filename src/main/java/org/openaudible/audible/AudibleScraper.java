@@ -120,7 +120,7 @@ public class AudibleScraper {
         ConnectionNotifier.getInstance().signout();
 
         try {
-            setURL("/signout");
+            setURL("/signout", "Signing out");
         } catch(Throwable th)
         {
             LOG.info("signout error, ignorning...");
@@ -319,7 +319,7 @@ public class AudibleScraper {
         if (true)
             getWebClient().setJavascriptEnabled(true);
         try {
-            setURL(homeURL(), "Loading web page...");
+            setURL(homeURL());
 
             if (checkLoggedIn())
                 return;
@@ -380,11 +380,17 @@ public class AudibleScraper {
     public void lib() throws Exception {
         String browserURL = ConnectionNotifier.instance.getLastURL();
 
-        if (!browserURL.isEmpty())
+        if (browserURL.startsWith(getAudibleBase()))
         {
+            // a bit of a hack.. try to log in using library URL in browser.
             LOG.info("Using library location from browser: "+browserURL);
-            if (setURLAndLogIn(browserURL))
-                return;
+            try {
+                if (setURLAndLogIn(browserURL))
+                    return;
+            } catch (IOException e)
+            {
+                LOG.error(e);
+            }
         }
 
         if (!setURLAndLogIn("/lib"))
@@ -455,16 +461,23 @@ public class AudibleScraper {
     }
 
     public Page setURL(String u) throws FailingHttpStatusCodeException, IOException {
-        return setURL(u, u);
+        return setURL(u, "");
     }
 
     public Page setURL(String u, String task) throws FailingHttpStatusCodeException, IOException {
-        LOG.info("setURL:" + u);
-        getProgress().setSubTask(task);
+
+
         EventTimer evt = new EventTimer();
         if (u.startsWith("/"))
             u = getAudibleBase() + u;
 
+        if (!task.isEmpty())
+        {
+            task += ": ";
+        }
+        task+=u;
+        getProgress().setSubTask(task);
+        LOG.info("setURL:" + u);
         Page p = getWebClient().getPage(u);
 
         if (p instanceof HtmlPage) {
@@ -581,17 +594,19 @@ public class AudibleScraper {
             ArrayList<Book> list = LibraryParser.instance.parseLibraryFragment(page);
 
             int newBooks = 0;
+            int partialBooks = 0;
 
             for (Book b : list) {
                 // LOG.info(b.toString());
-                if (isPartialBook(b))
-                {
-                    LOG.error("ignore partial book: " + b);
-                    continue;
-                }
                 if (results.contains(b)) {
                     LOG.error("duplicate book:" + b);
                     assert (false);
+                }
+
+                if (isPartialBook(b))
+                {
+                    partialBooks++;
+                    continue;
                 }
 
                 results.add(b);
@@ -602,6 +617,8 @@ public class AudibleScraper {
                     newBooks++;
                 }
             }
+            LOG.info("pageNum="+pageNum+" total="+list.size()+" new="+newBooks+" partial="+partialBooks);
+
 
             if (newBooks == 0) {
 

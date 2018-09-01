@@ -31,7 +31,8 @@ public enum Command {
     AppWebPage,
     Logout,
     Test1,
-    MenuSeparator;
+    MenuSeparator,
+    Ignore_Book;
 
 
     public char getKeyEquiv() {
