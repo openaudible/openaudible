@@ -29,16 +29,15 @@ import java.util.*;
 // audible.com web page scraper
 // Not thread safe, run single instance at a time.
 public class AudibleScraper {
+    final static String cookiesFileName = "cookies.json";
     private static final Log LOG = LogFactory.getLog(AudibleScraper.class);
+    static int maxLoginAttempts = 2;
+    final AudibleAccountPrefs account;
     private final AudibleClient webClient;
     public HtmlPage page;
-    final AudibleAccountPrefs account;
-    final static String cookiesFileName = "cookies.json";
-
     boolean debugCust = false;
     boolean loggedIn = false;
     String clickToDownload = "Click to download ";
-
     private IProgressTask progress;
 
 
@@ -52,6 +51,13 @@ public class AudibleScraper {
         }
     }
 
+    public static void deleteCookies() {
+        File cookiesFile = Directories.META.getDir(cookiesFileName);
+        if (cookiesFile.exists()) {
+            cookiesFile.delete();
+        }
+
+    }
 
     public HtmlPage getPage() {
         return page;
@@ -111,7 +117,7 @@ public class AudibleScraper {
                 // LOG.info("Cookie: "+c);
 
             }
-            LOG.info("Loaded "+list.size()+" cookies");
+            LOG.info("Loaded " + list.size() + " cookies");
         }
     }
 
@@ -121,8 +127,7 @@ public class AudibleScraper {
 
         try {
             setURL("/signout", "Signing out");
-        } catch(Throwable th)
-        {
+        } catch (Throwable th) {
             LOG.info("signout error, ignorning...");
 
         }
@@ -133,15 +138,6 @@ public class AudibleScraper {
             cookiesFile.delete();
         }
 
-
-    }
-
-    public static void deleteCookies()
-    {
-        File cookiesFile = Directories.META.getDir(cookiesFileName);
-        if (cookiesFile.exists()) {
-            cookiesFile.delete();
-        }
 
     }
 
@@ -167,7 +163,6 @@ public class AudibleScraper {
         FileUtils.writeByteArrayToFile(cookiesFile, o.getBytes());
     }
 
-    static int maxLoginAttempts = 2;
     protected boolean login() throws IOException {
         return login(0);
     }
@@ -249,9 +244,8 @@ public class AudibleScraper {
             LOG.info(page.getUrl());
 
             LOG.info("Login failed, see html files at:" + HTMLUtil.debugFile("submitting-credentials").getAbsolutePath() + " and " + HTMLUtil.debugFile("login failed").getAbsolutePath());
-            if (attempt<maxLoginAttempts)
-            {
-                login(attempt+1);
+            if (attempt < maxLoginAttempts) {
+                login(attempt + 1);
             }
 
         } else {
@@ -369,7 +363,7 @@ public class AudibleScraper {
 
         setURL(u);
         if (!checkLoggedIn()) {
-            LOG.info("not logged in after going to:"+u);
+            LOG.info("not logged in after going to:" + u);
             // trouble.. try again
             login();
             return checkLoggedIn();
@@ -380,15 +374,13 @@ public class AudibleScraper {
     public void lib() throws Exception {
         String browserURL = ConnectionNotifier.instance.getLastURL();
 
-        if (browserURL.startsWith(getAudibleBase()))
-        {
+        if (browserURL.startsWith(getAudibleBase())) {
             // a bit of a hack.. try to log in using library URL in browser.
-            LOG.info("Using library location from browser: "+browserURL);
+            LOG.info("Using library location from browser: " + browserURL);
             try {
                 if (setURLAndLogIn(browserURL))
                     return;
-            } catch (IOException e)
-            {
+            } catch (IOException e) {
                 LOG.error(e);
             }
         }
@@ -465,17 +457,22 @@ public class AudibleScraper {
     }
 
     public Page setURL(String u, String task) throws FailingHttpStatusCodeException, IOException {
+        return setURL(u, "", true);
+    }
 
+    public Page setURL(String u, String task, boolean appendURL) throws FailingHttpStatusCodeException, IOException {
 
-        EventTimer evt = new EventTimer();
         if (u.startsWith("/"))
             u = getAudibleBase() + u;
-
-        if (!task.isEmpty())
-        {
-            task += ": ";
+        if (appendURL) {
+            if (!task.isEmpty()) {
+                if (u.length() > 20)
+                    task += "\n";
+                else
+                    task += ": ";
+            }
+            task += u;
         }
-        task+=u;
         getProgress().setSubTask(task);
         LOG.info("setURL:" + u);
         Page p = getWebClient().getPage(u);
@@ -529,8 +526,7 @@ public class AudibleScraper {
     // In the US, productID that ends in a lowercase letter is a partial.
     // in the UK, a partial book has PUB_000123bUK
     // So if a book product ID contains any lower case letter, it should be a partial..
-    public boolean isPartialBook(Book b)
-    {
+    public boolean isPartialBook(Book b) {
         String pid = b.getProduct_id();
         return !pid.equals(pid.toUpperCase());
     }
@@ -568,19 +564,19 @@ public class AudibleScraper {
                 setPageFilter();
 
             } else {
-                // getProgress().setTask("Getting a list of your library.  );
-                EventTimer evt = new EventTimer();
+                // this is a bit of a hack. Extract the URL from the "next" HtmlButton.
                 String u = next.getAttribute("data-url");
                 if (u != null) {
-
                     if (!u.endsWith("&"))
                         u += "&";
                     u += "page=" + pageNum;
-                    setURL(u, "Reading Library page " + pageNum + "... Found " + results.size() + " books");
+                    setURL(u, "Reading Library page " + pageNum + "... Found " + results.size() + " books", false);
                 } else {
+                    // this is simple, but it doesn't work. Not sure why. Javascript, something else..
                     page = next.click();   // go to next page.
                     // LOG.info(next.getClass() + " " + evt.reportString("next-click") + next.asXml());
                 }
+
 
             }
 
@@ -603,8 +599,7 @@ public class AudibleScraper {
                     assert (false);
                 }
 
-                if (isPartialBook(b))
-                {
+                if (isPartialBook(b)) {
                     partialBooks++;
                     continue;
                 }
@@ -617,7 +612,7 @@ public class AudibleScraper {
                     newBooks++;
                 }
             }
-            LOG.info("pageNum="+pageNum+" total="+list.size()+" new="+newBooks+" partial="+partialBooks);
+            LOG.info("pageNum=" + pageNum + " total=" + list.size() + " new=" + newBooks + " partial=" + partialBooks);
 
 
             if (newBooks == 0) {
@@ -645,29 +640,29 @@ public class AudibleScraper {
             DomElement purchaseDateFilter = page.getElementByName("purchaseDateFilter");
 
             HtmlSelect h = (HtmlSelect) purchaseDateFilter;
-                int i = h.getSelectedIndex();
-                if (i != 0) {
-                    HtmlOption all = h.getOption(0);
-                    String url = all.getAttribute("data-url");
-                    try {
-                        if (url != null && !url.isEmpty()) {
-                            //LOG.info("url: "+ url);
-                            String newURL = url + "&purchaseDateFilter=all&programFilter=all&sortBy=PURCHASE_DATE.dsc";
-                            page = (HtmlPage) setURL(newURL, "Setting view filter");
-                            LOG.info("new URL: " + page.getUrl());
-                        }
-                        h = (HtmlSelect) page.getElementByName("purchaseDateFilter");
-                        i = h.getSelectedIndex();
-                        if (i != 0) {
-                            LOG.error("Expected filter to be set to 0, not " + i);
-                        }
-
-                    } catch (Exception e) {
-                        LOG.error("Error setting filter.. update may be required.", e);
+            int i = h.getSelectedIndex();
+            if (i != 0) {
+                HtmlOption all = h.getOption(0);
+                String url = all.getAttribute("data-url");
+                try {
+                    if (url != null && !url.isEmpty()) {
+                        //LOG.info("url: "+ url);
+                        String newURL = url + "&purchaseDateFilter=all&programFilter=all&sortBy=PURCHASE_DATE.dsc";
+                        page = (HtmlPage) setURL(newURL, "Setting view filter");
+                        LOG.info("new URL: " + page.getUrl());
                     }
-                }
+                    h = (HtmlSelect) page.getElementByName("purchaseDateFilter");
+                    i = h.getSelectedIndex();
+                    if (i != 0) {
+                        LOG.error("Expected filter to be set to 0, not " + i);
+                    }
 
-                return;
+                } catch (Exception e) {
+                    LOG.error("Error setting filter.. update may be required.", e);
+                }
+            }
+
+            return;
 
         } catch (Throwable th) {
             LOG.info("Unable to set purchaseDateFilter. Writing debug log to no_date.html. This may mean we are unable to get all of your books. You may need to log in with the Browser and set the filters to show all books.");

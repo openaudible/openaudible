@@ -73,11 +73,24 @@ public class Book implements Comparable<Book>, Serializable {
         return (getShortTitle().length() > 0) ? getShortTitle() : getFullTitle();
     }
 
-    public boolean equals(Book that) {
-        if (that == null) return false;
-        if (this == that) return true;
-        boolean e1 = this.getProduct_id().equals(that.getProduct_id());
-        return e1;
+    @Override
+    public int hashCode() {
+        return getKey().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        assert(obj instanceof Book);
+        assert(obj !=null);
+
+        return (obj!=null) && this.getKey().equals(((Book)obj).getKey());
+    }
+
+    private String getKey() {
+        String k = getProduct_id();
+        assert(k!=null);
+        assert(!k.isEmpty());
+        return k;
     }
 
     public boolean isOK() {
@@ -270,11 +283,6 @@ public class Book implements Comparable<Book>, Serializable {
         return out;
     }
 
-    @Override
-    public int hashCode() {
-        assert (!getProduct_id().isEmpty());
-        return getProduct_id().hashCode();
-    }
 
     public String getPurchaseDate() {
         return get(BookElement.purchase_date);
@@ -321,5 +329,12 @@ public class Book implements Comparable<Book>, Serializable {
         }
 
         return date;
+    }
+
+    public String getAuthorLink() {
+        return get(BookElement.author_link);
+    }
+    public void setAuthorLink(String s) {
+        set(BookElement.author_link, s);
     }
 }

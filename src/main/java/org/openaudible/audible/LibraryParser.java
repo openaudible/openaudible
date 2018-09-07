@@ -234,6 +234,21 @@ public enum LibraryParser {
                 break;
             case Author:
                 b.setAuthor(text);
+                // attempt to get link to author page.
+                try {
+                    anchors = cell.getElementsByTagName("a");
+                    if (anchors.size() == 1) {
+                        HtmlAnchor first = (HtmlAnchor) anchors.get(0);
+                        URL url = p.getFullyQualifiedUrl(first.getHrefAttribute());
+                        String href = url.toString();
+                        if (href.contains("?"))
+                            href = href.substring(0, href.indexOf("?"));
+                        b.setAuthorLink(href);
+                    }
+                } catch(Throwable th)
+                {
+                    LOG.error("error getting author link:"+xml);
+                }
                 break;
             case Length:
                 b.setDuration(text);

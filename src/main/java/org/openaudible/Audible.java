@@ -25,6 +25,7 @@ import org.openaudible.download.DownloadQueue;
 import org.openaudible.progress.IProgressTask;
 import org.openaudible.util.CopyWithProgress;
 import org.openaudible.util.HTMLUtil;
+import org.openaudible.util.TimeToSeconds;
 import org.openaudible.util.queues.IQueueJob;
 import org.openaudible.util.queues.IQueueListener;
 import org.openaudible.util.queues.ThreadedQueue;
@@ -36,31 +37,34 @@ import java.io.Writer;
 import java.util.*;
 
 public class Audible implements IQueueListener<Book> {
+    final static String ignoreSetFileName = "ignore.json";
     private static final Log LOG = LogFactory.getLog(Audible.class);
     public static Audible instance; // Singleton
+    final String keysFileName = "keys.json";
+    private final HashMap<String, Book> books = new HashMap<>(); // Book.id(), Book
+    private final HashSet<String> ignoreSet = new HashSet<>();        // book ID's to ignore.
     public DownloadQueue downloadQueue;
     public ConvertQueue convertQueue;
+    public long totalDuration = 0;
     // private String activationBytes = "";
     volatile boolean quit = false;
     boolean convertToMP3 = false;
     String accountPrefsFileName = "account.json";
     String cookiesFileName = "cookies.json";
     String bookFileName = "books.json";
-    final String keysFileName = "keys.json";
     HashSet<File> mp3Files = null;
     HashSet<File> aaxFiles = null;
+    HashSet<Book> toDownload = new HashSet<>();
+    HashSet<Book> toConvert = new HashSet<>();
+    Object lock = new Object();
     long needFileCacheUpdate = 0;
     int booksUpdated = 0;
     Exception last = null;
     private AudibleAccountPrefs account = new AudibleAccountPrefs();
     private AudibleScraper audibleScraper;
+    // AudibleRegion region = AudibleRegion.US;
     private IProgressTask progress;
     private boolean autoConvertToMP3 = false;
-    private final HashMap<String, Book> books = new HashMap<>(); // Book.id(), Book
-    // AudibleRegion region = AudibleRegion.US;
-
-    private final HashSet<String> ignoreSet = new HashSet<>();        // book ID's to ignore.
-
 
     public Audible() {
 
@@ -125,13 +129,11 @@ public class Audible implements IQueueListener<Book> {
     }
 
     // fix book info
-    private Book normalizeBook(Book b)
-    {
+    private Book normalizeBook(Book b) {
         String link = b.getInfoLink();
-        if (link.startsWith("/"))
-        {
+        if (link.startsWith("/")) {
             // convert to full URL.
-            b.setInfoLink("https://www.audible.com"+link);
+            b.setInfoLink("https://www.audible.com" + link);
         }
         return b;
     }
@@ -166,16 +168,14 @@ public class Audible implements IQueueListener<Book> {
         return out;
     }
 
-    public void addToIgnoreSet(Collection<Book> books)
-    {
-        for (Book b:books) {
+    public void addToIgnoreSet(Collection<Book> books) {
+        for (Book b : books) {
             removeBook(b);
             ignoreSet.add(b.id());
         }
         saveIgnoreSet();
     }
 
-    final static String ignoreSetFileName = "ignore.json";
     private void loadIgnoreSet() {
         try {
             Gson gson = new GsonBuilder().create();
@@ -184,7 +184,7 @@ public class Audible implements IQueueListener<Book> {
             if (prefsFile.exists()) {
                 String content = HTMLUtil.readFile(prefsFile);
                 HashSet set = gson.fromJson(content, HashSet.class);
-                if (set!=null) {
+                if (set != null) {
                     ignoreSet.clear();
                     ignoreSet.addAll(set);
                 }
@@ -200,9 +200,8 @@ public class Audible implements IQueueListener<Book> {
             Gson gson = new GsonBuilder().create();
             try {
                 HTMLUtil.writeFile(Directories.META.getDir(ignoreSetFileName), gson.toJson(ignoreSet));
-            }catch(Throwable th)
-            {
-                LOG.error("Error saving ignore list!",th);
+            } catch (Throwable th) {
+                LOG.error("Error saving ignore list!", th);
             }
         }
     }
@@ -261,7 +260,7 @@ public class Audible implements IQueueListener<Book> {
             BookNotifier.getInstance().setEnabled(true);
             BookNotifier.getInstance().booksUpdated();
         }
-        updateFileCache();
+
         LookupKey.instance.load(Directories.BASE.getDir(keysFileName));
         loadIgnoreSet();
     }
@@ -286,7 +285,7 @@ public class Audible implements IQueueListener<Book> {
             LOG.info("Books to download:" + results.size());
         }
 
-        ArrayList<Book> toConvert = toConvert();
+        Collection<Book> toConvert = toConvert();
 
         if (autoConvertToMP3) {
             results = convertQueue.addAll(toConvert);
@@ -372,17 +371,14 @@ public class Audible implements IQueueListener<Book> {
         // Look for books with missing info and re-parse if needed.
         // Information can be lost if
         boolean needSave = false;
-        for (Book b:getBooks())
-        {
-            if (!b.has(BookElement.summary) && hasAAX(b))
-            {
-                task.setTask("Updating book information", "Reading "+b);
+        for (Book b : getBooks()) {
+            if (!b.has(BookElement.summary) && hasAAX(b)) {
+                task.setTask("Updating book information", "Reading " + b);
                 needSave = AAXParser.instance.parseBook(b);
             }
         }
 
-        if (needSave)
-        {
+        if (needSave) {
             try {
                 save();
             } catch (IOException e) {
@@ -396,7 +392,37 @@ public class Audible implements IQueueListener<Book> {
         mp3Files = getFileSet(Directories.MP3);
         aaxFiles = getFileSet(Directories.AAX);
         needFileCacheUpdate = System.currentTimeMillis();
+
+        HashSet<Book> c = new HashSet<>();
+        HashSet<Book> d = new HashSet<>();
+        long seconds = 0;
+
+        for (Book b : getBooks()) {
+            if (isIgnoredBook(b)) continue;
+
+            if (canDownload(b)) d.add(b);
+            if (canConvert(b)) c.add(b);
+            seconds += TimeToSeconds.parseTimeStringToSeconds(b.getDuration());
+        }
+        synchronized (lock) {
+            toDownload.clear();
+            toDownload.addAll(d);
+            toConvert.clear();
+            toConvert.addAll(c);
+            totalDuration = seconds;
+        }
+
     }
+
+
+    public int getDownloadCount() {
+        return toDownload.size();
+    }
+
+    public int getConvertCount() {
+        return toConvert.size();
+    }
+
 
     public int mp3Count() {
         return mp3Files.size();
@@ -584,23 +610,24 @@ public class Audible implements IQueueListener<Book> {
         return Directories.AAX.getDir(b.getProduct_id() + ".AAX");
     }
 
-    public ArrayList<Book> toDownload() {
-        ArrayList<Book> list = new ArrayList<>();
-        for (Book b : getBooks()) {
-            if (!hasAAX(b) && !hasMP3(b) && downloadQueue.canAdd(b))
-                list.add(b);
-        }
-        return list;
+    public boolean canDownload(Book b) {
+        return !hasAAX(b) && !hasMP3(b) && downloadQueue.canAdd(b);
     }
 
-    public ArrayList<Book> toConvert() {
-        ArrayList<Book> list = new ArrayList<>();
-        for (Book b : getBooks()) {
-            if (hasAAX(b) && !hasMP3(b) && convertQueue.canAdd(b))
-                list.add(b);
+    public boolean canConvert(Book b) {
+        return hasAAX(b) && !hasMP3(b) && convertQueue.canAdd(b);
+    }
 
+    public Set<Book> toDownload() {
+        synchronized (lock) {
+            return new HashSet<Book>(toDownload);
         }
-        return list;
+    }
+
+    public Set<Book> toConvert() {
+        synchronized (lock) {
+            return new HashSet<Book>(toConvert);
+        }
     }
 
     public void quit() {
@@ -853,6 +880,19 @@ public class Audible implements IQueueListener<Book> {
 
     public boolean isIgnoredBook(Book b) {
         return ignoreSet.contains(b.id());
+    }
+
+    public boolean inDownloadSet(Book b) {
+        synchronized(lock)
+        {
+            return toDownload.contains(b);
+        }
+    }
+    public boolean inConvertSet(Book b) {
+        synchronized(lock)
+        {
+            return toConvert.contains(b);
+        }
     }
 }
 

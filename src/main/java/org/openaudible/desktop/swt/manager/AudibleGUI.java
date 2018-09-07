@@ -40,23 +40,21 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class AudibleGUI implements BookListener, ConnectionListener {
     private static final Log LOG = LogFactory.getLog(AudibleGUI.class);
     public static AudibleGUI instance;
     final Audible audible = new Audible();
+    final String appPrefsFileName = "settings.json";
+    public Prefs prefs = new Prefs();
     boolean hasFFMPEG = false;
     BookNotifier bookNotifier = BookNotifier.getInstance();
     boolean loggedIn = false;
-    int downloadCount, convertCount;
+
     String textFilter = "";
     AudibleBrowser browser = null;
-
-    public Prefs prefs = new Prefs();
-    final String appPrefsFileName = "settings.json";
-    private long totalDuration;
+    AudibleAccountPrefs userPass = null;
 
     public AudibleGUI() {
         assert (instance == null);
@@ -115,8 +113,6 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 
     }
 
-    AudibleAccountPrefs userPass = null;
-
     @Override
     public AudibleAccountPrefs getAccountPrefs(AudibleAccountPrefs in) {
         if (in.audiblePassword.isEmpty() || in.audibleUser.isEmpty()) {
@@ -142,6 +138,15 @@ public class AudibleGUI implements BookListener, ConnectionListener {
             userPass = null;
         }
         return in;
+    }
+
+    public int selectedAAXCount() {
+        int count = 0;
+        for (Book b : getSelected()) {
+            if (audible.hasAAX(b))
+                count++;
+        }
+        return count;
     }
 
 
@@ -214,16 +219,6 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     }
 */
 
-    public int selectedAAXCount() {
-        int count = 0;
-        for (Book b : getSelected()) {
-            if (audible.hasAAX(b))
-                count++;
-        }
-        return count;
-    }
-
-
     public boolean canDownloadAll() {
         return audible.aaxCount() < audible.getBookCount();
     }
@@ -248,14 +243,6 @@ public class AudibleGUI implements BookListener, ConnectionListener {
                 l.add(b);
         }
         downloadAAX(l);
-    }
-
-    public int getDownloadCount() {
-        return downloadCount;
-    }
-
-    public int getConvertCount() {
-        return convertCount;
     }
 
     public void connect() {
@@ -308,7 +295,6 @@ public class AudibleGUI implements BookListener, ConnectionListener {
             bookNotifier.booksUpdated();
         }
     }
-
 
     public boolean hasAAX(Book b) {
         return audible.hasAAX(b);
@@ -368,7 +354,6 @@ public class AudibleGUI implements BookListener, ConnectionListener {
             downloadAndConvertWithDialog();
     }
 
-
     // returns null if not logged in.
     private AudibleScraper connect(ProgressTask progressTask) throws Exception {
         audible.setProgress(progressTask);
@@ -412,8 +397,8 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     }
 
     private void downloadAndConvertWithDialog() {
-        ArrayList<Book> dl = audible.toDownload();
-        ArrayList<Book> conv = audible.toConvert();
+        Collection<Book> dl = audible.toDownload();
+        Collection<Book> conv = audible.toConvert();
 
         if (dl.size() == 0 && conv.size() == 0) {
             String upToDate = "Your library is up to date! Go buy more Audible books!";
@@ -426,8 +411,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
                 msg = "You have " + conv.size() + " book(s) to convert to MP3\n";
 
             LOG.info(msg + " autoConvert=" + prefs.autoConvert);
-            if (prefs.autoConvert  || prefs.autoDownload)
-            {
+            if (prefs.autoConvert || prefs.autoDownload) {
                 if (prefs.autoConvert)
                     convertMP3(conv);
                 if (prefs.autoDownload)
@@ -458,17 +442,15 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     public void ignoreSelected() {
         List<Book> sel = getSelected();
 
-        if (!sel.isEmpty())
-        {
+        if (!sel.isEmpty()) {
             Book first = sel.get(0);
             String title = "Are you sure you want to ignore books";
-            String bodySingular = "Are you sure you want to ignore the following book? \n\t"+ first.getFullTitle()+"\n\nIt will be added to the ignore list and not shown in OpenAudible anymore.";
-            String bodyPlurel = "You selected "+sel.size()+" books. Are you sure you want to ignore them? \n\nThey will added to the ignore list and not be shown in OpenAudible anymore.";
-            String body = sel.size()==1 ? bodySingular:bodyPlurel;
+            String bodySingular = "Are you sure you want to ignore the following book? \n\t" + first.getFullTitle() + "\n\nIt will be added to the ignore list and not shown in OpenAudible anymore.";
+            String bodyPlurel = "You selected " + sel.size() + " books. Are you sure you want to ignore them? \n\nThey will added to the ignore list and not be shown in OpenAudible anymore.";
+            String body = sel.size() == 1 ? bodySingular : bodyPlurel;
 
-            boolean yn = MessageBoxFactory.showGeneralYesNo(getShell(), title,body);
-            if (yn)
-            {
+            boolean yn = MessageBoxFactory.showGeneralYesNo(getShell(), title, body);
+            if (yn) {
                 audible.addToIgnoreSet(sel);
                 BookNotifier.getInstance().booksUpdated();      // redraw all.
             }
@@ -561,9 +543,9 @@ public class AudibleGUI implements BookListener, ConnectionListener {
             case MP3_Files:
                 return "" + audible.mp3Count();
             case To_Download:
-                return "" + getDownloadCount();
+                return "" + audible.getDownloadCount();
             case To_Convert:
-                return "" + getConvertCount();
+                return "" + audible.getConvertCount();
             case Downloading:
                 int dl = audible.downloadQueue.jobsInProgress();
                 int dq = audible.downloadQueue.size();
@@ -633,7 +615,6 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         }
     }
 
-
     public void exportWebPage(boolean showUserInterface) {
         try {
             File destDir = Directories.getDir(Directories.WEB);
@@ -653,15 +634,14 @@ public class AudibleGUI implements BookListener, ConnectionListener {
                 try {
                     URI i = index.toURI();
                     String u = i.toString();
-                    LOG.info("Book html file is: "+index.getAbsolutePath()+" url="+u);
-                    if (showUserInterface             )
+                    LOG.info("Book html file is: " + index.getAbsolutePath() + " url=" + u);
+                    if (showUserInterface)
                         AudibleGUI.instance.browse(u);
                 } catch (Exception e) {
                     showError(e, "displaying web page");
                 }
-            } else
-            {
-                assert(false);
+            } else {
+                assert (false);
             }
 
         } catch (Exception e) {
@@ -732,11 +712,11 @@ public class AudibleGUI implements BookListener, ConnectionListener {
     public void bookUpdated(Book book) {
     }
 
-
     @Override
     public void booksUpdated() {
         // TODO: Ensure this isn't called too frequently.
         audible.updateFileCache();
+/*
         int d = 0;
         int c = 0;
         long seconds = 0;
@@ -755,14 +735,21 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         downloadCount = d;
         convertCount = c;
         totalDuration = seconds;
+*/
     }
-
 
     private boolean displayBook(Book b) {
         if (audible.isIgnoredBook(b))
             return false;
 
         if (textFilter.isEmpty()) return true;    // don't skip any books if no filter.
+        StatusPanel.Status status = isSpecialSearch(textFilter);
+        if (status!=null)
+        {
+            return displayBookByStatus(b, status);
+        }
+
+
         String text = textFilter.toLowerCase();
         BookElement elems[] = {BookElement.fullTitle, BookElement.author, BookElement.narratedBy, BookElement.shortTitle};
 
@@ -773,13 +760,11 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         return false;
     }
 
-
     // if search text is filled, return books that match.
     // otherwise, return all books (default)
     public List<Book> getDisplayedBooks() {
         ArrayList<Book> displayed = new ArrayList<>();
-        for (Book b : Audible.instance.getBooks())
-        {
+        for (Book b : Audible.instance.getBooks()) {
             if (displayBook(b))
                 displayed.add(b);
         }
@@ -790,7 +775,6 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         textFilter = text;
         bookNotifier.booksUpdated();
     }
-
 
     public void parseAAX() {
         ProgressTask task = new ProgressTask("Parse AAX File") {
@@ -826,16 +810,13 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 
     }
 
-
     public void browse() {
         browse(audible.getAudibleURL() + "/lib");
     }
 
-
     public String browseSettings() {
         return audible.getAudibleURL() + "/account/settings";
     }
-
 
     public void browse(final String url) {
 
@@ -882,7 +863,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 
         if (browser != null && !browser.isDisposed()) {
 
-            String url = userPass.audibleRegion.getBaseURL()+"/signout";
+            String url = userPass.audibleRegion.getBaseURL() + "/signout";
             browser.setUrl(url);
             browser.close();
         }
@@ -933,7 +914,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 
     // total book time, in seconds.
     public long getTotalDuration() {
-        return totalDuration;
+        return audible.totalDuration;
     }
 
     public void test1() {
@@ -950,96 +931,21 @@ public class AudibleGUI implements BookListener, ConnectionListener {
         }
     }
 
-    class BookQueueListener implements IQueueListener<Book> {
-
-        @Override
-        public void itemEnqueued(final ThreadedQueue<Book> queue, final Book o) {
-            bookNotifier.booksUpdated();
-        }
-
-        @Override
-        public void itemDequeued(final ThreadedQueue<Book> queue, final Book o) {
-            bookNotifier.booksUpdated();
-        }
-
-        @Override
-        public void jobStarted(final ThreadedQueue<Book> queue, final IQueueJob job, final Book o) {
-            bookNotifier.bookUpdated(o);
-        }
-
-        @Override
-        public void jobError(final ThreadedQueue<Book> queue, final IQueueJob job, final Book o, final Throwable th) {
-            bookNotifier.bookUpdated(o);
-        }
-
-        @Override
-        public void jobCompleted(final ThreadedQueue<Book> queue, final IQueueJob job, final Book o) {
-            booksUpdated();
-            bookNotifier.bookUpdated(o);
-            checkAutomation();
-        }
-
-        @Override
-        public void jobProgress(final ThreadedQueue<Book> queue, final IQueueJob job, final Book book, final String task, final String subtask) {
-            String msg = "";
-
-            if (queue == audible.downloadQueue)
-                msg = "Downloading ";
-            else
-                msg = "Converting ";
-
-            assert (msg.length() > 0);
-
-            if (subtask != null) {
-                msg += subtask;
-            }
-            bookNotifier.bookProgress(book, msg);
-        }
-    }
-
-
-    class PageBuilderTask extends ProgressTask {
-        final WebPage pageBuilder;
-        final List<Book> books;
-
-        PageBuilderTask(File destDir, final List<Book> list, boolean includeMP3) {
-            super("Creating Your Audiobook Web Page");
-            pageBuilder = new WebPage(destDir, this, includeMP3);
-            books = list;
-        }
-
-        @Override
-        public void run() {
-            try {
-                pageBuilder.buildPage(books);
-            } catch (Exception e) {
-                LOG.error("error", e);
-                if (!wasCanceled())
-                    showError(e, "building web page");
-
-            }
-        }
-    }
-
-
     // called after every book is downloaded or converted.
-    public void checkAutomation()
-    {
-        ArrayList<Book> dl = audible.toDownload();
-        ArrayList<Book> conv = audible.toConvert();
+    public void checkAutomation() {
+        Collection<Book> dl = audible.toDownload();
+        Collection<Book> conv = audible.toConvert();
 
         if (prefs.autoConvert)
             convertMP3(conv);
         if (prefs.autoDownload)
             downloadAAX(dl);
 
-        if (dl.size()==0 && conv.size()==0 && prefs.autoWebPage)
-        {
+        if (dl.size() == 0 && conv.size() == 0 && prefs.autoWebPage) {
             exportWebPage(false);
         }
 
     }
-
 
     public void load() throws IOException {
         Audible.instance.load();
@@ -1053,9 +959,9 @@ public class AudibleGUI implements BookListener, ConnectionListener {
                 prefs = gson.fromJson(content, Prefs.class);
             }
 
-            if (prefs.concurrentConversions<1||prefs.concurrentConversions>10)
+            if (prefs.concurrentConversions < 1 || prefs.concurrentConversions > 10)
                 prefs.concurrentConversions = 5;
-            if (prefs.concurrentDownloads<1||prefs.concurrentDownloads>10)
+            if (prefs.concurrentDownloads < 1 || prefs.concurrentDownloads > 10)
                 prefs.concurrentDownloads = 3;
 
             audible.convertQueue.setConcurrentJobs(prefs.concurrentConversions);
@@ -1103,10 +1009,10 @@ public class AudibleGUI implements BookListener, ConnectionListener {
                     this.setTask("Updating");
                     BookNotifier.getInstance().booksUpdated();
 
-                    audible.updateFileCache();
-                    // audibleGUI.updateFileCache();
-
-                    BookNotifier.getInstance().booksUpdated();
+//                    audible.updateFileCache();
+//                    // audibleGUI.updateFileCache();
+//
+//                    BookNotifier.getInstance().booksUpdated();
                     backgroundVersionCheck();
                     new Thread(() -> checkFFMPEG()).start();
 
@@ -1141,7 +1047,6 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 
         }).start();
     }
-
 
     public void importAAXFiles() {
         try {
@@ -1258,8 +1163,138 @@ public class AudibleGUI implements BookListener, ConnectionListener {
                     browse(url);
             }
         });
+    }
 
+    final String customSearchPrefix = ":";
+
+
+    public void setStatusFilter(StatusPanel.Status status) {
+        String searchText = "";
+        if (status!=null) searchText = customSearchPrefix+status.name();
+        Application.instance.mainWindow.searchField.setSearchText(searchText);
+    }
+
+    private StatusPanel.Status isSpecialSearch(String f) {
+        StatusPanel.Status result = null;
+
+        if (!f.startsWith(customSearchPrefix)) return null;
+
+
+        try {
+            result = StatusPanel.Status.valueOf(f.trim().substring(customSearchPrefix.length()));
+            if (result.canFilterByStatusType())
+                return result;
+        } catch (Throwable th) {
+            return null;
+        }
+        return null;
 
     }
+
+    // return true if book should be displayed when status is set.
+    private boolean displayBookByStatus(Book b, StatusPanel.Status status) {
+        switch (status) {
+
+            case AAX_Files:
+                // display only files that have aax.
+                return audible.hasAAX(b);
+
+            case MP3_Files:
+                return audible.hasMP3(b);
+
+            case To_Download:
+                return audible.inDownloadSet(b);
+
+
+            case To_Convert:
+                return audible.inConvertSet(b);
+
+            case Downloading:
+                return audible.downloadQueue.inJob(b);
+
+            case Converting:
+                return audible.convertQueue.inJob(b);
+
+            default:
+                LOG.error("unexpected status:"+status);
+                break;
+        }
+
+        return false;
+
+    }
+
+
+
+    class BookQueueListener implements IQueueListener<Book> {
+
+        @Override
+        public void itemEnqueued(final ThreadedQueue<Book> queue, final Book o) {
+            bookNotifier.booksUpdated();
+        }
+
+        @Override
+        public void itemDequeued(final ThreadedQueue<Book> queue, final Book o) {
+            bookNotifier.booksUpdated();
+        }
+
+        @Override
+        public void jobStarted(final ThreadedQueue<Book> queue, final IQueueJob job, final Book o) {
+            bookNotifier.bookUpdated(o);
+        }
+
+        @Override
+        public void jobError(final ThreadedQueue<Book> queue, final IQueueJob job, final Book o, final Throwable th) {
+            bookNotifier.bookUpdated(o);
+        }
+
+        @Override
+        public void jobCompleted(final ThreadedQueue<Book> queue, final IQueueJob job, final Book o) {
+            booksUpdated();
+            bookNotifier.bookUpdated(o);
+            checkAutomation();
+        }
+
+        @Override
+        public void jobProgress(final ThreadedQueue<Book> queue, final IQueueJob job, final Book book, final String task, final String subtask) {
+            String msg = "";
+
+            if (queue == audible.downloadQueue)
+                msg = "Downloading ";
+            else
+                msg = "Converting ";
+
+            assert (msg.length() > 0);
+
+            if (subtask != null) {
+                msg += subtask;
+            }
+            bookNotifier.bookProgress(book, msg);
+        }
+    }
+
+    class PageBuilderTask extends ProgressTask {
+        final WebPage pageBuilder;
+        final List<Book> books;
+
+        PageBuilderTask(File destDir, final List<Book> list, boolean includeMP3) {
+            super("Creating Your Audiobook Web Page");
+            pageBuilder = new WebPage(destDir, this, includeMP3);
+            books = list;
+        }
+
+        @Override
+        public void run() {
+            try {
+                pageBuilder.buildPage(books);
+            } catch (Exception e) {
+                LOG.error("error", e);
+                if (!wasCanceled())
+                    showError(e, "building web page");
+
+            }
+        }
+    }
+
 
 }

@@ -12,6 +12,7 @@ public class MainWindow extends GridComposite {
     BookInfoPanel info;
     StatusPanel status;
     boolean useToolbar = false;
+    public SearchField searchField;
 
     public MainWindow(Composite c) {
         super(c, SWT.NONE);
@@ -39,12 +40,12 @@ public class MainWindow extends GridComposite {
         // Row 1, search bar and button bar.
         if (useToolbar) {
             row = new GridComposite(c, SWT.BORDER_DOT, useToolbar ? 2 : 1, false, GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-            SearchField sf = new SearchField(row, 180, GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
+            searchField = new SearchField(row, 180, GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
             BookButtonBar b = new BookButtonBar(row, GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_BEGINNING);
         } else {
             row = new GridComposite(c, SWT.BORDER_DOT, 1, false, GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
             row.noMargins();
-            SearchField sf = new SearchField(row, 120, GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
+            searchField = new SearchField(row, 120, GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
         }
 
         // Row 2. Status and selected book
@@ -66,8 +67,6 @@ public class MainWindow extends GridComposite {
         gd.widthHint = 170;
         statusGroup.setLayoutData(gd);
         status = new StatusPanel(statusGroup);
-
-
     }
 
     private void createBottom(Composite parent) {

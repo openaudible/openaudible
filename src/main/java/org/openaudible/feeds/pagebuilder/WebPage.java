@@ -48,6 +48,7 @@ public class WebPage {
         i.rating_count = b.get(BookElement.rating_count);
 
         i.link_url = b.getInfoLink();
+        i.author_url = b.getAuthorLink();
 
         i.description = b.get(BookElement.description);
         i.purchase_date = b.getPurchaseDateSortable();

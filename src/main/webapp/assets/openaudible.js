@@ -18,9 +18,18 @@ function asString(str, len) {
 }
 
 function mp3Link(book, content) {
-	if (!book || !book.mp3 || !content)
-		return "";
-	return "<a href='mp3/" + encodeURIComponent(book.mp3) + "'>" + content + "</a> ";
+    if (!book || !book.mp3 || !content)
+        return "";
+    return "<a href='mp3/" + encodeURIComponent(book.mp3) + "'>" + content + "</a> ";
+}
+function authorLink(book) {
+    if (!book || !book.author)
+        return "";
+    if (book.author_link && book.author_url.startsWith("http"))
+	{
+        return "<a href='"+book.author_url + "'>" + asString(book.author) + "</a> ";
+    }
+	return asString(book.author);
 }
 
 function bookImage(book, addLink) {
@@ -48,7 +57,7 @@ function populateBooks(arr, table) {
 		row['book'] = book;
 		row['title'] = title;
 		row['narrated_by'] = narrated_by;
-		row['author'] = author;
+		row['author'] = authorLink(book);	// author;
 		row['duration'] = duration;
 
         row['purchase_date'] = asString(book.purchase_date);

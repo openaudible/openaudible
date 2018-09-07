@@ -37,4 +37,10 @@ public class SearchField extends GridComposite {
             }
         });
     }
+
+
+    public void setSearchText(String searchText) {
+        text.setText(searchText);
+        AudibleGUI.instance.filterDisplayedBooks(text.getText());
+    }
 }

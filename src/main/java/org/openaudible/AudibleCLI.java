@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -143,7 +144,7 @@ public class AudibleCLI {
                 audible.load();
                 break;
             case toDownload: {
-                ArrayList<Book> list = audible.toDownload();
+                Collection<Book> list = audible.toDownload();
                 for (Book b : list)
                     println(b);
                 println("Need to download:" + list.size());
@@ -151,7 +152,7 @@ public class AudibleCLI {
             }
 
             case toConvert: {
-                ArrayList<Book> list = audible.toConvert();
+                Collection<Book> list = audible.toConvert();
                 for (Book b : list)
                     println(b);
                 println("Need to convert:" + list.size());

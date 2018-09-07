@@ -3,6 +3,8 @@ package org.openaudible.desktop.swt.manager.views;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -34,6 +36,7 @@ public class BookInfoPanel extends GridComposite implements BookListener {
     BookElement elems[] = {
             BookElement.fullTitle,
             BookElement.author,
+            BookElement.author_link,
             BookElement.narratedBy,
             BookElement.duration,
             BookElement.release_date,
@@ -106,6 +109,15 @@ public class BookInfoPanel extends GridComposite implements BookListener {
             c = parent;
         }
 
+        MouseAdapter linkClickListener =  new MouseAdapter() {
+            @Override
+            public void mouseUp(MouseEvent mouseEvent) {
+                super.mouseUp(mouseEvent);
+                Label l = (Label) mouseEvent.widget;
+                linkClicked(l);
+            }
+        };
+
         for (BookElement s : elems) {
             String labelName = getName(s);
             Label l = c.newLabel();
@@ -120,7 +132,9 @@ public class BookInfoPanel extends GridComposite implements BookListener {
             d.setBackground(bgColor);
             d.setData(s);
             stats[s.ordinal()] = d;
+            d.addMouseListener(linkClickListener);
         }
+
 
         if (true) {
             // Task Status:
@@ -142,6 +156,22 @@ public class BookInfoPanel extends GridComposite implements BookListener {
         return c;
     }
 
+    private void linkClicked(Label s) {
+        if (curBook!=null) {
+            BookElement e = (BookElement) s.getData();
+            switch (e) {
+                case author:
+                    LOG.info("click author: "+curBook+" link="+curBook.getAuthorLink());
+                    break;
+                case fullTitle:
+                case shortTitle:
+                    LOG.info("click title: "+curBook+" link="+curBook.getInfoLink());
+                    break;
+            }
+        }
+
+    }
+
 
     private void update(Book b) {
         curBook = b;
@@ -156,6 +186,22 @@ public class BookInfoPanel extends GridComposite implements BookListener {
                 value = getValue(e, b);
             }
             s.setText(value);
+
+            if (e==BookElement.author)
+            {
+                boolean hasLink = false;
+
+                if (b!=null) {
+                    String link = b.getAuthorLink();
+                    if (link.startsWith("http")) {
+                        // s.setFont(FontShop.
+                        hasLink = true;
+                    }
+                }
+
+
+            }
+
         }
 
         String taskMsg = AudibleGUI.instance.getTaskString(curBook);

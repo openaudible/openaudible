@@ -12,6 +12,8 @@ import org.openaudible.desktop.swt.i8n.Translate;
 import org.openaudible.desktop.swt.manager.Application;
 import org.openaudible.util.Platform;
 
+import java.util.HashMap;
+
 // ugly singleton swt font manager
 public class FontShop {
     public final static Log logger = LogFactory.getLog(FontShop.class);
@@ -26,7 +28,9 @@ public class FontShop {
     final Font regFonts[];
     final Font boldFonts[];
     final Font italicFonts[];
+    HashMap<String, Font> fontCache = new HashMap<>();
 
+    ;
 
     public FontShop(Display display) {
         if (display == null) {
@@ -45,6 +49,8 @@ public class FontShop {
             curFonts = this;
 
     }
+
+    ;
 
     /**
      * Check the given Font for being NULL or disposed. Return false in that case.
@@ -119,6 +125,30 @@ public class FontShop {
         return curFonts.boldFonts[TREE_FONT];
     }
 
+    public String getFontKey(String fontName, FontType fontType, FontStyle fontStyle, int sizeAdjust) {
+        return fontName + "_" + fontType.name() + "_" + fontStyle.name() + "_" + sizeAdjust;
+    }
+
+    public Font getFont(String fontName, FontType fontType, FontStyle fontStyle, int sizeAdjust) {
+        String key = getFontKey(fontName, fontType, fontStyle, sizeAdjust);
+
+        Font f = fontCache.get(key);
+        if (f == null) {
+            // create Font
+            f = createFont(fontName, fontType, fontStyle, sizeAdjust);
+            assert (f != null);
+            fontCache.put(key, f);
+        }
+        return f;
+    }
+
+    private Font createFont(String fontName, FontType fontType, FontStyle fontStyle, int sizeAdjust) {
+        return null;    // TODO
+    }
+
+    public Font getFont(FontType fontType, FontStyle fontStyle) {
+        return null;    // return getFont(defaultFontName(fontType), fontType,)
+    }
 
     private Font newDefaultFont(int id) {
         Display display = Display.getCurrent();
@@ -186,7 +216,6 @@ public class FontShop {
         return "Fonts";
     }
 
-
     public void checkFont() {
         for (int i = 0; i < regFonts.length; i++) {
             if (!isset(regFonts[i])) {
@@ -202,6 +231,11 @@ public class FontShop {
 
         }
     }
+
+    public enum FontType {DIALOG, HEADER, TABLE, TEXT, TREE, LINK}
+
+
+    public enum FontStyle {REGULAR, BOLD, UNDERLINE, ITALIC}
 
 
 }

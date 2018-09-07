@@ -16,6 +16,7 @@ public class Application extends GUI {
     public static Application instance;
     public boolean quitting = false;
     AudibleGUI audibleGUI = new AudibleGUI();
+    public MainWindow mainWindow;
 
     public Application(Display d) {
         super(d);
@@ -36,7 +37,8 @@ public class Application extends GUI {
     }
 
     public Composite createMainBody(Composite parent) {
-        return new MainWindow(parent);
+        mainWindow = new MainWindow(parent);
+        return mainWindow;
     }
 
     void createLayout() {

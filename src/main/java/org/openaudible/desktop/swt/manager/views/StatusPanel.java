@@ -1,6 +1,8 @@
 package org.openaudible.desktop.swt.manager.views;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -22,25 +24,48 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
     Label stats[];
     // Label connected;
 
+
+    class StatusClick extends MouseAdapter {
+        final Status status;
+
+        StatusClick(Status s) {
+            status = s;
+        }
+
+        @Override
+        public void mouseDown(MouseEvent mouseEvent) {
+            super.mouseDown(mouseEvent);
+            System.out.println("click:" + status);
+            if (status.canFilterByStatusType())
+                AudibleGUI.instance.setStatusFilter(status);
+            else
+                AudibleGUI.instance.setStatusFilter(null);
+
+        }
+    }
+
     StatusPanel(Composite c) {
         super(c, SWT.NONE);
         initLayout(2, false, GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
 
         BookNotifier.getInstance().addListener(this);
         ConnectionNotifier.getInstance().addListener(this);
-        Status elems[] = Status.values();
-        stats = new Label[elems.length];
 
-        for (int x = 0; x < elems.length; x++) {
-            if (!elems[x].display())
+        stats = new Label[Status.values().length];
+        int index=0;
+        for (Status e:Status.values())
+        {
+            if (!e.display())
                 continue;
-            String labelName = elems[x].displayName();
+            String labelName = e.displayName();
             Label l = newLabel();
             l.setText(Translate.getInstance().labelName(labelName) + ": ");
             l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+
             l.setFont(FontShop.tableFontBold());
             l.setBackground(bgColor);
-            // TODO: Add more stats when user hovers over stats
+
+
             // l.addListener(SWT.MouseHover);
             Label d = newLabel();
             GridData gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
@@ -49,8 +74,15 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
 
             d.setFont(FontShop.tableFont());
             d.setBackground(bgColor);
-            d.setData(elems[x]);
-            stats[x] = d;
+            d.setData(e);
+
+
+            // allow user to click on status and filter
+            StatusClick clickHandler = new StatusClick(e);
+            l.addMouseListener(clickHandler);
+            d.addMouseListener(clickHandler);
+
+            stats[index++] = d;
         }
 
         _update();
@@ -121,7 +153,6 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
 
         public boolean display() {
             switch (this) {
-                case Books:
                 case To_Convert:
                 case Downloading:
                 case Converting:
@@ -132,6 +163,7 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
 
                 case AAX_Files:
                 case To_Download:
+                case Books:
                     return false;
 
                 default:
@@ -139,9 +171,34 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
 
             }
 
-
             return true;
         }
+        public boolean canFilterByStatusType()
+        {
+            return canFilterByStatusType(this);
+        }
+
+       public static boolean canFilterByStatusType(Status result)
+        {
+            switch (result) {
+                case Connected:
+                case Hours:
+                    return false;
+
+                case Books:
+                case AAX_Files:
+                case MP3_Files:
+                case To_Download:
+                case To_Convert:
+                case Downloading:
+                case Converting:
+                    return true;
+                default: assert(false);
+
+            }
+            return false;
+        }
+
     }
 
     @Override
