@@ -25,11 +25,21 @@ function mp3Link(book, content) {
 function authorLink(book) {
     if (!book || !book.author)
         return "";
-    if (book.author_link && book.author_url.startsWith("http"))
-	{
+    if (book.author_url && book.author_url.startsWith("http"))
+    {
         return "<a href='"+book.author_url + "'>" + asString(book.author) + "</a> ";
     }
-	return asString(book.author);
+    return asString(book.author);
+}
+function publisherLink(book) {
+    if (!book || !book.publisher)
+        return "";
+    return "<a href='https://www.audible.com/search?searchProvider="+encodeURIComponent(book.publisher) + "'>" + asString(book.publisher) + "</a> ";
+}
+function narratorLink(book) {
+    if (!book || !book.narrated_by)
+        return "";
+    return "<a href='https://www.audible.com/search?searchNarrator="+encodeURIComponent(book.narrated_by) + "'>" + asString(book.narrated_by) + "</a> ";
 }
 
 function bookImage(book, addLink) {
@@ -56,9 +66,10 @@ function populateBooks(arr, table) {
 		
 		row['book'] = book;
 		row['title'] = title;
-		row['narrated_by'] = narrated_by;
+		row['narrated_by'] = narratorLink(book);
 		row['author'] = authorLink(book);	// author;
 		row['duration'] = duration;
+        row['publisher'] = publisherLink(book);	// publisher link
 
         row['purchase_date'] = asString(book.purchase_date);
         row['release_date'] = asString(book.release_date);

@@ -22,13 +22,13 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 public class MimeTypeAdapter extends XmlAdapter<String, MimeType> {
 
-    @Override
-    public MimeType unmarshal(final String mimeTypeString) throws Exception {
-        return MimeType.fromType(mimeTypeString);
-    }
+	@Override
+	public MimeType unmarshal(final String mimeTypeString) throws Exception {
+		return MimeType.fromType(mimeTypeString);
+	}
 
-    @Override
-    public String marshal(final MimeType mimeType) throws Exception {
-        return mimeType.getType();
-    }
+	@Override
+	public String marshal(final MimeType mimeType) throws Exception {
+		return mimeType.getType();
+	}
 }

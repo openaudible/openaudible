@@ -12,35 +12,35 @@ import org.openaudible.desktop.swt.util.shop.PaintShop;
 
 // Small search text input field for filtering results based on string.
 public class SearchField extends GridComposite {
-    Text text;
-
-    public SearchField(Composite c, int widthHint, int gdStyle) {
-        super(c, SWT.NONE);
-        initLayout(2, false, gdStyle);
-        Label l = new Label(this, SWT.NONE);
-        l.setImage(PaintShop.getImage("icons/search.png")); // use our search icon rather than the SWT.ICON_SEARCH
-        text = new Text(this, SWT.SEARCH | SWT.ICON_CANCEL);
-        text.setEditable(true);
-        text.setCursor(null);
-        GridData gd = new GridData();
-        gd.widthHint = widthHint;
-        text.setLayoutData(gd);
-
-        text.addKeyListener(new KeyListener() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                AudibleGUI.instance.filterDisplayedBooks(text.getText());
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-            }
-        });
-    }
-
-
-    public void setSearchText(String searchText) {
-        text.setText(searchText);
-        AudibleGUI.instance.filterDisplayedBooks(text.getText());
-    }
+	Text text;
+	
+	public SearchField(Composite c, int widthHint, int gdStyle) {
+		super(c, SWT.NONE);
+		initLayout(2, false, gdStyle);
+		Label l = new Label(this, SWT.NONE);
+		l.setImage(PaintShop.getImage("icons/search.png")); // use our search icon rather than the SWT.ICON_SEARCH
+		text = new Text(this, SWT.SEARCH | SWT.ICON_CANCEL);
+		text.setEditable(true);
+		text.setCursor(null);
+		GridData gd = new GridData();
+		gd.widthHint = widthHint;
+		text.setLayoutData(gd);
+		
+		text.addKeyListener(new KeyListener() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				AudibleGUI.instance.filterDisplayedBooks(text.getText());
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+			}
+		});
+	}
+	
+	
+	public void setSearchText(String searchText) {
+		text.setText(searchText);
+		AudibleGUI.instance.filterDisplayedBooks(text.getText());
+	}
 }

@@ -32,26 +32,26 @@ import javax.xml.bind.annotation.XmlValue;
  */
 public class Category {
 
-    private String domain;
-    private String textValue;
+	private String domain;
+	private String textValue;
 
-    @XmlAttribute
-    public String getDomain() {
-        return domain;
-    }
+	@XmlAttribute
+	public String getDomain() {
+		return domain;
+	}
 
-    public Category setDomain(String domain) {
-        this.domain = domain;
-        return this;
-    }
+	public Category setDomain(String domain) {
+		this.domain = domain;
+		return this;
+	}
 
-    @XmlValue
-    public String getTextValue() {
-        return textValue;
-    }
+	@XmlValue
+	public String getTextValue() {
+		return textValue;
+	}
 
-    public Category setTextValue(String textValue) {
-        this.textValue = textValue;
-        return this;
-    }
+	public Category setTextValue(String textValue) {
+		this.textValue = textValue;
+		return this;
+	}
 }

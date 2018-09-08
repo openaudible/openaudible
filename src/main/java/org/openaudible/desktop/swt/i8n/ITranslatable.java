@@ -32,9 +32,9 @@ package org.openaudible.desktop.swt.i8n;
  * @version 1.0.2
  */
 public interface ITranslatable {
-
-    /**
-     * Update translation of all String literals
-     */
-    void updateI18N();
+	
+	/**
+	 * Update translation of all String literals
+	 */
+	void updateI18N();
 }

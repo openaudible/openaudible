@@ -29,36 +29,36 @@ import java.util.Optional;
 @XmlRootElement
 public class Rss {
 
-    private Channel channel;
+	private Channel channel;
 
-    public static Optional<Rss> fromXmlStream(final InputStream inputStream) {
-        if (Objects.isNull(inputStream)) {
-            return Optional.empty();
-        }
+	public static Optional<Rss> fromXmlStream(final InputStream inputStream) {
+		if (Objects.isNull(inputStream)) {
+			return Optional.empty();
+		}
 
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(Rss.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            return Optional.of((Rss) jaxbUnmarshaller.unmarshal(inputStream));
-        } catch (JAXBException e) {
-            // TODO not sure I want to put logging in this library - perhaps slf4j or commons if I need to...
-        }
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance(Rss.class);
+			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+			return Optional.of((Rss) jaxbUnmarshaller.unmarshal(inputStream));
+		} catch (JAXBException e) {
+			// TODO not sure I want to put logging in this library - perhaps slf4j or commons if I need to...
+		}
 
-        return Optional.empty();
-    }
+		return Optional.empty();
+	}
 
-    public Channel getChannel() {
-        return channel;
-    }
+	public Channel getChannel() {
+		return channel;
+	}
 
-    @XmlElement
-    public Rss setChannel(Channel channel) {
-        this.channel = channel;
-        return this;
-    }
+	@XmlElement
+	public Rss setChannel(Channel channel) {
+		this.channel = channel;
+		return this;
+	}
 
-    @XmlAttribute
-    public String getVersion() {
-        return "2.0";
-    }
+	@XmlAttribute
+	public String getVersion() {
+		return "2.0";
+	}
 }

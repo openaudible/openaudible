@@ -24,38 +24,38 @@ import java.net.URI;
 
 public class Enclosure {
 
-    private URI url;
-    private long length;
-    private MimeType type;
+	private URI url;
+	private long length;
+	private MimeType type;
 
-    @XmlAttribute
-    public URI getUrl() {
-        return url;
-    }
+	@XmlAttribute
+	public URI getUrl() {
+		return url;
+	}
 
-    public Enclosure setUrl(final URI url) {
-        this.url = url;
-        return this;
-    }
+	public Enclosure setUrl(final URI url) {
+		this.url = url;
+		return this;
+	}
 
-    @XmlAttribute
-    public long getLength() {
-        return length;
-    }
+	@XmlAttribute
+	public long getLength() {
+		return length;
+	}
 
-    public Enclosure setLength(final long length) {
-        this.length = length;
-        return this;
-    }
+	public Enclosure setLength(final long length) {
+		this.length = length;
+		return this;
+	}
 
-    @XmlAttribute
-    @XmlJavaTypeAdapter(MimeTypeAdapter.class)
-    public MimeType getType() {
-        return type;
-    }
+	@XmlAttribute
+	@XmlJavaTypeAdapter(MimeTypeAdapter.class)
+	public MimeType getType() {
+		return type;
+	}
 
-    public Enclosure setType(final MimeType type) {
-        this.type = type;
-        return this;
-    }
+	public Enclosure setType(final MimeType type) {
+		this.type = type;
+		return this;
+	}
 }

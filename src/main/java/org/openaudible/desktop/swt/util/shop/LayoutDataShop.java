@@ -36,69 +36,69 @@ import org.eclipse.swt.layout.GridData;
  * @version 1.0.2
  */
 public class LayoutDataShop {
-
-    /**
-     * This utility class constructor is hidden
-     */
-    private LayoutDataShop() {
-        //Protect default constructor
-    }
-
-    /**
-     * Create a new FormData with the given Parameters
-     *
-     * @param marginLeft   Margin in pixel to the left
-     * @param marginRight  Margin in pixel to the right
-     * @param marginTop    Margin in pixel to the top
-     * @param marginBottom Margin in pixel to the bottom
-     * @return FormData with the given parameters
-     */
-    public static FormData createFormData(int marginLeft, int marginRight, int marginTop, int marginBottom) {
-        FormData formData = new FormData();
-        formData.top = new FormAttachment(0, marginTop);
-        formData.left = new FormAttachment(0, marginLeft);
-        formData.right = new FormAttachment(100, marginRight);
-        formData.bottom = new FormAttachment(100, marginBottom);
-        return formData;
-    }
-
-    /**
-     * Create a new GridData with the given parameters
-     *
-     * @param style          GridData style
-     * @param horizontalSpan Horizontal span
-     * @return GridData with the given parameters
-     */
-    public static GridData createGridData(int style, int horizontalSpan) {
-        return createGridData(style, horizontalSpan, SWT.DEFAULT);
-    }
-
-    /**
-     * Create a new GridData with the given parameters
-     *
-     * @param style          GridData style
-     * @param horizontalSpan Horizontal span
-     * @param widthHint      Width hint in pixel
-     * @return GridData with the given parameters
-     */
-    public static GridData createGridData(int style, int horizontalSpan, int widthHint) {
-        return createGridData(style, horizontalSpan, widthHint, SWT.DEFAULT);
-    }
-
-    /**
-     * Create a new GridData with the given parameters
-     *
-     * @param style          GridData style
-     * @param horizontalSpan Horizontal span
-     * @param widthHint      Width hint in pixel
-     * @param heightHint     Height hint in pixel
-     * @return GridData with the given parameters
-     */
-    public static GridData createGridData(int style, int horizontalSpan, int widthHint, int heightHint) {
-        GridData g = new GridData(style);
-        g.horizontalSpan = horizontalSpan;
-        g.widthHint = widthHint;
-        g.heightHint = heightHint;
-        return g;
-    }
+	
+	/**
+	 * This utility class constructor is hidden
+	 */
+	private LayoutDataShop() {
+		//Protect default constructor
+	}
+	
+	/**
+	 * Create a new FormData with the given Parameters
+	 *
+	 * @param marginLeft   Margin in pixel to the left
+	 * @param marginRight  Margin in pixel to the right
+	 * @param marginTop    Margin in pixel to the top
+	 * @param marginBottom Margin in pixel to the bottom
+	 * @return FormData with the given parameters
+	 */
+	public static FormData createFormData(int marginLeft, int marginRight, int marginTop, int marginBottom) {
+		FormData formData = new FormData();
+		formData.top = new FormAttachment(0, marginTop);
+		formData.left = new FormAttachment(0, marginLeft);
+		formData.right = new FormAttachment(100, marginRight);
+		formData.bottom = new FormAttachment(100, marginBottom);
+		return formData;
+	}
+	
+	/**
+	 * Create a new GridData with the given parameters
+	 *
+	 * @param style          GridData style
+	 * @param horizontalSpan Horizontal span
+	 * @return GridData with the given parameters
+	 */
+	public static GridData createGridData(int style, int horizontalSpan) {
+		return createGridData(style, horizontalSpan, SWT.DEFAULT);
+	}
+	
+	/**
+	 * Create a new GridData with the given parameters
+	 *
+	 * @param style          GridData style
+	 * @param horizontalSpan Horizontal span
+	 * @param widthHint      Width hint in pixel
+	 * @return GridData with the given parameters
+	 */
+	public static GridData createGridData(int style, int horizontalSpan, int widthHint) {
+		return createGridData(style, horizontalSpan, widthHint, SWT.DEFAULT);
+	}
+	
+	/**
+	 * Create a new GridData with the given parameters
+	 *
+	 * @param style          GridData style
+	 * @param horizontalSpan Horizontal span
+	 * @param widthHint      Width hint in pixel
+	 * @param heightHint     Height hint in pixel
+	 * @return GridData with the given parameters
+	 */
+	public static GridData createGridData(int style, int horizontalSpan, int widthHint, int heightHint) {
+		GridData g = new GridData(style);
+		g.horizontalSpan = horizontalSpan;
+		g.widthHint = widthHint;
+		g.heightHint = heightHint;
+		return g;
+	}
 }
