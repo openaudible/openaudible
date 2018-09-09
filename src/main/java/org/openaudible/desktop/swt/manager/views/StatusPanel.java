@@ -154,6 +154,7 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
 			switch (this) {
 				case To_Convert:
 				case Downloading:
+				case To_Download:
 				case Converting:
 				case MP3_Files:
 				case Connected:
@@ -161,7 +162,6 @@ public class StatusPanel extends GridComposite implements BookListener, Connecti
 					return true;
 				
 				case AAX_Files:
-				case To_Download:
 				case Books:
 					return false;
 				

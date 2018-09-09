@@ -30,7 +30,11 @@ public class BookNotifier extends EventNotifier<BookListener> implements BookLis
 	public synchronized List<Book> getSelected() {
 		
 		return Collections.unmodifiableList(selected);
-		
+	}
+	
+	public void clearSelectedBooks()
+	{
+		booksSelected(new ArrayList<>());
 	}
 	
 	@Override

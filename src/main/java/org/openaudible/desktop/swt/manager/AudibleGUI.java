@@ -219,11 +219,11 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 	}
 	
 	public boolean canDownloadAll() {
-		return audible.aaxCount() < audible.getBookCount();
+		return audible.getDownloadCount()>0;
 	}
 	
 	public boolean canConvertAll() {
-		return audible.mp3Count() < audible.getBookCount();
+		return audible.getDownloadCount()>0;
 	}
 	
 	public void convertAll() {
@@ -771,6 +771,7 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 	
 	public void filterDisplayedBooks(String text) {
 		textFilter = text;
+		bookNotifier.clearSelectedBooks();
 		bookNotifier.booksUpdated();
 	}
 	

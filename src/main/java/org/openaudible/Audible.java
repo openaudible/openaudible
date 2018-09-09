@@ -392,44 +392,46 @@ public class Audible implements IQueueListener<Book> {
 		mp3Files = getFileSet(Directories.MP3);
 		aaxFiles = getFileSet(Directories.AAX);
 		needFileCacheUpdate = System.currentTimeMillis();
-		
-		HashSet<Book> c = new HashSet<>();
-		HashSet<Book> d = new HashSet<>();
-		long seconds = 0;
-		
-		for (Book b : getBooks()) {
-			if (isIgnoredBook(b)) continue;
-			
-			if (canDownload(b)) d.add(b);
-			if (canConvert(b)) c.add(b);
-			seconds += TimeToSeconds.parseTimeStringToSeconds(b.getDuration());
-		}
 		synchronized (lock) {
 			toDownload.clear();
-			toDownload.addAll(d);
 			toConvert.clear();
-			toConvert.addAll(c);
+			long seconds = 0;
+			for (Book b : getBooks()) {
+				if (isIgnoredBook(b)) continue;
+				
+				if (canDownload(b)) toDownload.add(b);
+				if (canConvert(b)) toConvert.add(b);
+				seconds += TimeToSeconds.parseTimeStringToSeconds(b.getDuration());
+			}
 			totalDuration = seconds;
 		}
 		
 	}
 	
 	
-	public int getDownloadCount() {
+	public int getDownloadCount() {		synchronized (lock) {
+		
 		return toDownload.size();
+	}
 	}
 	
 	public int getConvertCount() {
-		return toConvert.size();
+		synchronized (lock) {
+			
+			return toConvert.size();
+		}
 	}
 	
 	
-	public int mp3Count() {
-		return mp3Files.size();
+	public int mp3Count() {synchronized (lock){
+		return mp3Files.size();}
+		
 	}
 	
 	public int aaxCount() {
-		return aaxFiles.size();
+		synchronized (lock) {
+			return aaxFiles.size();
+		}
 	}
 	
 	public void updateLibrary(boolean quick) throws Exception {
@@ -620,7 +622,7 @@ public class Audible implements IQueueListener<Book> {
 	
 	public Set<Book> toDownload() {
 		synchronized (lock) {
-			return new HashSet<Book>(toDownload);
+			return new HashSet<>(toDownload);
 		}
 	}
 	
