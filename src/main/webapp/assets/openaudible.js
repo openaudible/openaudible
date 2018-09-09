@@ -25,7 +25,7 @@ function mp3Link(book, content) {
 function authorLink(book) {
     if (!book || !book.author)
         return "";
-    if (book.author_url && book.author_url.startsWith("http"))
+    if (book.author_url && book.author_url.substring(0, 4) == 'http')
     {
         return "<a href='"+book.author_url + "'>" + asString(book.author) + "</a> ";
     }
