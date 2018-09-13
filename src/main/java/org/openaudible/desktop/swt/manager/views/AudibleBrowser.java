@@ -56,6 +56,18 @@ public class AudibleBrowser {
 		
 		browser = new Browser(parent, style);
 		browser.addTitleListener(event -> getShell().setText(event.title));
+
+		browser.addProgressListener( new ProgressAdapter() {
+			@Override
+			public void completed( ProgressEvent event ) {
+				String text = browser.getText();
+				ConnectionNotifier.instance.pageLoaded(browser.getUrl(), browser.getText());
+
+				// here, text will contain the full page source
+			}
+		} );
+
+
 		Object t = browser.getWebBrowser();
 		
 		customHeader = new String[1];
@@ -470,4 +482,8 @@ public class AudibleBrowser {
 		if (!isDisposed()) browser.close();
 		browser = null;
 	}
+
+
+
+
 }

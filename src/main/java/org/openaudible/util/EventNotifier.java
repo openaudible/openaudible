@@ -27,5 +27,5 @@ public abstract class EventNotifier<T> {
 	protected Object getLock() {
 		return listeners;
 	}
-	
+
 }

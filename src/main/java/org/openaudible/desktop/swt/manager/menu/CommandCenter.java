@@ -259,7 +259,7 @@ public class CommandCenter {
 			case Console:
 				LogWindow.show();
 				break;
-			case Logout:
+			case Logout_and_Clear_Cookies:
 				AudibleGUI.instance.logout();
 				break;
 			case Ignore_Book:
@@ -315,8 +315,8 @@ public class CommandCenter {
 				return AudibleGUI.instance.canDownloadAll();
 			case Convert_All:
 				return AudibleGUI.instance.canConvertAll();
-			case Logout:
-				return ConnectionNotifier.getInstance().isConnected();
+			case Logout_and_Clear_Cookies:
+				return true;	// ConnectionNotifier.getInstance().isConnected();
 			case Preferences:
 			case Quit:
 			case About:

@@ -139,76 +139,6 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 		return in;
 	}
 
-
-/*
-    public void fetchDecryptionKeyOld() {
-        try {
-            if (!audible.getAccount().audibleKey.isEmpty())
-                throw new Exception("Audible key already set.");
-
-            String key = audible.getScraper(true).fetchDecrpytionKey();
-            audible.getAccount().audibleKey = key;
-            audible.save();
-        } catch (Throwable th) {
-            LOG.info("Error getting key.", th);
-            MessageBoxFactory.showError(null, "Unable to get Key\nError:" + th);
-        }
-    }
-    public void fetchDecryptionKey() {
-        try {
-            File aax = null;
-            for (Book b:getSelected())
-            {
-
-            }
-
-            if (!audible.getAccount().audibleKey.isEmpty())
-                throw new Exception("Audible key already set.");
-
-            String key = audible.getScraper(true).fetchDecrpytionKey();
-            audible.getAccount().audibleKey = key;
-            audible.save();
-        } catch (Throwable th) {
-            LOG.info("Error getting key.", th);
-            MessageBoxFactory.showError(null, "Unable to get Key\nError:" + th);
-        }
-    }
-
-
-    public String lookupKey(final File aaxFile) {
-
-        class LookupTask extends ProgressTask {
-            LookupTask() {
-                super("Look up encrpytion key...");
-
-            }
-
-            String result = null;
-            String err = null;
-
-            public void run() {
-                try {
-                    result = LookupKey.instance.getKeyFromAAX(aaxFile, this);
-                } catch (Exception e) {
-                    err = e.getMessage();
-
-                }
-            }
-        }
-        ;
-        LookupTask task = new LookupTask();
-
-        ProgressDialog.doProgressTask(task);
-        if (task.err != null) {
-            MessageBoxFactory.showError(null, "Unable to get Key\nError:" + task.err);
-            return null;
-        } else {
-            return task.result;
-        }
-
-    }
-*/
-	
 	public int selectedAAXCount() {
 		int count = 0;
 		for (Book b : getSelected()) {
@@ -263,8 +193,8 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 						
 						
 						LOG.info("Error connecting", e);
-						if (!wasCanceled())
-							showError(e, "refreshing book information");
+						// if (!wasCanceled()) showError(e, "Error connecting. Last page was "+ConnectionNotifier.getInstance().lastErrorURL);
+
 					} finally {
 						audible.setProgress(null);
 						if (scraper != null) {
@@ -860,11 +790,15 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 	public boolean logout() {
 		SWTAsync.assertGUI();
 		
-		if (browser != null && !browser.isDisposed()) {
-			
-			String url = userPass.audibleRegion.getBaseURL() + "/signout";
-			browser.setUrl(url);
-			browser.close();
+		if (browser != null && !browser.isDisposed() && userPass!=null) {
+			try {
+				String url = userPass.audibleRegion.getBaseURL() + "/signout";
+				browser.setUrl(url);
+				browser.close();
+			}catch(Throwable th)
+			{
+				LOG.error("ignoring log out error", th);
+			}
 		}
 		
 		
@@ -1151,12 +1085,13 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 	}
 	
 	@Override
-	public void loginFailed(String url, String html) {
-		
+	public void loginFailed(String url, String title, String html) {
+
+
 		SWTAsync.slow(new SWTAsync("Need to open browser...") {
 			public void task() {
-				String message = "Unable to automatically log in... \n\nPlease use the OpenAudible web browser to log onto your audible account and navigate to your library (list of books) and try to connect again." +
-						"\n\nOpen OpenAudible Browser Now?";
+				String message = "Unable to automatically log in... \n\nLast Page:"+title+"\nPlease use the OpenAudible web browser to log onto your audible account and navigate to your library (list of books) and try to connect again." +
+						"\n\nOpen OpenAudible Browser Now?\n"+url;
 				boolean ok = MessageBoxFactory.showGeneralYesNo(null, "Log in to your audible account", message);
 				if (ok)
 					browse(url);

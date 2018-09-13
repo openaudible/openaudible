@@ -10,5 +10,5 @@ public interface ConnectionListener {
 	
 	AudibleAccountPrefs getAccountPrefs(AudibleAccountPrefs in);
 	
-	void loginFailed(String url, String html);
+	void loginFailed(String url, String title, String html);
 }

@@ -29,7 +29,7 @@ public enum Command {
 	Browser,
 	Check_For_Update,
 	AppWebPage,
-	Logout,
+	Logout_and_Clear_Cookies,
 	Test1,
 	MenuSeparator,
 	Ignore_Book;
@@ -90,7 +90,7 @@ public enum Command {
 			case Browser:
 				cmd = 'B';
 				break;
-			case Logout:
+			case Logout_and_Clear_Cookies:
 			case Console:
 				break;
 		}
