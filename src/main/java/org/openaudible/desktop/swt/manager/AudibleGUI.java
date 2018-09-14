@@ -851,16 +851,14 @@ public class AudibleGUI implements BookListener, ConnectionListener {
 	}
 	
 	public void test1() {
-		if (KindleScraper.instance == null) {
-			new KindleScraper(audible.getAccount());
-			
-		}
+		if (browser==null)
+			browse("http://audible.com/lib");
+		
 		
 		try {
-			KindleScraper.instance.test();
-			
+			browser.test();
 		} catch (Throwable th) {
-			LOG.debug("Error", th);
+			LOG.info("Error", th);
 		}
 	}
 	

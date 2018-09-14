@@ -1,6 +1,7 @@
 package org.openaudible.util;
 
 import com.gargoylesoftware.htmlunit.html.*;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openaudible.Directories;
@@ -92,6 +93,12 @@ public class HTMLUtil {
 	
 	public static File debugFile(String what) {
 		return new File(Directories.getTmpDir(), what);
+	}
+	
+	public static File debugToFile(String what,String text) throws IOException {
+		File f = debugFile(what);
+		FileUtils.writeByteArrayToFile(f, text.getBytes());
+		return f;
 	}
 	
 	public static String debugNode(DomNode p, String what) {

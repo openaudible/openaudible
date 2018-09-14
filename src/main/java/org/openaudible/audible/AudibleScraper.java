@@ -33,7 +33,7 @@ public class AudibleScraper {
 	static int maxLoginAttempts = 1;
 	final AudibleAccountPrefs account;
 	private final AudibleClient webClient;
-	public HtmlPage page;
+	private HtmlPage page;
 	boolean debugCust = false;
 	boolean loggedIn = false;
 	String clickToDownload = "Click to download ";

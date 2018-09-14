@@ -322,6 +322,8 @@ public class Audible implements IQueueListener<Book> {
 		for (Book b : bookList) {
 			File aax = getAAXFileDest(b);
 			aaxs.remove(aax);
+			
+			
 		}
 		
 		if (aaxs.size() > 0) {
@@ -334,6 +336,7 @@ public class Audible implements IQueueListener<Book> {
 				try {
 					Book b = AAXParser.instance.parseAAX(f, Directories.getDir(Directories.ART), AAXParser.CoverImageAction.saveInDirectory);
 					takeBook(b);
+					
 					task.setSubTask(b.toString());
 					File imageDest = Audible.instance.getImageFileDest(b);
 					if (!imageDest.exists()) {
@@ -359,6 +362,11 @@ public class Audible implements IQueueListener<Book> {
 		for (Book b : bookList) {
 			File mp3 = getMP3FileDest(b);
 			mp3s.remove(mp3);
+			
+			
+			updatePurchaseDate(b);
+			
+			
 		}
 		
 		if (mp3s.size() > 0) {
@@ -388,6 +396,38 @@ public class Audible implements IQueueListener<Book> {
 		
 	}
 	
+	private void updatePurchaseDate(Book b) {
+		if (b.getFullTitle().contains("A Game of T")) {
+			System.currentTimeMillis();
+		}
+		String curDate = b.getPurchaseDate();
+		boolean needUpdate = curDate.isEmpty();
+		if (curDate.length() > 10) {
+			System.currentTimeMillis();
+			b.setPurchaseDate("");
+			needUpdate=true;
+		}
+		
+		if (needUpdate) {
+			File f = getAAXFileDest(b);
+			if (f.exists()) {
+				long lm = f.lastModified();
+				if (lm == 0) lm = System.currentTimeMillis();
+				
+				b.setPurchaseDate(new Date(lm));
+				
+				String check = b.getPurchaseDateSortable();
+				if (check.length()!=10)
+				{
+					b.setPurchaseDate("");
+				}
+				
+			}
+		}
+		
+		
+	}
+	
 	public void updateFileCache() {
 		mp3Files = getFileSet(Directories.MP3);
 		aaxFiles = getFileSet(Directories.AAX);
@@ -409,10 +449,11 @@ public class Audible implements IQueueListener<Book> {
 	}
 	
 	
-	public int getDownloadCount() {		synchronized (lock) {
-		
-		return toDownload.size();
-	}
+	public int getDownloadCount() {
+		synchronized (lock) {
+			
+			return toDownload.size();
+		}
 	}
 	
 	public int getConvertCount() {
@@ -423,8 +464,10 @@ public class Audible implements IQueueListener<Book> {
 	}
 	
 	
-	public int mp3Count() {synchronized (lock){
-		return mp3Files.size();}
+	public int mp3Count() {
+		synchronized (lock) {
+			return mp3Files.size();
+		}
 		
 	}
 	

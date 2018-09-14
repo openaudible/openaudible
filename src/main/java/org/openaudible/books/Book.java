@@ -10,6 +10,9 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class Book implements Comparable<Book>, Serializable {
+	static SimpleDateFormat audibleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+	static SimpleDateFormat purchaseDateFormat = new SimpleDateFormat("MM-dd-yyyy");
+	static SimpleDateFormat dispalyFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private final HashMap<String, String> map = new HashMap<>();
 	
 	public Book(HashMap<String, String> m) {
@@ -213,24 +216,24 @@ public class Book implements Comparable<Book>, Serializable {
 		return get(BookElement.rating_average);
 	}
 	
-	public void setRating_average(double rating_average) {
-		set(BookElement.rating_average, "" + rating_average);
-	}
-	
 	public void setRating_average(String rating_average) {
 		set(BookElement.rating_average, rating_average);
+	}
+	
+	public void setRating_average(double rating_average) {
+		set(BookElement.rating_average, "" + rating_average);
 	}
 	
 	public String getRating_count() {
 		return get(BookElement.rating_count);
 	}
 	
-	public void setRating_count(int rating_count) {
-		set(BookElement.rating_count, "" + rating_count);
-	}
-	
 	public void setRating_count(String rating_count) {
 		set(BookElement.rating_count, rating_count);
+	}
+	
+	public void setRating_count(int rating_count) {
+		set(BookElement.rating_count, "" + rating_count);
 	}
 	
 	public String getRelease_date() {
@@ -288,6 +291,11 @@ public class Book implements Comparable<Book>, Serializable {
 		return get(BookElement.purchase_date);
 	}
 	
+	public void setPurchaseDate(Date d) {
+		String s = dispalyFormat.format(d);
+		setPurchaseDate(s);
+	}
+	
 	public void setPurchaseDate(String purchaseDateText) {
 		set(BookElement.purchase_date, purchaseDateText);
 	}
@@ -301,10 +309,9 @@ public class Book implements Comparable<Book>, Serializable {
 		String date = getRelease_date();
 		if (!date.isEmpty()) {
 			// 11-MAR-2015
-			SimpleDateFormat parseFormat = new SimpleDateFormat("dd-MMM-yyyy");
+			
 			try {
-				Date d = parseFormat.parse(date);
-				SimpleDateFormat dispalyFormat = new SimpleDateFormat("yyyy-MM-dd");
+				Date d = audibleDateFormat.parse(date);
 				String out = dispalyFormat.format(d);
 				return out;
 			} catch (ParseException e) {
@@ -318,14 +325,33 @@ public class Book implements Comparable<Book>, Serializable {
 	
 	public String getPurchaseDateSortable() {
 		String date = getPurchaseDate();
+		// if (true) return date;
+		
 		if (!date.isEmpty()) {
+			
+			boolean err = false;
+			
+			
 			String dt[] = date.split("-");
 			if (dt.length == 3) {
-				return "20" + dt[2] + "-" + dt[0] + "-" + dt[1];    // yyyy-mm-dd for sorting and viewing
-				// warning, y3k bug
-			} else {
+				if (dt[0].length()==4&&dt[1].length()==2&&dt[2].length()==2)
+				{
+					return date;	// yyyy-mm-dd format we like
+				}
+				if (dt[0].length()==2&&dt[1].length()==2&&dt[2].length()==2)
+				{
+					return "20" + dt[2] + "-" + dt[0] + "-" + dt[1];    // mm-dd-yy is most common
+				}
 			
+				err = true;
+			} else {
+				err = true;
 			}
+			
+			if (err) {
+				return "* " + date;
+			}
+			
 		}
 		
 		return date;

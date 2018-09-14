@@ -18,13 +18,16 @@ import org.openaudible.audible.AudibleClient;
 import org.openaudible.audible.ConnectionNotifier;
 import org.openaudible.desktop.swt.gui.MessageBoxFactory;
 import org.openaudible.desktop.swt.gui.SWTAsync;
+import org.openaudible.util.HTMLUtil;
 import org.openaudible.util.Platform;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+
 
 public class AudibleBrowser {
 	public final static Log logger = LogFactory.getLog(AudibleBrowser.class);
@@ -56,18 +59,26 @@ public class AudibleBrowser {
 		
 		browser = new Browser(parent, style);
 		browser.addTitleListener(event -> getShell().setText(event.title));
-
-		browser.addProgressListener( new ProgressAdapter() {
+		
+		browser.addProgressListener(new ProgressAdapter() {
 			@Override
-			public void completed( ProgressEvent event ) {
+			public void completed(ProgressEvent event) {
 				String text = browser.getText();
 				ConnectionNotifier.instance.pageLoaded(browser.getUrl(), browser.getText());
-
+				// System.out.println("**** HTML **** \n"+text);
+				
+				try {
+					File f = HTMLUtil.debugToFile("last.html", text);
+					System.out.println("Loaded page:" + f.getAbsolutePath());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
 				// here, text will contain the full page source
 			}
-		} );
-
-
+		});
+		
+		
 		Object t = browser.getWebBrowser();
 		
 		customHeader = new String[1];
@@ -418,8 +429,91 @@ public class AudibleBrowser {
 			shell.open();
 	}
 	
-	private void test() {
+	String get(String w) {
+		if (!w.endsWith(";"))
+			w += ";";
+		
+		return eval("return " + w);
+	}
 	
+	String eval(String w) {
+		try {
+			Object o = browser.evaluate(w);
+			String clz = o != null ? o.getClass().toString() : "";
+			System.out.println("eval(" + w + ") -> " + o + " " + clz);
+			
+			if (o != null) {
+				if (o instanceof String)
+					return (String) o;
+				return o.toString();
+			}
+			
+		} catch (Throwable th) {
+			logger.error("unable to eval " + w, th);
+		}
+		return null;
+	}
+	
+	public void nextPage()
+	{
+		String js = "const buttons = document.querySelectorAll('button');\n" +
+				"var next=null;\n" +
+				"var test='len='+buttons.length;\n" +
+				"\n" +
+				"for (var i = 0; i < buttons.length; i++) {\n" +
+				"    var b = buttons[i];\n" +
+				"\ttest += 'b='+b;\n" +
+				"\tconst dn = b.getAttribute('data-name');\n" +
+				"\tif (dn!=null) { next = b; test = dn; }\t\n" +
+				"}\n" +
+				"\n" +
+				"\n" +
+				"if (next!=null) next.click();\n" +
+				"return test;\n" +
+				"\n" +
+				"\n";
+		eval(js);
+	}
+	
+	public void test() {
+		
+		try {
+			if (true)
+			{
+				nextPage();
+				return;
+			}
+			
+			Object window = eval("return window;");
+			String userAgent = eval("return navigator.userAgent");
+			String navigatorVendor = eval("return navigator.vendor");
+			String numAnchors = eval("return document.anchors.length;");
+			
+			eval("return document.anchors;");
+			eval("return document;");
+			get("document.getElementsByTagName('button')");
+			get("document.getElementsByTagName('button')[0]");
+			get("document.querySelectorAll('img')");
+			get("document.querySelectorAll('img').length");
+			String c1 = "const buttons = document.querySelectorAll('button');\n"
+					+ " var test='';\n"
+					+ "for (var i = 0; i < buttons.length; i++) {\n"
+					+ " test += 'abc';\n"
+					+ "}\nreturn test;";
+			
+			eval(c1);
+
+
+//			for(var i = 0; i < inputs.length; i++) {
+//				if(inputs[i].type.toLowerCase() == 'text') {
+//					alert(inputs[i].value);
+//				}
+//			}
+		
+			
+		} catch (Throwable th) {
+			th.printStackTrace();
+		}
 	}
 	
 	public void setUrl(String u) {
@@ -482,8 +576,6 @@ public class AudibleBrowser {
 		if (!isDisposed()) browser.close();
 		browser = null;
 	}
-
-
-
-
+	
+	
 }
