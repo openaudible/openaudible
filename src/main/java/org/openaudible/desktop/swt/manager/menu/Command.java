@@ -31,8 +31,9 @@ public enum Command {
 	AppWebPage,
 	Logout_and_Clear_Cookies,
 	Test1,
-	MenuSeparator,
-	Ignore_Book;
+	Ignore_Book,
+	// Scrap_Page,
+	MenuSeparator;
 	
 	
 	public char getKeyEquiv() {
@@ -57,10 +58,10 @@ public enum Command {
 			case About:
 				break;
 			case ViewInAudible:
-				cmd='I';
+				cmd = 'I';
 				break;
 			case Show_MP3:
-				cmd='M';
+				cmd = 'M';
 				break;
 			case Show_AAX:
 				break;
@@ -92,21 +93,22 @@ public enum Command {
 			case Convert_All:
 				break;
 			case Help:
-				cmd='H';
+				cmd = 'H';
 				break;
 			case Browser:
 				cmd = 'B';
 				break;
 			case Check_For_Update:
-				cmd='U';
+				cmd = 'U';
 				break;
 			case AppWebPage:
 				break;
 			case Logout_and_Clear_Cookies:
-			case Console:cmd = 'L';
+			case Console:
+				cmd = 'L';
 				break;
 			case Test1:
-				cmd='T';
+				cmd = 'T';
 				break;
 			case MenuSeparator:
 				break;

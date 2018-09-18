@@ -6,6 +6,7 @@ import java.io.*;
 
 public class CopyWithProgress {
 	final static int bufSize = 64 * 1024;
+	
 	public static String byteCountToString(long l) {
 		long k = l / 1024;
 		long m = l / (1024 * 1024);
@@ -28,7 +29,7 @@ public class CopyWithProgress {
 		return "" + k + "K";
 	}
 	
-
+	
 	public static long copyWithProgress(final IProgressTask p, final File in, final File out) throws IOException {
 		final String totalBytes = byteCountToString(in.length());
 		

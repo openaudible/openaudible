@@ -7,6 +7,6 @@ public interface Version {
 	boolean appDebug = true;
 	String appLink = "http://openaudible.org";
 	String versionLink = "http://openaudible.org/swt_version.json";
-	String news = "test news here\nok!";	// latest features go here.
+	String news = "";    // latest features go here.
 }
 

@@ -95,7 +95,7 @@ public class HTMLUtil {
 		return new File(Directories.getTmpDir(), what);
 	}
 	
-	public static File debugToFile(String what,String text) throws IOException {
+	public static File debugToFile(String what, String text) throws IOException {
 		File f = debugFile(what);
 		FileUtils.writeByteArrayToFile(f, text.getBytes());
 		return f;

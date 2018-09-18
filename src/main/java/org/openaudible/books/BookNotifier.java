@@ -32,8 +32,7 @@ public class BookNotifier extends EventNotifier<BookListener> implements BookLis
 		return Collections.unmodifiableList(selected);
 	}
 	
-	public void clearSelectedBooks()
-	{
+	public void clearSelectedBooks() {
 		booksSelected(new ArrayList<>());
 	}
 	

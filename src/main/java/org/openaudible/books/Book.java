@@ -83,9 +83,6 @@ public class Book implements Comparable<Book>, Serializable {
 	
 	@Override
 	public boolean equals(Object obj) {
-		assert (obj instanceof Book);
-		assert (obj != null);
-		
 		return (obj != null) && this.getKey().equals(((Book) obj).getKey());
 	}
 	
@@ -334,15 +331,13 @@ public class Book implements Comparable<Book>, Serializable {
 			
 			String dt[] = date.split("-");
 			if (dt.length == 3) {
-				if (dt[0].length()==4&&dt[1].length()==2&&dt[2].length()==2)
-				{
-					return date;	// yyyy-mm-dd format we like
+				if (dt[0].length() == 4 && dt[1].length() == 2 && dt[2].length() == 2) {
+					return date;    // yyyy-mm-dd format we like
 				}
-				if (dt[0].length()==2&&dt[1].length()==2&&dt[2].length()==2)
-				{
+				if (dt[0].length() == 2 && dt[1].length() == 2 && dt[2].length() == 2) {
 					return "20" + dt[2] + "-" + dt[0] + "-" + dt[1];    // mm-dd-yy is most common
 				}
-			
+				
 				err = true;
 			} else {
 				err = true;
@@ -364,4 +359,16 @@ public class Book implements Comparable<Book>, Serializable {
 	public void setAuthorLink(String s) {
 		set(BookElement.author_link, s);
 	}
+	
+	
+	// isPartialBook. A part of a single book. Not to be confused with one of a series.
+	// In the US, productID that ends in a lowercase letter is a partial.
+	// in the UK, a partial book has PUB_000123bUK
+	// So if a book product ID contains any lower case letter, it should be a partial..
+	public boolean isPartialBook() {
+		String pid = this.getProduct_id();
+		return !pid.equals(pid.toUpperCase());
+	}
+	
+	
 }

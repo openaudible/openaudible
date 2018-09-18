@@ -12,8 +12,6 @@ public class ConnectionNotifier extends EventNotifier<ConnectionListener> implem
 	State state = State.Not_Connected;
 	private static final Log LOG = LogFactory.getLog(ConnectionNotifier.class);
 	
-	private String lastURL = "";
-	
 	
 	private ConnectionNotifier() {
 	}
@@ -34,10 +32,10 @@ public class ConnectionNotifier extends EventNotifier<ConnectionListener> implem
 		}
 		
 	}
-
+	
 	public String lastErrorURL = "";
 	public String lastErrorTitle = "";
-
+	
 	public boolean isConnected() {
 		return getState() == State.Connected;
 	}
@@ -70,24 +68,7 @@ public class ConnectionNotifier extends EventNotifier<ConnectionListener> implem
 		return getState() == State.Disconnected;
 	}
 	
-	public String getLastURL() {
-		return lastURL;
-	}
 	
-	public void setLastURL(String lastURL) {
-		this.lastURL = lastURL;
-		if (!lastURL.contains("audible")) {
-			LOG.warn("expected audible");
-		}
-		LOG.info("Setting lastURL to:" + lastURL);
-	}
-
-	public void pageLoaded(String url, String html)
-	{
-		LOG.info("browser loaded:"+url);
-	}
-
-
 	// not connected is unknown.
 	// connected means in account
 	// disconnected means a password is being asked for.
@@ -98,10 +79,10 @@ public class ConnectionNotifier extends EventNotifier<ConnectionListener> implem
 	
 	@Override
 	public void loginFailed(String url, String title, String xml) {
-
+		
 		lastErrorTitle = title;
 		lastErrorURL = url;
-
+		
 		if (state != State.SignedOut) {
 			for (ConnectionListener l : getListeners()) {
 				l.loginFailed(url, title, xml);

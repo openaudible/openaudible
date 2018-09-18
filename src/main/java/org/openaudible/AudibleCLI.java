@@ -2,8 +2,11 @@ package org.openaudible;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openaudible.audible.AudibleClient;
+import org.openaudible.audible.AudibleScraper;
 import org.openaudible.books.Book;
 import org.openaudible.convert.AAXParser;
+import org.openaudible.progress.NullProgressTask;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -91,6 +94,12 @@ public class AudibleCLI {
 		}
 	}
 	
+	AudibleScraper createScraper() throws Exception {
+		return new AudibleScraper(audible.getAccount(), new AudibleClient(), new NullProgressTask());
+		
+	}
+	
+	
 	private void doCommand(AudibleCmd f, String[] r) throws Exception {
 		String args = "";
 		for (int x = 1; x < r.length; x++) {
@@ -98,6 +107,8 @@ public class AudibleCLI {
 				args += " ";
 			args += r[x];
 		}
+		AudibleScraper s;
+		
 		println("Running " + f + " " + args);
 		switch (f) {
 			case help:
@@ -132,8 +143,10 @@ public class AudibleCLI {
 				break;
 			
 			case updateInfo:
+				s = createScraper();
+				
 				for (Book b : audible.find(args))
-					audible.updateInfo(b);
+					audible.updateInfo(b, s);
 				break;
 			case download:
 				audible.downloadQueue.addAll(audible.find(args));
@@ -158,18 +171,18 @@ public class AudibleCLI {
 				break;
 			}
 			case info:
-				audible.getScraper().getInfo(audible.findFirst(args, true));
+				createScraper().getInfo(audible.findFirst(args, true));
 				break;
 			
 			case home:
-				audible.getScraper().home();
+				createScraper().home();
 				break;
 			
 			case export:
 				audible.export(new File("books.csv"));
 				break;
 			case library:
-				audible.updateLibrary(false);
+				audible.updateLibrary(createScraper(), false);
 				break;
 			
 			case test2:

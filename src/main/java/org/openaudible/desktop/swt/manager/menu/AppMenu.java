@@ -110,6 +110,7 @@ public class AppMenu implements ITranslatable, SelectionListener {
 		return null;
 	}
 	
+	
 	private MenuItem newMItem(Menu parent, Command cmd, int style) {
 		MenuItem item = installSystemMenu(cmd);
 		if (item != null)
@@ -228,6 +229,8 @@ public class AppMenu implements ITranslatable, SelectionListener {
 		if (app.quitting)
 			return;
 		
+		MenuItem browser;
+		
 		for (MenuItem m : menuItems) {
 			if (m.isDisposed()) {
 				System.err.println(m + " menuitem disposed");
@@ -242,15 +245,19 @@ public class AppMenu implements ITranslatable, SelectionListener {
 				((IMenuCommand) t).update(m);
 			} else if (t instanceof Command) {
 				Command c = (Command) t;
-				m.setEnabled(CommandCenter.instance.getEnabled(c));
+				commandCenter.updateMenu(c, m);
 			}
+			
+			
 		}
 		
 		setEnabled(editMenu, Command.Copy, false);
 		setEnabled(editMenu, Command.Paste, false);
 		setEnabled(editMenu, Command.Cut, false);
 		
+		
 	}
+	
 	
 	private void initMnemonics() {
 		if (mbar != null)

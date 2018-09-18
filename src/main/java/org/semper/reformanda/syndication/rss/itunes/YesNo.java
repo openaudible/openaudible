@@ -19,13 +19,13 @@ package org.semper.reformanda.syndication.rss.itunes;
 public enum YesNo {
 	YES("yes"),
 	NO("no");
-
+	
 	private final String textRepresentation;
-
+	
 	YesNo(final String textRepresentation) {
 		this.textRepresentation = textRepresentation;
 	}
-
+	
 	/**
 	 * @param yesNoText input text
 	 * @return <code>YES</code> if the input string matches the text value for <code>YES</code>.  Otherwise <code>NO</code>.
@@ -33,7 +33,7 @@ public enum YesNo {
 	public static YesNo fromText(final String yesNoText) {
 		return YES.toString().equals(yesNoText) ? YES : NO;
 	}
-
+	
 	@Override
 	public String toString() {
 		return textRepresentation;

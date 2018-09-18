@@ -8,6 +8,8 @@ import com.gargoylesoftware.htmlunit.util.WebConnectionWrapper;
 import net.sourceforge.htmlunit.corejs.javascript.Context;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openaudible.progress.IProgressTask;
+import org.openaudible.progress.NullProgressTask;
 
 import java.io.IOException;
 import java.util.logging.Handler;
@@ -21,6 +23,9 @@ public class AudibleClient extends WebClient {
 	static Logger system = Logger.getLogger("AudibleClient");
 	Cache cache = new Cache();
 	boolean useJS = true;
+	protected boolean allowNetworkAccess = true;        // if set to false, disallow navigation, clicks, etc.
+	protected HtmlPage lastPage;
+	
 	/*
 		String DEFAULT_MOBILE_USER_AGENT_STRING = "Mozilla/5.0 (iPhone; CPU iPhone OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5376e Safari/8536.25";
 		String netscape4 = "Mozilla/4.08 [en] (WinNT; I ;Nav)";
@@ -131,4 +136,31 @@ public class AudibleClient extends WebClient {
 		return p;
 	}
 	
+	
+	public void throwIfNetworkDisabled() throws AudibleLoginError {
+		if (!allowNetworkAccess)
+			throw new AudibleLoginError("network disabled");
+		
+	}
+	
+	@Override
+	public HtmlPage getPage(String url) throws IOException, FailingHttpStatusCodeException {
+		HtmlPage p = getPage(url, new NullProgressTask());
+		lastPage = p;
+		return p;
+	}
+	
+	public HtmlPage getPage(String url, IProgressTask task) throws IOException, FailingHttpStatusCodeException {
+		HtmlPage p = super.getPage(url);
+		lastPage = p;
+		return p;
+	}
+	
+	
+	public HtmlPage getLastPage() {
+		return lastPage;
+	}
+	
+	public void stop() {
+	}
 }

@@ -31,25 +31,25 @@ import javax.xml.bind.annotation.XmlValue;
  * You may include as many category elements as you need to, for different domains, and to have an item cross-referenced in different parts of the same domain.
  */
 public class Category {
-
+	
 	private String domain;
 	private String textValue;
-
+	
 	@XmlAttribute
 	public String getDomain() {
 		return domain;
 	}
-
+	
 	public Category setDomain(String domain) {
 		this.domain = domain;
 		return this;
 	}
-
+	
 	@XmlValue
 	public String getTextValue() {
 		return textValue;
 	}
-
+	
 	public Category setTextValue(String textValue) {
 		this.textValue = textValue;
 		return this;

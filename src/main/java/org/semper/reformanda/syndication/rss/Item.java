@@ -29,7 +29,7 @@ import java.net.URL;
 import java.util.Date;
 
 public class Item {
-
+	
 	private String title;
 	// TODO link
 	private String description;
@@ -40,7 +40,7 @@ public class Item {
 	private URL guid;
 	private Date pubDate;
 	// TODO source
-
+	
 	// iTunes
 	private String author;
 	private String subtitle;
@@ -52,132 +52,132 @@ public class Item {
 	private Explicit explicit;
 	private YesNo isClosedCaptioned;
 	// TODO itunes order.  ughh.
-
-
+	
+	
 	public URL getGuid() {
 		return guid;
 	}
-
+	
 	public Item setGuid(URL guid) {
 		this.guid = guid;
 		return this;
 	}
-
+	
 	public String getTitle() {
 		return title;
 	}
-
+	
 	public Item setTitle(final String title) {
 		this.title = title;
 		return this;
 	}
-
+	
 	public String getDescription() {
 		return description;
 	}
-
+	
 	public Item setDescription(final String description) {
 		this.description = description;
 		return this;
 	}
-
+	
 	@XmlJavaTypeAdapter(Rfc822DateFormatAdapter.class)
 	public Date getPubDate() {
 		return pubDate;
 	}
-
+	
 	public Item setPubDate(final Date pubDate) {
 		this.pubDate = pubDate;
 		return this;
 	}
-
+	
 	public Enclosure getEnclosure() {
 		return enclosure;
 	}
-
+	
 	public Item setEnclosure(final Enclosure enclosure) {
 		this.enclosure = enclosure;
 		return this;
 	}
-
+	
 	@XmlElement(namespace = "http://www.itunes.com/dtds/podcast-1.0.dtd")
 	public String getAuthor() {
 		return author;
 	}
-
+	
 	public Item setAuthor(String author) {
 		this.author = author;
 		return this;
 	}
-
+	
 	@XmlElement(namespace = "http://www.itunes.com/dtds/podcast-1.0.dtd")
 	public String getSubtitle() {
 		return subtitle;
 	}
-
+	
 	public Item setSubtitle(String subtitle) {
 		this.subtitle = subtitle;
 		return this;
 	}
-
+	
 	@XmlElement(namespace = "http://www.itunes.com/dtds/podcast-1.0.dtd")
 	public String getSummary() {
 		return summary;
 	}
-
+	
 	public Item setSummary(String summary) {
 		this.summary = summary;
 		return this;
 	}
-
+	
 	@XmlElement(namespace = "http://www.itunes.com/dtds/podcast-1.0.dtd")
 	public ItunesImage getImage() {
 		return image;
 	}
-
+	
 	public Item setImage(ItunesImage image) {
 		this.image = image;
 		return this;
 	}
-
+	
 	@XmlElement(namespace = "http://www.itunes.com/dtds/podcast-1.0.dtd")
 	public String getDuration() {
 		return duration;
 	}
-
+	
 	public Item setDuration(String duration) {
 		this.duration = duration;
 		return this;
 	}
-
+	
 	@XmlElement(namespace = "http://www.itunes.com/dtds/podcast-1.0.dtd")
 	@XmlJavaTypeAdapter(YesNoTypeAdapter.class)
 	public YesNo getBlock() {
 		return block;
 	}
-
+	
 	public Item setBlock(final YesNo block) {
 		this.block = block;
 		return this;
 	}
-
+	
 	@XmlElement(namespace = "http://www.itunes.com/dtds/podcast-1.0.dtd")
 	@XmlJavaTypeAdapter(ExplicityTypeAdapter.class)
 	public Explicit getExplicit() {
 		return explicit;
 	}
-
+	
 	public Item setExplicit(final Explicit explicit) {
 		this.explicit = explicit;
 		return this;
 	}
-
+	
 	@XmlElement(namespace = "http://www.itunes.com/dtds/podcast-1.0.dtd")
 	@XmlJavaTypeAdapter(YesNoTypeAdapter.class)
 	public YesNo getIsClosedCaptioned() {
 		return isClosedCaptioned;
 	}
-
+	
 	public Item setIsClosedCaptioned(final YesNo isClosedCaptioned) {
 		this.isClosedCaptioned = isClosedCaptioned;
 		return this;

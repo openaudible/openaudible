@@ -1,7 +1,6 @@
 package org.openaudible.desktop.swt.util.shop;
 
 import org.apache.commons.io.FileUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openaudible.desktop.swt.manager.Version;
 import org.openaudible.util.EventTimer;
@@ -17,7 +16,7 @@ public class BuildInstaller {
 	}
 	
 	public static JSONObject build() throws Exception {
-		EventTimer evt=new EventTimer();
+		EventTimer evt = new EventTimer();
 		
 		File d = new File(".." + File.separator + "install4j");
 		if (!d.isDirectory())
@@ -90,34 +89,33 @@ public class BuildInstaller {
 			switch (ext) {
 				case ".sh":
 					kind = "liunx";
-					kind2 ="Linux GTK";
+					kind2 = "Linux GTK";
 					break;
 				case ".exe":
 					kind = "win";
-					kind2 ="Windows 64x";
+					kind2 = "Windows 64x";
 					
 					break;
 				case ".dmg":
 					kind = "mac";
-					kind2 ="Mac OS X";
+					kind2 = "Mac OS X";
 					break;
 				default:
-					throw new Exception("invalid ext:"+fn);
+					throw new Exception("invalid ext:" + fn);
 			}
-			String newName = "OpenAudible_"+kind+"_"+Version.appVersion+ext;
+			String newName = "OpenAudible_" + kind + "_" + Version.appVersion + ext;
 			File newFile = new File(installDir, newName);
 			ok = installerFile.renameTo(newFile);
 			if (!ok) throw new Exception("rename failed");
 			installerFile = newFile;
 			
 			
-			
 			JSONObject platform = new JSONObject();
 			platform.put("file", newName);
 			platform.put("md5", md5);
-			platform.put("url", downloadDir+newName);
+			platform.put("url", downloadDir + newName);
 			platform.put("size", installerFile.length());
-			platform.put("mb", Util.instance.byteCountToString(installerFile.length())+"b");
+			platform.put("mb", Util.instance.byteCountToString(installerFile.length()) + "b");
 			platform.put("version", Version.appVersion);
 			platform.put("platform", kind2);
 			
@@ -141,21 +139,19 @@ public class BuildInstaller {
 	}
 	
 	
-	public static JSONObject newReleaseJSON()
-	{
+	public static JSONObject newReleaseJSON() {
 		JSONObject json = new JSONObject();
-		json.put("tag_name", "v"+Version.appVersion);
-		json.put("name", "v"+Version.appVersion);
+		json.put("tag_name", "v" + Version.appVersion);
+		json.put("name", "v" + Version.appVersion);
 		json.put("target_commitish", "master");
-		json.put("body", "OpenAudible release version "+Version.appVersion+".");
+		json.put("body", "OpenAudible release version " + Version.appVersion + ".");
 		json.put("draft", false);
 		json.put("prerelease", false);
 		return json;
 	}
 	
 	// POST https://<upload_url>/repos/:owner/:repo/releases/:release_id/assets?name=foo.zip
-	public JSONObject addAssetJSON(File f, String contentType)
-	{
+	public JSONObject addAssetJSON(File f, String contentType) {
 		JSONObject json = new JSONObject();
 		return json;
 	}

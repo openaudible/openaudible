@@ -13,6 +13,11 @@ public enum AudibleRegion {
 		return "https://" + this.getBaseDomain();
 	}
 	
+	public String getLibraryURL() {
+		return getBaseURL() + "/lib";    // this may not be right for all regions.
+	}
+	
+	
 	public String getBaseDomain() {
 		switch (this) {
 			case US:
