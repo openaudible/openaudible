@@ -3,9 +3,11 @@ An open source desktop application for downloading and managing your Audible aud
 
 ## Latest Release
 
-[Download](https://github.com/openaudible/openaudible/releases/latest) installers for Windows, Mac and Linux.
+[Download](https://openaudible.org) installers for Windows, Mac and Linux.
 
 More information is available at the project home page [openaudible.org](http://openaudible.org).
+
+Note: Due to various constraints, the posted github version may be behind the currently posted binary.
 
 ## Features
 - Import audible books from your account
