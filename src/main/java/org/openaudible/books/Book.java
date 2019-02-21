@@ -13,7 +13,7 @@ import java.util.Locale;
 public class Book implements Comparable<Book>, Serializable {
 	static SimpleDateFormat audibleDateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
 	static SimpleDateFormat purchaseDateFormat = new SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH);
-	static SimpleDateFormat displayFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+	static SimpleDateFormat displayDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 	private final HashMap<String, String> map = new HashMap<>();
 	
 	public Book(HashMap<String, String> m) {
@@ -290,7 +290,7 @@ public class Book implements Comparable<Book>, Serializable {
 	}
 	
 	public void setPurchaseDate(Date d) {
-		String s = displayFormat.format(d);
+		String s = displayDateFormat.format(d);
 		setPurchaseDate(s);
 	}
 	
@@ -310,7 +310,7 @@ public class Book implements Comparable<Book>, Serializable {
 			
 			try {
 				Date d = audibleDateFormat.parse(date);
-				String out = displayFormat.format(d);
+				String out = displayDateFormat.format(d);
 				return out;
 			} catch (ParseException e) {
 				e.printStackTrace();
