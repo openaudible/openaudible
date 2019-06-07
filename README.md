@@ -1,7 +1,13 @@
 # OpenAudible
-An open source desktop application for downloading and managing your Audible audiobooks.
+A cross-platform desktop application for downloading and managing your Audible audiobooks.
 
-## Latest Release
+## Important Note
+
+This open source version 1.1.8 is not the latest available as a binary version. 
+You can still build this version from scratch, but it will not be the latest version available.
+
+
+## Latest Binary Release
 
 [Download](https://openaudible.org) installers for Windows, Mac and Linux.
 
@@ -16,11 +22,8 @@ Note: Due to various constraints, the posted github version may be behind the cu
 - Display all your books in searchable UI
 - Export web page/javascript file with all your books
 
-## Screenshot
-![Windows Screenshot](http://openaudible.org/images/open_audible_win.png) <br>
-Windows User Interface
 
-## Building
+## Building version 1.1.8
 OpenAudible is a java application that uses Maven for building.
 
 ### Prerequisites
