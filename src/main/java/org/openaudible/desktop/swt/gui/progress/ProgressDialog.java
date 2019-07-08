@@ -310,7 +310,7 @@ public class ProgressDialog extends ProgressMonitorDialog {
 	}
 	
 	public void operationWasCanceled() {
-		MessageDialog.openInformation(shell, "Cancelled", "Operation was caneled.");
+		MessageDialog.openInformation(shell, "Cancelled", "Operation was cancelled.");
 	}
 	
 	public void runTask() {
