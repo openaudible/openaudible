@@ -1,19 +1,11 @@
 # OpenAudible
 A cross-platform desktop application for downloading and managing your Audible audiobooks.
 
-## Important Note
-
-This open source version 1.1.8 is not the latest available as a binary version. 
-You can still build this version from scratch, but it will not be the latest version available.
-
-
 ## Latest Binary Release
 
-[Download](https://openaudible.org) installers for Windows, Mac and Linux.
+[Download](https://openaudible.org) installers for Windows, Mac and Linux. 
 
 More information is available at the project home page [openaudible.org](http://openaudible.org).
-
-Note: Due to various constraints, the posted github version may be behind the currently posted binary.
 
 ## Features
 - Import audible books from your account
@@ -22,6 +14,9 @@ Note: Due to various constraints, the posted github version may be behind the cu
 - Display all your books in searchable UI
 - Export web page/javascript file with all your books
 
+## Note
+This open source version 1.1.8 is not the latest available as a binary version. 
+You can still build this version from scratch, but it will not be the latest version available. 
 
 ## Building version 1.1.8
 OpenAudible is a java application that uses Maven for building.
@@ -115,9 +110,9 @@ While stable, OpenAudible is always looking for improvements, testing and bug re
 
 - Donation of an [Open Source code signing certificate](https://www.certum.eu/certum/cert,offer_en_open_source_cs.xml) would be nice.
 - Exporting to a podcast format is being considered
-- Testing and feedback with regions is needed
+- Testing and feedback with regions outside of the US/UK is needed
 - Exporting to a format that supports the best mobile and linux audio book players is the goal.
-- Are chapters working well in your favorite audio book player?
+- Are chapters, artwork, and meta data working well in your favorite audio book player?
 - UI improvement ideas welcome, especially for Linux.
 - The in-app [help documentation](https://github.com/openaudible/openaudible/tree/master/src/main/help) is not great and ugly.  
 - Support for multiple audible accounts would be nice
