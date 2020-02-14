@@ -3,7 +3,7 @@ A cross-platform desktop application for downloading and managing your Audible a
 
 ## Latest Binary Release
 
-[Download](https://openaudible.org) installers for Windows, Mac and Linux. 
+[Download](https://openaudible.org) installers for Windows, Mac and Linux. (64bit)
 
 More information is available at the project home page [openaudible.org](http://openaudible.org).
 
@@ -17,12 +17,13 @@ More information is available at the project home page [openaudible.org](http://
 ## Note
 This open source version 1.1.8 is not the latest available as a binary version. 
 You can still build this version from scratch, but it will not be the latest version available. 
+You can also run the latest version using Java debugger using these instructions, and the source can be decompiled.
 
 ## Building version 1.1.8
 OpenAudible is a java application that uses Maven for building.
 
 ### Prerequisites
-Java 8, Maven, and git. Windows, Mac or Linux Desktop.
+Java 8, Maven, and git. Windows, Mac or Linux Desktop, 64 bit Intel/AMD architectures only.
 
 Clone the [git repo](https://github.com/openaudible/openaudible)
 
@@ -59,24 +60,24 @@ Select Edit Configurations... <br />
 Add Application <br />
 Name: OpenAudible <br />
 Main Class: org.openaudible.desktop.Application <br />
-VM options: -ea <br />
-Mac VM options: -ea -XstartOnFirstThread <br />
-Click Debug button <br />
+VM options: -ea -Dfile.encoding=UTF-8 <br />
+Mac VM options: -XstartOnFirstThread <br />
+Then Run or Debug <br />
 
 #### Windows Command Line
 ```
-java -cp "target\openaudible-jar-with-dependencies.jar;swt\org.eclipse.swt.win32.win32.x86_64-4.6.jar" org.openaudible.desktop.Application
+java -Dfile.encoding=UTF-8 -ea -cp "target\openaudible-jar-with-dependencies.jar;swt\org.eclipse.swt.win32.win32.x86_64-4.6.jar" org.openaudible.desktop.Application
 ```
 
 #### Mac Command Line
 ```
-java -XstartOnFirstThread -cp "./target/openaudible-jar-with-dependencies.jar:./swt/org.eclipse.swt.cocoa.macosx.x86_64-4.6.jar" org.openaudible.desktop.Application
+java -XstartOnFirstThread -Dfile.encoding=UTF-8 -ea -cp "./target/openaudible-jar-with-dependencies.jar:./swt/org.eclipse.swt.cocoa.macosx.x86_64-4.6.jar" org.openaudible.desktop.Application
 ```
 Notice on Mac, the -XstartOnFirstThread is required to run SWT apps.
 
 #### Linux Command Line
 ```
-java -cp "target/openaudible-jar-with-dependencies.jar:swt/org.eclipse.swt.gtk.linux.x86_64-4.6.jar" org.openaudible.desktop.Application
+java -Dfile.encoding=UTF-8 -ea -cp "target/openaudible-jar-with-dependencies.jar:swt/org.eclipse.swt.gtk.linux.x86_64-4.6.jar" org.openaudible.desktop.Application
 ```
 
 #### Notes
