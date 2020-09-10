@@ -35,7 +35,7 @@ public class AudibleClient extends WebClient {
 	public static String swtWindows = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; Trident/7.0; rv:11.0) like Gecko";
 	
 	public AudibleClient() {
-		super(BrowserVersion.BEST_SUPPORTED);
+		super();
 		this.getOptions().setThrowExceptionOnScriptError(false);
 		this.getOptions().setMaxInMemory(1024 * 1024);
 		assert (this.getOptions().isRedirectEnabled());
