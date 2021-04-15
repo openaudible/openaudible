@@ -28,6 +28,9 @@ Build this version (1.1.8) from scratch using the [build instructions](BUILD.rm)
 ## License
 This project is licensed under the Apache 2.0 License - see the [LICENSE.md](LICENSE.md) file for details, but may uses code licensed by other licenses.
 
-We include a fully GPL-compliant binary of ffmpeg for audio conversions
+We include a minimal LGPL-compliant binary of ffmpeg for audio conversions.
 
-Please use responsibly on content you are legally authorized to access.
+We use Install4J for our multi-platform installer builder. 
+![Install4J](https://www.ej-technologies.com/images/product_banners/install4j_medium.png)
+
+Please use responsibly on content you have purchased and are legally authorized to access and back up.
