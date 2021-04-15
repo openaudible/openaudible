@@ -3,7 +3,7 @@ A cross-platform desktop application for downloading and managing your Audible a
 
 ## Latest Binary Release
 
-[Download](https://openaudible.org) installers for Windows, Mac and Linux. (64bit)
+[Download](https://openaudible.org) installers for [Windows](https://openaudible.org/latest/OpenAudible_win.exe), [Mac](https://openaudible.org/latest/OpenAudible_mac.dmg) and [Linux](https://openaudible.org/latest/OpenAudible_x86_64.AppImage). (64bit)
 
 ![Screenshot](screenshot_linux.png)
 
@@ -30,7 +30,9 @@ This project is licensed under the Apache 2.0 License - see the [LICENSE.md](LIC
 
 We include a minimal LGPL-compliant binary of ffmpeg for audio conversions.
 
-We use Install4J for our multi-platform installer builder. 
-![Install4J](https://www.ej-technologies.com/images/product_banners/install4j_medium.png)
+
+We use [![Install4J](https://www.ej-technologies.com/images/product_banners/install4j_small.png)](https://www.ej-technologies.com/products/install4j/overview.html) for our multi-platform installer builder.
+
+
 
 Please use responsibly on content you have purchased and are legally authorized to access and back up.
