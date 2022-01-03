@@ -18,8 +18,8 @@ More information is available at the project home page [openaudible.org](http://
 
 And many more features have been added.
 
-## No Longer Open Source
-The source code linked in this repo is out of date. Open source code is only through version version 1.1.8 is not the latest available as a binary version. Many new features have been added to the closed source binary versions. Give it a try!
+## Important note about the source code
+The source code linked in this repo is version 1.1.8, and is out of date. Please use the full binary versions. Many new features have since been added. Give it a try!
 
 We use [![Install4J](https://www.ej-technologies.com/images/product_banners/install4j_small.png)](https://www.ej-technologies.com/products/install4j/overview.html) for our multi-platform installer builder.
 
