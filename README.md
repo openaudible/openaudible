@@ -5,7 +5,7 @@ A cross-platform desktop application for downloading and managing your Audible a
 
 [Download](https://openaudible.org) installers for [Windows](https://openaudible.org/latest/OpenAudible_win.exe), [Mac](https://openaudible.org/latest/OpenAudible_mac.dmg) and [Linux](https://openaudible.org/latest/OpenAudible_x86_64.AppImage). (64bit)
 
-![Screenshot](screenshot_linux.png)
+![Screenshot](screenshot.png)
 
 More information is available at the project home page [openaudible.org](http://openaudible.org).
 
@@ -24,4 +24,4 @@ The source code linked in this repo is version 1.1.8, and is out of date. Please
 We use [![Install4J](https://www.ej-technologies.com/images/product_banners/install4j_small.png)](https://www.ej-technologies.com/products/install4j/overview.html) for our multi-platform installer builder.
 
 
-Please use responsibly on content you have purchased and are legally authorized to access and back up.
+Please use responsibly on content you have purchased and are legally authorized to access and backup.
