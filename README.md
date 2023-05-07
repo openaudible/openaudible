@@ -3,7 +3,7 @@ A cross-platform desktop application for downloading and managing your Audible a
 
 ## Latest Binary Release
 
-[Download](https://openaudible.org) installers for [Windows](https://openaudible.org/latest/OpenAudible_win.exe), Mac [Intel](https://openaudible.org/latest/OpenAudible_mac.dmg)/[M1](https://openaudible.org/latest/OpenAudible_mac_aarch64.dmg) and [Linux](https://openaudible.org/latest/OpenAudible_x86_64.AppImage). (64bit)
+[Download](https://openaudible.org) installers for [Windows](https://openaudible.org/latest/OpenAudible_win.exe), [Mac](https://openaudible.org/latest/OpenAudible_mac.dmg) and [Linux](https://openaudible.org/latest/OpenAudible_x86_64.AppImage). (64bit)
 
 ![Screenshot](screenshot.png)
 
